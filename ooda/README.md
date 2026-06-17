@@ -121,7 +121,7 @@ Assembles the per-tick prompt from `CLAWD.md` + live observations and calls an L
 
 1. `XAI_API_KEY` → `grok-4.3-fast` (or `XAI_MODEL`)
 2. `DEEPSEEK_API_KEY` → `deepseek-v4-flash` (via `DEEPSEEK_BASE_URL`)
-3. `OPENROUTER_API_KEY` → `nex-agi/nex-n2-pro:free` (or `OPENROUTER_MODEL`)
+3. `ZKROUTER_API_KEY` (or `OPENROUTER_API_KEY`) → `nex-agi/nex-n2-pro:free` via `ZKROUTER_BASE_URL`
 4. `ANTHROPIC_API_KEY` → `claude-haiku-4-5-20251001` (or `ANTHROPIC_MODEL`)
 5. **Fallback** → `deterministicDecision()` (no key needed)
 
@@ -232,8 +232,10 @@ All enforced in code — not just prompt guidance:
 | `XAI_MODEL` | clawd-decision | Override Grok model |
 | `DEEPSEEK_API_KEY` | clawd-decision | DeepSeek key (priority 2) |
 | `DEEPSEEK_BASE_URL` | clawd-decision | DeepSeek base URL |
-| `OPENROUTER_API_KEY` | clawd-decision | OpenRouter key (priority 3) |
-| `OPENROUTER_MODEL` | clawd-decision | Override OpenRouter model |
+| `ZKROUTER_API_KEY` | clawd-decision | Preferred Clawd router key on the public zk.x402.wtf stack (priority 3) |
+| `ZKROUTER_BASE_URL` | clawd-decision | Override the default router base (`https://clawdrouter-zk.fly.dev/v1`) |
+| `OPENROUTER_API_KEY` | clawd-decision | Compatibility fallback for the same OpenAI-format router slot |
+| `OPENROUTER_MODEL` | clawd-decision | Override the router model |
 | `ANTHROPIC_API_KEY` | clawd-decision | Claude key (priority 4) |
 | `ANTHROPIC_MODEL` | clawd-decision | Override Claude model |
 | `SOLANA_RPC_URL` | loop | RPC URL (mainnet URLs rejected) |

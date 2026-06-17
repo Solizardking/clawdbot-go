@@ -4,8 +4,8 @@
  * Provider priority:
  *   1. XAI_API_KEY      → grok-4.3 (fast, cheap, streaming)
  *   2. DEEPSEEK_API_KEY → deepseek-v4-flash
- *   3. OPENROUTER_API_KEY → configurable model
- *   4. ANTHROPIC_API_KEY  → Claude direct
+ *   3. ZKROUTER_API_KEY / OPENROUTER_API_KEY → OpenAI-compatible router
+ *   4. ANTHROPIC_API_KEY                     → Claude direct
  *
  * Design: Fresh context per tick. No conversation history.
  * The per-tick prompt (CLAWD.md) + observations → one JSON decision.
@@ -177,10 +177,10 @@ export async function clawdDecision(obs: Observations): Promise<unknown> {
   const prompt = getPrompt(obs);
   let raw: string | undefined;
 
-  // Provider priority: Grok → DeepSeek → OpenRouter → Claude
+  // Provider priority: Grok → DeepSeek → zkrouter/OpenRouter-compatible → Claude
   const xaiKey = process.env['XAI_API_KEY'];
   const dsKey = process.env['DEEPSEEK_API_KEY'];
-  const orKey = process.env['OPENROUTER_API_KEY'];
+  const zkRouterKey = process.env['ZKROUTER_API_KEY'] || process.env['OPENROUTER_API_KEY'];
   const antKey = process.env['ANTHROPIC_API_KEY'];
 
   if (xaiKey) {
@@ -199,11 +199,16 @@ export async function clawdDecision(obs: Observations): Promise<unknown> {
     }
   }
 
-  if (!raw && orKey) {
+  if (!raw && zkRouterKey) {
     try {
-      raw = await callOpenAi(prompt, orKey, 'https://openrouter.ai/api/v1', process.env['OPENROUTER_MODEL'] || 'nex-agi/nex-n2-pro:free');
+      raw = await callOpenAi(
+        prompt,
+        zkRouterKey,
+        process.env['ZKROUTER_BASE_URL'] || 'https://clawdrouter-zk.fly.dev/v1',
+        process.env['OPENROUTER_MODEL'] || 'nex-agi/nex-n2-pro:free',
+      );
     } catch (err) {
-      process.stderr.write(`[clawd-decision] OpenRouter failed: ${err}\n`);
+      process.stderr.write(`[clawd-decision] zkrouter/OpenRouter-compatible provider failed: ${err}\n`);
     }
   }
 

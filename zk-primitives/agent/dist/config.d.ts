@@ -1,0 +1,50 @@
+/**
+ * ZK Agent configuration.
+ *
+ * Loaded from environment variables so the same agent binary works
+ * locally, in CI, and in production without code changes.
+ *
+ * Required:
+ *   CLAWD_ZK_RPC_URL        — Solana RPC endpoint (Helius recommended)
+ *   CLAWD_ZK_PROGRAM_ID     — Address of the deployed `clawd-zk` program
+ *
+ * Optional:
+ *   CLAWD_ZK_PHOTON_URL     — Photon indexer URL (defaults to the RPC URL)
+ *   CLAWD_ZK_API_KEY        — Separate API key for the RPC (some providers)
+ *   CLAWD_ZK_COMMITMENT     — "processed" | "confirmed" | "finalized" (default "confirmed")
+ *   CLAWD_ZK_KEYPAIR        — Path to a Solana CLI keypair JSON for signing
+ *   CLAWD_ZK_NETWORK        — "mainnet" | "devnet" | "localnet" (for intent hints)
+ */
+import { PublicKey } from "@solana/web3.js";
+/**
+ * Default program id used by the deployed `clawd-zk` program on mainnet.
+ *
+ * 32 base-58 chars; corresponds to the placeholder 32-byte buffer
+ * 0xCL CLAWDzk11111111111111111111111111111111 (visible as a base58
+ * string only at the config layer — the actual program address is
+ * set when the Anchor IDL is built and deployed).
+ */
+export declare const DEFAULT_PROGRAM_ID: PublicKey;
+export interface ZkAgentConfig {
+    /** Helius or other Solana RPC URL (api-key may be embedded). */
+    rpcUrl: string;
+    /** Address of the deployed `clawd-zk` program. */
+    programId: PublicKey;
+    /** Photon indexer URL. Defaults to `rpcUrl`. */
+    photonUrl: string;
+    /** Separate API key for the RPC. */
+    apiKey?: string;
+    /** Commitment level for RPC calls. */
+    commitment: "processed" | "confirmed" | "finalized";
+    /** Optional path to a Solana keypair JSON for signing. */
+    keypairPath?: string;
+    /** Network hint for intent routing. */
+    network: "mainnet" | "devnet" | "localnet";
+}
+/**
+ * Load ZK agent config from the current `process.env`.
+ *
+ * Throws if the required `CLAWD_ZK_RPC_URL` is not set.
+ */
+export declare function loadAgentConfig(env?: Record<string, string | undefined>): ZkAgentConfig;
+//# sourceMappingURL=config.d.ts.map

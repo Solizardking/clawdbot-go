@@ -161,6 +161,9 @@ type SolanaConfig struct {
 	WalletPubkey         string  `json:"wallet_pubkey"`
 	WalletKeyPath        string  `json:"wallet_key_path"`
 	MaxPositionSOL       float64 `json:"max_position_sol"`
+
+	// Phoenix perpetual futures (https://phoenix.trade)
+	PhoenixAPIURL string `json:"phoenix_api_url"` // default: https://perp-api.phoenix.trade
 }
 
 // ── ClawdBot: OODA Loop ──────────────────────────────────────────────

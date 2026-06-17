@@ -54,6 +54,14 @@
     "clawd-zk-agent"
   ],
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Solizardking/clawdbot-go"
+  },
+  "homepage": "https://github.com/Solizardking/clawdbot-go/tree/main/zk-primitives/agent",
+  "bugs": {
+    "url": "https://github.com/Solizardking/clawdbot-go/issues"
+  },
   "dependencies": {
     "@clawd/zk-client": "file:../client",
     "@solana/kit": "^2.1.0",

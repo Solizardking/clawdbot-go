@@ -93,10 +93,10 @@ Features:
   • <10MB RAM, boots in <1s on ARM64
 
 Public surfaces:
-  • Runtime repo: github.com/Solizardking/clawdbot-go
-  • Ecosystem hub: github.com/solizardking/solana-clawd
-  • x402 gateway: zk.x402.wtf
-  • Terminal: cheshireterminal.ai`,
+  • Runtime repo: https://github.com/Solizardking/clawdbot-go
+  • Ecosystem hub: https://github.com/solizardking/solana-clawd
+  • x402 gateway: https://zk.x402.wtf
+  • Terminal: https://cheshireterminal.ai`,
 		Example: "clawdbot agent -m \"What is SOL price?\"\nclawdbot ooda --interval 60\nclawdbot ooda --hw-bus 1\nclawdbot hardware scan\nclawdbot hardware demo\nclawdbot status",
 	}
 

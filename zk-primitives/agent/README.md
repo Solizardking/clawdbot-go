@@ -7,6 +7,12 @@
 > TypeScript API (`ClawdZkAgent`), and a deterministic natural-language
 > intent router.
 
+Public surfaces for the parent stack:
+- Runtime repo: `https://github.com/Solizardking/clawdbot-go`
+- Ecosystem hub: `https://github.com/solizardking/solana-clawd`
+- Gateway: `https://zk.x402.wtf`
+- Terminal: `https://cheshireterminal.ai`
+
 The ZK primitive on its own is a low-level SDK: nullifier
 computation, Groth16 proof assembly, Light Protocol state-tree
 plumbing. Useful, but it forces every Clawd agent that wants to
@@ -103,7 +109,7 @@ const agent = await ClawdZkAgent.fromEnv();
 // 2. Or build it explicitly
 const agent = ClawdZkAgent.create({
   config: {
-    rpcUrl: "https://mainnet.helius-rpc.com?api-key=…",
+    rpcUrl: "https://zk.x402.wtf/api/solana/rpc-public",
     programId: /* base58 */,
     photonUrl: "https://mainnet.helius-rpc.com",
     commitment: "confirmed",
@@ -127,7 +133,7 @@ console.log(result.signature);
 
 | Var | Default | Notes |
 |---|---|---|
-| `CLAWD_ZK_RPC_URL` | — for on-chain actions | Helius or other Solana RPC URL. `inspect` / `verify` / `nullifier` / `ask` can run without it. |
+| `CLAWD_ZK_RPC_URL` | `https://zk.x402.wtf/api/solana/rpc-public` | Solana RPC URL for on-chain actions. `inspect` / `verify` / `nullifier` / `ask` can run without it. |
 | `CLAWD_ZK_PROGRAM_ID` | `CLAWDzk11…111` (mainnet) | Base58 pubkey, or one of the named aliases `CLAWDZK_MAINNET` / `CLAWDZK_DEVNET` / `CLAWDZK_LOCALNET`. |
 | `CLAWD_ZK_PHOTON_URL` | = `CLAWD_ZK_RPC_URL` | Helius Photon indexer for compressed-state reads. |
 | `CLAWD_ZK_API_KEY` | none | If your RPC needs a separate header. |

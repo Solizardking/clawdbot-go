@@ -5,6 +5,12 @@
 > Powers the on-chain identity, attestation, and encrypted-state
 > layer for the Clawd agent fleet.
 
+Public surfaces for the wider stack:
+- Runtime repo: `https://github.com/Solizardking/clawdbot-go`
+- Ecosystem hub: `https://github.com/solizardking/solana-clawd`
+- Gateway: `https://zk.x402.wtf`
+- Terminal: `https://cheshireterminal.ai`
+
 ## What this is
 
 A focused, audited-friendly on-chain program plus a TypeScript SDK
@@ -107,7 +113,7 @@ pnpm install   # or npm install
 import { ClawdZkClient, computeNullifier } from "@clawd/zk-client";
 import { createSolanaRpc, createKeyPairSignerFromBytes } from "@solana/kit";
 
-const rpc = createSolanaRpc("https://mainnet.helius-rpc.com?api-key=...");
+const rpc = createSolanaRpc("https://zk.x402.wtf/api/solana/rpc-public");
 const signer = await createKeyPairSignerFromBytes(secretKey);
 const client = new ClawdZkClient({ rpc, programId: PROGRAM_ID });
 

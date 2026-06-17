@@ -46,5 +46,9 @@ export interface ZkAgentConfig {
  *
  * Throws if the required `CLAWD_ZK_RPC_URL` is not set.
  */
-export declare function loadAgentConfig(env?: Record<string, string | undefined>): ZkAgentConfig;
+export interface LoadAgentConfigOptions {
+    requireRpcUrl?: boolean;
+    defaultRpcUrl?: string;
+}
+export declare function loadAgentConfig(env?: Record<string, string | undefined>, options?: LoadAgentConfigOptions): ZkAgentConfig;
 //# sourceMappingURL=config.d.ts.map

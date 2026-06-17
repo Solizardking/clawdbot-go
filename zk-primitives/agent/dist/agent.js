@@ -28,7 +28,7 @@ import { createSolanaRpc } from "@solana/kit";
 import { readFile } from "node:fs/promises";
 import { resolve as resolvePath } from "node:path";
 import { Buffer } from "node:buffer";
-import { ClawdZkClient, computeNullifier, verifyGroth16Offchain, buildPublishPublicInputs, packPublicInputs, } from "@clawd/zk-client";
+import { ClawdZkClient, computeNullifier, verifyGroth16Offchain, buildCommitPublicInputs, buildPublishPublicInputs, packPublicInputs, } from "@clawd/zk-client";
 import { loadAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 import { routeIntent } from "./intents.js";
 // ---------------------------------------------------------------------------
@@ -91,6 +91,14 @@ export class ClawdZkAgent {
     /** Construct from environment variables. */
     static async fromEnv() {
         const config = loadAgentConfig();
+        return ClawdZkAgent.fromLoadedConfig(config);
+    }
+    /** Construct from env when present, otherwise with offline-safe defaults. */
+    static async fromEnvOrDefaults() {
+        const config = loadAgentConfig(process.env, { requireRpcUrl: false });
+        return ClawdZkAgent.fromLoadedConfig(config);
+    }
+    static async fromLoadedConfig(config) {
         let signer;
         if (config.keypairPath) {
             const raw = await readFile(resolvePath(config.keypairPath), "utf-8");
@@ -135,11 +143,22 @@ export class ClawdZkAgent {
                     nullifier: ensure32("nullifier", args.nullifier),
                 });
             }
+            else if (args.modelHash &&
+                args.ciphertextCommitment &&
+                args.stateVersion != null &&
+                args.committer) {
+                publicInputs = buildCommitPublicInputs({
+                    committer: args.committer,
+                    modelHash: ensure32("modelHash", args.modelHash),
+                    ciphertextCommitment: ensure32("ciphertextCommitment", args.ciphertextCommitment),
+                    stateVersion: args.stateVersion,
+                });
+            }
         }
         if (!publicInputs) {
             return {
                 ok: false,
-                reason: "Either `publicInputs` or (attester + modelHash + payloadCommitment + nullifier) must be provided.",
+                reason: "Either `publicInputs` or publish inputs (attester + modelHash + payloadCommitment + nullifier) or commit inputs (committer + modelHash + ciphertextCommitment + stateVersion) must be provided.",
             };
         }
         const result = verifyGroth16Offchain({ proof: args.proof, publicInputs });
@@ -228,6 +247,12 @@ export class ClawdZkAgent {
             proof: args.proof,
         };
         const instruction = await this.client.commitEncryptedState(commitArgs);
+        const publicInputsPacked = packPublicInputs(buildCommitPublicInputs({
+            committer: attesterPubkey.toBytes(),
+            modelHash,
+            ciphertextCommitment,
+            stateVersion,
+        }));
         const summary = [
             `${CLAWD_BANNER} commitEncryptedState`,
             `  program        : ${this.config.programId.toBase58()}`,
@@ -235,8 +260,9 @@ export class ClawdZkAgent {
             `  modelHash      : 0x${bytesToHex(modelHash)}`,
             `  ciphertext     : 0x${bytesToHex(ciphertextCommitment)}`,
             `  stateVersion   : ${stateVersion.toString()}`,
+            `  public inputs  : 0x${bytesToHex(publicInputsPacked)}`,
         ].join("\n");
-        return { instruction, publicInputsPackedHex: "", summary };
+        return { instruction, publicInputsPackedHex: bytesToHex(publicInputsPacked), summary };
     }
     /**
      * Natural-language intent router. Recognises the same phrases that

@@ -34,6 +34,7 @@ export interface IntentContext {
     stateVersion?: number | bigint;
     context?: string;
     proofPath?: string;
+    nullifier?: string;
 }
 /**
  * Route a free-form text input to a typed intent + args.

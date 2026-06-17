@@ -80,6 +80,9 @@ export interface VerifyProofArgs {
     payloadCommitment?: Bytes32;
     nullifier?: Bytes32;
     attester?: Uint8Array;
+    ciphertextCommitment?: Bytes32;
+    stateVersion?: number | bigint;
+    committer?: Uint8Array;
 }
 export interface VerifyProofResult {
     ok: boolean;
@@ -97,6 +100,9 @@ export declare class ClawdZkAgent {
     static create(opts: ClawdZkAgentOptions): ClawdZkAgent;
     /** Construct from environment variables. */
     static fromEnv(): Promise<ClawdZkAgent>;
+    /** Construct from env when present, otherwise with offline-safe defaults. */
+    static fromEnvOrDefaults(): Promise<ClawdZkAgent>;
+    private static fromLoadedConfig;
     /**
      * Convenience: load a proof JSON file from disk and return it as a
      * `Groth16Proof` with hex → bytes conversion.

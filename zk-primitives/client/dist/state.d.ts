@@ -6,7 +6,6 @@
  * compressed accounts.
  */
 import type { PublicKey } from "@solana/web3.js";
-import type { Bytes32 } from "./types.js";
 export interface ValidityProof {
     /** Compressed proof, 128 bytes (Groth16 over the Merkle proof). */
     compressedProof: Uint8Array;
@@ -30,7 +29,7 @@ export declare function fetchValidityProofV2(args: {
     rpc: any;
     hashes?: Uint8Array[];
     addressesWithTrees?: {
-        address: Bytes32;
+        address: Uint8Array;
         tree: PublicKey;
     }[];
 }): Promise<ValidityProof>;

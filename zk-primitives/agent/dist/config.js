@@ -16,6 +16,9 @@
  *   CLAWD_ZK_NETWORK        — "mainnet" | "devnet" | "localnet" (for intent hints)
  */
 import { PublicKey } from "@solana/web3.js";
+function publicKeyFromByte(byte) {
+    return new PublicKey(new Uint8Array(32).fill(byte));
+}
 /**
  * Default program id used by the deployed `clawd-zk` program on mainnet.
  *
@@ -24,11 +27,11 @@ import { PublicKey } from "@solana/web3.js";
  * string only at the config layer — the actual program address is
  * set when the Anchor IDL is built and deployed).
  */
-export const DEFAULT_PROGRAM_ID = new PublicKey("CLAWDzk1111111111111111111111111111111111111");
+export const DEFAULT_PROGRAM_ID = publicKeyFromByte(1);
 const KNOWN_PROGRAM_IDS = {
-    CLAWDZK_MAINNET: "CLAWDzk1111111111111111111111111111111111111",
-    CLAWDZK_DEVNET: "CLAWDzk2222222222222222222222222222222222222",
-    CLAWDZK_LOCALNET: "CLAWDzk3333333333333333333333333333333333333",
+    CLAWDZK_MAINNET: DEFAULT_PROGRAM_ID,
+    CLAWDZK_DEVNET: publicKeyFromByte(2),
+    CLAWDZK_LOCALNET: publicKeyFromByte(3),
 };
 function asString(v, fallback) {
     if (v == null)
@@ -53,7 +56,7 @@ function resolveProgramId(raw) {
         return DEFAULT_PROGRAM_ID;
     const named = KNOWN_PROGRAM_IDS[raw.toUpperCase()];
     if (named)
-        return new PublicKey(named);
+        return named;
     try {
         return new PublicKey(raw);
     }
@@ -61,14 +64,11 @@ function resolveProgramId(raw) {
         throw new Error(`Invalid CLAWD_ZK_PROGRAM_ID: ${raw}. Expected a base58 pubkey or one of: ${Object.keys(KNOWN_PROGRAM_IDS).join(", ")}.`);
     }
 }
-/**
- * Load ZK agent config from the current `process.env`.
- *
- * Throws if the required `CLAWD_ZK_RPC_URL` is not set.
- */
-export function loadAgentConfig(env = process.env) {
-    const rpcUrl = asString(env.CLAWD_ZK_RPC_URL, "");
-    if (!rpcUrl) {
+export function loadAgentConfig(env = process.env, options = {}) {
+    const requireRpcUrl = options.requireRpcUrl ?? true;
+    const fallbackRpcUrl = options.defaultRpcUrl ?? "http://127.0.0.1:8899";
+    const rpcUrl = asString(env.CLAWD_ZK_RPC_URL, requireRpcUrl ? "" : fallbackRpcUrl);
+    if (!rpcUrl && requireRpcUrl) {
         throw new Error("CLAWD_ZK_RPC_URL is not set. Add it to ~/.clawd-code/.env (or pass `rpcUrl` directly to the agent).");
     }
     const programId = resolveProgramId(env.CLAWD_ZK_PROGRAM_ID);

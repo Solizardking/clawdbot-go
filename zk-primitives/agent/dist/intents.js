@@ -84,7 +84,9 @@ export function routeIntent(text, _agent, ctx = {}) {
                 proofPath: ctx.proofPath,
                 modelHash: ctx.modelHash,
                 payloadCommitment: ctx.payloadCommitment,
-                nullifier: ctx.ciphertextCommitment, // user supplies a hex if needed
+                ciphertextCommitment: ctx.ciphertextCommitment,
+                stateVersion: ctx.stateVersion,
+                nullifier: ctx.nullifier,
             },
         });
     }

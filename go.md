@@ -4,119 +4,70 @@
 **Local path:** `/Users/8bit/clawdbot-go`  
 **Language:** Go 1.25  
 **Module:** `github.com/8bitlabs/clawdbot`  
+**Public gateway:** `https://zk.x402.wtf`  
 **Public hub:** `https://github.com/solizardking/solana-clawd`  
 **Public terminal:** `https://cheshireterminal.ai`
 
 ---
 
-## What Was Just Done (last commit: `b54ccc2`)
+## Current State
 
-Four files were added/modified to wire clawdbot into the sovereign AI stack:
+The current worktree is wired around the public Clawd surfaces and defaults to the sovereign AI stack:
 
 | File | Change |
 |------|--------|
-| `install.sh` | Curl installer — clones repo, builds binary, writes `.env`, POSTs install telemetry to `https://zk.x402.wtf/api/install` to get an `installId` |
-| `.env.example` | Pre-filled with free zkrouter AI + SolanaTracker RPC so users need zero API keys |
-| `pkg/config/config.go` | Default `ModelList[0]` now points at `clawdrouter-zk.fly.dev/v1` with model `openai/zkrouter-auto`; default `HeliusRPCURL` points at `https://zk.x402.wtf/api/solana/rpc-public` |
-| `README.md` | Quick-start section updated with curl install command |
+| `install.sh` | Installer clones the public runtime repo, registers installs through `https://zk.x402.wtf/api/install`, and writes a ready-to-run `.env` with public defaults |
+| `.env.example` | Pre-filled with public zkrouter and RPC defaults so a fresh install can start without private credentials |
+| `pkg/config/config.go` | Central source of truth for runtime repo, hub repo, gateway, terminal, zkrouter base URL, and public RPC defaults |
+| `cmd/clawdbot/main.go` | CLI status/help/gateway output exposes the canonical runtime, hub, gateway, and terminal surfaces |
+| `web/backend/main.go` | `/api/status`, `/api/connectors`, and `/api/ecosystem` now expose the same public topology for the web console |
 
 ---
 
-## Critical Gap — LLM Is Not Actually Wired
+## Verified Runtime Wiring
 
-The biggest pending work: **`runInteractiveAgent` is a stub.** The REPL loop at `cmd/clawdbot/main.go:1137` does not call any LLM. It just prints placeholder text:
-
-```go
-// cmd/clawdbot/main.go:1137
-func runInteractiveAgent(cfg *config.Config) error {
-    // ...
-    default:
-        fmt.Printf("[CLAWDBOT] Processing with %s...\n", cfg.Agents.Defaults.ModelName)
-        fmt.Printf("(LLM integration pending — connect your API keys in config)\n")
-    }
-```
-
-Similarly at `cmd/clawdbot/main.go:~120`:
+The CLI LLM path is no longer a stub:
 
 ```go
-// TODO: Wire to LLM provider from config
-_ = cfg
-```
-
-The `ClawdAgent` struct and the `providers.LLMProvider` interface are fully built (`pkg/agent/agent.go`, `pkg/providers/providers.go`) — they just aren't called from the CLI yet.
-
----
-
-## What Needs to Be Done
-
-### 1. Add a zkrouter-compatible provider constructor
-
-`pkg/providers/providers.go` has `NewOpenRouterProvider(apiKey string)` which hardcodes `baseURL = "https://openrouter.ai/api/v1"`. Add an overload that accepts a custom base URL:
-
-```go
-// Add this function to pkg/providers/providers.go
-func NewOpenAICompatProvider(apiKey, baseURL string) *OpenRouterProvider {
-    return &OpenRouterProvider{
-        apiKey:  apiKey,
-        baseURL: baseURL,  // e.g. "https://clawdrouter-zk.fly.dev/v1"
-        client:  &http.Client{Timeout: 120 * time.Second},
-    }
-}
-```
-
-The `OpenRouterProvider` already uses the OpenAI chat completions format (`/chat/completions`), so it works with zkrouter out of the box — just needs the configurable base URL.
-
-### 2. Wire provider from config in `runInteractiveAgent`
-
-Replace the stub in `cmd/clawdbot/main.go:runInteractiveAgent`:
-
-```go
-func runInteractiveAgent(cfg *config.Config) error {
-    // Build provider from config.ModelList[0] (defaults to zkrouter)
-    var provider providers.LLMProvider
+func buildProvider(cfg *config.Config) providers.LLMProvider {
     if len(cfg.ModelList) > 0 {
         entry := cfg.ModelList[0]
         base := entry.APIBase
         if base == "" {
-            base = "https://clawdrouter-zk.fly.dev/v1"
+            base = config.ZkRouterBaseURL
         }
-        provider = providers.NewOpenAICompatProvider(entry.APIKey, base)
-    } else {
-        provider = providers.NewOpenRouterProvider(cfg.Providers.OpenRouter.APIKey)
+        key := entry.APIKey
+        if key == "" {
+            key = "clawdbot-free"
+        }
+        return providers.NewOpenAICompatProvider(key, base)
     }
-
-    agent, err := agent.NewClawdAgent(agent.AgentConfig{
-        Model:         cfg.ModelList[0].Model,  // "openai/zkrouter-auto"
-        Provider:      provider,
-        MaxIterations: cfg.Agents.Defaults.MaxToolIterations,
-        MaxTokens:     cfg.Agents.Defaults.MaxTokens,
-        Temperature:   cfg.Agents.Defaults.Temperature,
-    })
-    if err != nil {
-        return err
-    }
-
-    // Then run the REPL loop using agent.Run(ctx, userInput)
-    ...
+    return providers.NewOpenRouterProvider(cfg.Providers.OpenRouter.APIKey)
 }
 ```
 
-Also fix the single-shot `-m` message path at `cmd/clawdbot/main.go:~120` — same provider construction, then call `agent.Run(ctx, message)`.
+`newClawdAgent()` and `runInteractiveAgent()` both use this helper, so the default CLI path now routes through the OpenAI-compatible zkrouter base by default while still allowing overrides through config or env vars.
 
-### 3. Wire the OODA loop provider
+---
 
-`clawdbot ooda` likely has the same stub. Find `runOODALoop` or equivalent and apply the same provider wiring.
+## Remaining Work That Still Matters
 
-### 4. Update README install URL
+### 1. Keep public and backing URLs clearly separated
 
-The README references:
-```
-git clone https://github.com/Solizardking/clawdbot-go.git
-```
-This was partially updated but double-check — all references should use:
-```
-https://github.com/Solizardking/clawdbot-go
-```
+The canonical public surfaces are:
+
+- `https://github.com/Solizardking/clawdbot-go`
+- `https://github.com/solizardking/solana-clawd`
+- `https://zk.x402.wtf`
+- `https://cheshireterminal.ai`
+
+The backing AI router endpoint `https://clawdrouter-zk.fly.dev/v1` is still real and still used, but docs and user-facing output should keep presenting it as implementation detail behind `zk.x402.wtf` unless a contributor actually needs the lower-level endpoint.
+
+### 2. Continue open-source hygiene cleanup
+
+- Keep repo metadata (`.gitignore`, `.gitattributes`, OCI labels, package metadata) aligned with the fact that this is a public repo.
+- Keep generated build output and local caches out of source archives and language stats.
+- Continue scanning for stale internal branding or references that conflict with the canonical hub / gateway / terminal story.
 
 ---
 
@@ -148,12 +99,20 @@ install.sh                      Curl installer (just added)
 
 ## Infrastructure Context
 
-The zkrouter stack is deployed at:
+The public-facing stack is:
 
 | Endpoint | What |
 |----------|------|
-| `https://clawdrouter-zk.fly.dev/v1` | OpenAI-compatible AI router (fly.dev) |
-| `https://zk.x402.wtf` | Next.js web frontend (Vercel) |
+| `https://zk.x402.wtf` | Canonical public gateway and install surface |
+| `https://cheshireterminal.ai` | Canonical public terminal surface |
+| `https://github.com/solizardking/solana-clawd` | Canonical ecosystem hub |
+| `https://github.com/Solizardking/clawdbot-go` | Runtime repository |
+
+The main backing services behind that public surface are:
+
+| Backend endpoint | What |
+|------------------|------|
+| `https://clawdrouter-zk.fly.dev/v1` | OpenAI-compatible AI router backend |
 | `https://zk.x402.wtf/api/solana/rpc-public` | Public SolanaTracker RPC proxy (no key needed) |
 | `https://zk.x402.wtf/api/install` | Install registration → Neon DB tracking |
 
@@ -180,7 +139,7 @@ cd /Users/8bit/clawdbot-go    # or clone from GitHub
 go mod download
 go build ./...                 # must compile cleanly
 
-# Run agent (should hit zkrouter after your wiring changes)
+# Run agent (uses zkrouter/public defaults unless overridden)
 ZKROUTER_BASE_URL=https://clawdrouter-zk.fly.dev/v1 \
 ZKROUTER_API_KEY=clawdbot-free \
 go run ./cmd/clawdbot agent -m "What is the current SOL price?"

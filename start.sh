@@ -3,7 +3,7 @@
 # ClawdBot Go :: One-Shot Start Script
 # Installs dependencies, compiles everything, runs animated launcher
 # ─────────────────────────────────────────────────────────────────────
-set -e
+set -euo pipefail
 
 GREEN='\033[1;38;2;20;241;149m'
 PURPLE='\033[1;38;2;153;69;255m'
@@ -20,9 +20,10 @@ cd "$ROOT"
 echo ""
 echo -e "${GREEN}    🦞 ClawdBot Go — One-Shot Start${RESET}"
 echo -e "${DIM}    ────────────────────────────────${RESET}"
-echo -e "${DIM}    Runtime: github.com/Solizardking/clawdbot-go${RESET}"
-echo -e "${DIM}    Hub:     github.com/solizardking/solana-clawd${RESET}"
-echo -e "${DIM}    Gateway: zk.x402.wtf · Terminal: cheshireterminal.ai${RESET}"
+echo -e "${DIM}    Runtime: https://github.com/Solizardking/clawdbot-go${RESET}"
+echo -e "${DIM}    Hub:     https://github.com/solizardking/solana-clawd${RESET}"
+echo -e "${DIM}    Gateway: https://zk.x402.wtf${RESET}"
+echo -e "${DIM}    Terminal: https://cheshireterminal.ai${RESET}"
 echo ""
 
 # ── Check Node.js ─────────────────────────────────────────────────

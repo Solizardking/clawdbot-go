@@ -40,7 +40,7 @@ BUILD_DIR := ./build
 BIN_CLI   := $(BUILD_DIR)/clawdbot
 BIN_TUI   := $(BUILD_DIR)/clawdbot-tui
 
-.PHONY: all build orin tui docker clean install test lint deps scan-i2c
+.PHONY: all build orin rpi riscv macos cross tui docker docker-orin clean install test lint deps scan-i2c help
 
 # ── Default ───────────────────────────────────────────────────────────
 
@@ -173,6 +173,7 @@ scan-i2c:
 clean:
 	@echo "🧹 Cleaning..."
 	@rm -rf $(BUILD_DIR)
+	@rm -rf .cache
 	@echo "✓ Clean"
 
 # ── Help ──────────────────────────────────────────────────────────────

@@ -196,8 +196,8 @@ echo
 echo -e "  ${BOLD}Edit your config:${RESET}  ${CYAN}nano ${ENV_FILE}${RESET}"
 echo -e "  ${BOLD}Runtime repo:${RESET}      ${CYAN}${REPO}${RESET}"
 echo -e "  ${BOLD}Ecosystem hub:${RESET}    ${CYAN}${HUB_REPO}${RESET}"
+echo -e "  ${BOLD}Gateway:${RESET}          ${CYAN}https://zk.x402.wtf${RESET}"
 echo -e "  ${BOLD}Terminal:${RESET}         ${CYAN}${TERMINAL_URL}${RESET}"
-echo -e "  ${BOLD}Free AI portal:${RESET}    ${CYAN}https://zk.x402.wtf${RESET}"
 echo
 echo -e "  🦞 \$CLAWD :: Droids Lead The Way"
 echo

@@ -84,7 +84,7 @@ clawdbot solana trending         # top Solana tokens
 ### Manual Install
 
 ```bash
-git clone https://github.com/Solizardking/clawdbot-go.git
+git clone https://github.com/Solizardking/clawdbot-go
 cd clawdbot-go
 
 # Configure API keys (zkrouter + RPC pre-filled, add your own to unlock higher limits)
@@ -116,6 +116,12 @@ cd web/frontend && npm install && npm run build && cd ../..
 ./build/clawdbot ooda --sim --interval 60
 ./build/clawdbot web                              # dashboard → http://localhost:18800
 ```
+
+The default install path is already pointed at the public Clawd surfaces:
+- runtime repo: `https://github.com/Solizardking/clawdbot-go`
+- ecosystem hub: `https://github.com/solizardking/solana-clawd`
+- gateway: `https://zk.x402.wtf`
+- terminal: `https://cheshireterminal.ai`
 
 ---
 

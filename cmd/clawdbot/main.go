@@ -21,6 +21,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/8bitlabs/clawdbot/pkg/agent"
+	"github.com/8bitlabs/clawdbot/pkg/bus"
+	"github.com/8bitlabs/clawdbot/pkg/channels"
 	"github.com/8bitlabs/clawdbot/pkg/config"
 	"github.com/8bitlabs/clawdbot/pkg/hardware"
 	"github.com/8bitlabs/clawdbot/pkg/phoenix"
@@ -147,7 +149,7 @@ func NewAgentCommand() *cobra.Command {
 			}
 
 			// Interactive REPL mode
-			fmt.Println(lobster)
+			fmt.Print(lobster)
 			fmt.Printf("%s🦞 ClawdBot Interactive Mode%s\n", colorGreen, colorReset)
 			fmt.Printf("%sModel: %s | Workspace: %s%s\n", colorDim, cfg.Agents.Defaults.ModelName, cfg.Agents.Defaults.Workspace, colorReset)
 			fmt.Printf("%sType your message or use memory commands (!remember, !recall, !trades, !lessons)%s\n\n", colorDim, colorReset)
@@ -194,10 +196,51 @@ func NewGatewayCommand() *cobra.Command {
 			fmt.Printf("  Gateway:   %s\n", config.GatewayURL)
 			fmt.Printf("  Terminal:  %s\n", config.TerminalURL)
 
-			// TODO: Wire real gateway runtime with OODA loop and channel server.
-			select {} // Block forever
+			return runGatewayRuntime(cfg)
 		},
 	}
+}
+
+func runGatewayRuntime(cfg *config.Config) error {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	messageBus := bus.NewMessageBus()
+	defer messageBus.Close()
+
+	manager := channels.NewManager(messageBus)
+	registered := manager.List()
+	if len(registered) == 0 {
+		fmt.Printf("%sNo concrete channel adapters registered; gateway will run OODA only.%s\n", colorAmber, colorReset)
+	}
+
+	if err := manager.StartAll(ctx); err != nil {
+		return fmt.Errorf("channel startup: %w", err)
+	}
+	defer manager.StopAll(context.Background())
+
+	go func() {
+		for {
+			msg, ok := messageBus.SubscribeOutbound(ctx)
+			if !ok {
+				return
+			}
+			if err := manager.DispatchOutbound(ctx, msg); err != nil {
+				fmt.Fprintf(os.Stderr, "[gateway] outbound dispatch failed channel=%s chat=%s err=%v\n", msg.Channel, msg.ChatID, err)
+			}
+		}
+	}()
+
+	ooda := agent.NewOODAAgent(cfg, &consoleHooks{})
+	if err := ooda.Start(); err != nil {
+		return fmt.Errorf("ooda startup: %w", err)
+	}
+	defer ooda.Stop()
+
+	fmt.Printf("%sGateway runtime active. Press Ctrl-C to stop.%s\n", colorGreen, colorReset)
+	<-ctx.Done()
+	fmt.Printf("\n%sGateway shutting down...%s\n", colorAmber, colorReset)
+	return nil
 }
 
 // ── Onboard Command ──────────────────────────────────────────────────
@@ -207,7 +250,7 @@ func NewOnboardCommand() *cobra.Command {
 		Use:   "onboard",
 		Short: "Initialize ClawdBot config & workspace",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println(lobster)
+			fmt.Print(lobster)
 			fmt.Printf("%s🦞 Welcome to ClawdBot!%s\n\n", colorGreen, colorReset)
 
 			configPath := config.DefaultConfigPath()

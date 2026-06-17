@@ -8,6 +8,18 @@
 **Public hub:** `https://github.com/solizardking/solana-clawd`  
 **Public terminal:** `https://cheshireterminal.ai`
 
+## Module Path Decision
+
+The public runtime repository is `https://github.com/Solizardking/clawdbot-go`, but the active Go module path remains `github.com/8bitlabs/clawdbot`.
+
+That is an intentional compatibility choice in the current state, not an accidental partial rename. It keeps:
+
+- internal imports stable
+- existing `ldflags` targets stable
+- downstream builds from breaking unexpectedly
+
+If the project later migrates the module path into the public repo namespace, that should be treated as an explicit breaking change with a full import rewrite, not as routine cleanup.
+
 ---
 
 ## Current State

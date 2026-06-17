@@ -123,6 +123,20 @@ The default install path is already pointed at the public Clawd surfaces:
 - gateway: `https://zk.x402.wtf`
 - terminal: `https://cheshireterminal.ai`
 
+### Module Path Compatibility
+
+The public repository is:
+- `https://github.com/Solizardking/clawdbot-go`
+
+The current Go module path is still:
+- `github.com/8bitlabs/clawdbot`
+
+That mismatch is intentional for now. The codebase keeps the legacy module path to avoid breaking existing imports, build scripts, and `ldflags` references while the public repo and hub are stabilized. In practice:
+
+- clone and browse the code from `https://github.com/Solizardking/clawdbot-go`
+- expect Go imports inside the repo to remain `github.com/8bitlabs/clawdbot/...`
+- treat a future module-path migration as a deliberate breaking change, not as unfinished accidental drift
+
 ---
 
 ## 🏗 Architecture

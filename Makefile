@@ -20,8 +20,8 @@ GOVERSION := $(shell go version | cut -d' ' -f3)
 
 MODULE    := github.com/8bitlabs/clawdbot
 # The Go import path stays stable for v1 compatibility even though the public
-# runtime repo is github.com/Solizardking/clawdbot-go and the wider hub is
-# github.com/solizardking/solana-clawd.
+# runtime repo is https://github.com/Solizardking/clawdbot-go and the wider hub
+# is https://github.com/solizardking/solana-clawd.
 PKG_VER   := $(MODULE)/pkg/config
 
 LDFLAGS   := -s -w \

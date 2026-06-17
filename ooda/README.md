@@ -9,9 +9,12 @@
 ## Quickstart
 
 ```bash
-npm run ooda               # 50 ticks, deterministic, no TUI
-npm run ooda:tui           # pipe through the ANSI dashboard
-npm run demo:ooda          # demo run
+cd ooda
+npm install
+
+npm run loop -- --ticks 50 --sleep 0.25          # deterministic, no TUI
+npm run loop -- --ticks 200 --sleep 0.4 --tui | npm run tui
+npm run loop -- --goblin --ticks 100 --llm       # aggressive paper/devnet mode
 
 # Manual flags
 npx tsx ooda/loop.ts --ticks 100 --sleep 0.25 --llm
@@ -128,6 +131,15 @@ Assembles the per-tick prompt from `CLAWD.md` + live observations and calls an L
 **`deterministicDecision(obs)`** — 5-candle SMA crossover: opens long when price < SMA × 0.995, opens short when price > SMA × 1.005, closes on reversal. No API key required.
 
 The prompt is assembled fresh each tick — stateless, no conversation history.
+
+### `package.json` — local harness metadata
+
+The `ooda/` directory now carries its own `package.json` so the harness is reproducible as an open-source subproject. It declares the actual runtime dependencies used here:
+
+- `openai` for the OpenAI-compatible router slot
+- `execa` for optional journal commits
+- `chalk` for the ANSI TUI
+- `tsx` and `typescript` for local execution and linting
 
 ---
 

@@ -141,7 +141,15 @@ async function readPerpsOiSignal(previous?: {
 }): Promise<OiSignal | undefined> {
   if (!USE_PERPS_OI) return undefined;
   try {
-    const mod = await import('../perps/clawd-agents-perps/src/signals/oi-core.ts');
+    const modulePath = '../perps/clawd-agents-perps/src/signals/oi-core.ts';
+    const mod = await import(modulePath) as {
+      buildClawdOiCoreSignal(args: {
+        symbol: string;
+        previous?: typeof previous;
+        mode: string;
+        mock: boolean;
+      }): Promise<OiSignal>;
+    };
     return await mod.buildClawdOiCoreSignal({
       symbol: PERPS_SYMBOL,
       previous,

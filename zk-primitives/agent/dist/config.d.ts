@@ -1,34 +1,34 @@
 /**
- * ZK Agent configuration.
+ * ZK Shark Agent configuration.
  *
- * Loaded from environment variables so the same agent binary works
- * locally, in CI, and in production without code changes.
+ * Loaded from environment variables so the same Shark of All Streets
+ * binary works locally, in CI, and in production without code changes.
  *
  * Required:
- *   CLAWD_ZK_RPC_URL        — Solana RPC endpoint (Helius recommended)
- *   CLAWD_ZK_PROGRAM_ID     — Address of the deployed `clawd-zk` program
+ *   ZK_SHARK_RPC_URL        - Solana RPC endpoint (Helius recommended)
+ *   ZK_SHARK_PROGRAM_ID     - Address of the deployed ZK program
  *
  * Optional:
- *   CLAWD_ZK_PHOTON_URL     — Photon indexer URL (defaults to the RPC URL)
- *   CLAWD_ZK_API_KEY        — Separate API key for the RPC (some providers)
- *   CLAWD_ZK_COMMITMENT     — "processed" | "confirmed" | "finalized" (default "confirmed")
- *   CLAWD_ZK_KEYPAIR        — Path to a Solana CLI keypair JSON for signing
- *   CLAWD_ZK_NETWORK        — "mainnet" | "devnet" | "localnet" (for intent hints)
+ *   ZK_SHARK_PHOTON_URL     - Photon indexer URL (defaults to the RPC URL)
+ *   ZK_SHARK_API_KEY        - Separate API key for the RPC (some providers)
+ *   ZK_SHARK_COMMITMENT     - "processed" | "confirmed" | "finalized" (default "confirmed")
+ *   ZK_SHARK_KEYPAIR        - Path to a Solana CLI keypair JSON for signing
+ *   ZK_SHARK_NETWORK        - "mainnet" | "devnet" | "localnet" (for intent hints)
+ *
+ * Legacy CLAWD_ZK_* variables are still accepted as fallbacks.
  */
 import { PublicKey } from "@solana/web3.js";
 /**
- * Default program id used by the deployed `clawd-zk` program on mainnet.
+ * Default program id used by the deployed ZK Shark program on mainnet.
  *
- * 32 base-58 chars; corresponds to the placeholder 32-byte buffer
- * 0xCL CLAWDzk11111111111111111111111111111111 (visible as a base58
- * string only at the config layer — the actual program address is
- * set when the Anchor IDL is built and deployed).
+ * This is a deterministic valid placeholder public key; replace it
+ * with the deployed Anchor program id before sending transactions.
  */
 export declare const DEFAULT_PROGRAM_ID: PublicKey;
-export interface ZkAgentConfig {
+export interface ZkSharkAgentConfig {
     /** Helius or other Solana RPC URL (api-key may be embedded). */
     rpcUrl: string;
-    /** Address of the deployed `clawd-zk` program. */
+    /** Address of the deployed ZK Shark program. */
     programId: PublicKey;
     /** Photon indexer URL. Defaults to `rpcUrl`. */
     photonUrl: string;
@@ -41,14 +41,11 @@ export interface ZkAgentConfig {
     /** Network hint for intent routing. */
     network: "mainnet" | "devnet" | "localnet";
 }
+export type ZkAgentConfig = ZkSharkAgentConfig;
 /**
- * Load ZK agent config from the current `process.env`.
+ * Load ZK Shark agent config from the current `process.env`.
  *
- * Throws if the required `CLAWD_ZK_RPC_URL` is not set.
+ * Throws if neither `ZK_SHARK_RPC_URL` nor legacy `CLAWD_ZK_RPC_URL` is set.
  */
-export interface LoadAgentConfigOptions {
-    requireRpcUrl?: boolean;
-    defaultRpcUrl?: string;
-}
-export declare function loadAgentConfig(env?: Record<string, string | undefined>, options?: LoadAgentConfigOptions): ZkAgentConfig;
+export declare function loadAgentConfig(env?: Record<string, string | undefined>): ZkSharkAgentConfig;
 //# sourceMappingURL=config.d.ts.map

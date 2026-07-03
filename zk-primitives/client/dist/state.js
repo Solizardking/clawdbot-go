@@ -7,11 +7,8 @@
  */
 /** Fetch a non-inclusion proof for a list of nullifier addresses. */
 export async function fetchValidityProofV2(args) {
-    const rpc = args.rpc;
-    if (!rpc.getValidityProofV0) {
-        throw new Error("RPC client does not expose getValidityProofV0; use a Light-compatible RPC wrapper.");
-    }
-    const result = await rpc.getValidityProofV0(args.hashes ?? [], args.addressesWithTrees ?? []);
+    const sdk = await import("@lightprotocol/stateless.js");
+    const result = await sdk.getValidityProofV0(args.hashes ?? [], args.addressesWithTrees ?? [], []);
     return {
         compressedProof: result.compressedProof,
         rootIndices: result.rootIndices,
@@ -20,16 +17,12 @@ export async function fetchValidityProofV2(args) {
 }
 /** Fetch the current v2 address tree info. */
 export async function fetchAddressTreeV2(rpc) {
-    if (typeof rpc.getAddressTreeV2 !== "function") {
-        throw new Error("RPC client does not expose getAddressTreeV2; use a Light-compatible RPC wrapper.");
-    }
+    const sdk = await import("@lightprotocol/stateless.js");
     return rpc.getAddressTreeV2();
 }
 /** Fetch a random v2 state tree for new outputs. */
 export async function fetchRandomStateTreeV2(rpc) {
-    if (typeof rpc.getRandomStateTreeInfo !== "function") {
-        throw new Error("RPC client does not expose getRandomStateTreeInfo; use a Light-compatible RPC wrapper.");
-    }
+    const sdk = await import("@lightprotocol/stateless.js");
     const info = await rpc.getRandomStateTreeInfo();
     return { tree: info.tree, queue: info.queue };
 }

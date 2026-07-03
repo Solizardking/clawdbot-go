@@ -1,38 +1,40 @@
 #!/usr/bin/env node
 /**
- * clawd-zk-agent — CLI entry point.
+ * zk-shark-agent - CLI entry point for ZK Shark, the Shark of All Streets.
  *
  * Subcommands:
  *
- *   clawd-zk-agent inspect
+ *   zk-shark-agent inspect
  *     Print the active configuration (RPC, program, network, signer).
  *
- *   clawd-zk-agent attest <modelHash> <payloadCommitment> <proof.json> [--context <ctx>]
+ *   zk-shark-agent attest <modelHash> <payloadCommitment> <proof.json> [--context <ctx>]
  *     Build and (when a signer is attached) submit a publish_attestation
  *     instruction. The proof is read from <proof.json> as
  *     `{ a, b, c, verifyingKey }` (hex strings).
  *
- *   clawd-zk-agent commit <ciphertextCommitment> <stateVersion> <proof.json> [--model <modelHash>]
+ *   zk-shark-agent commit <ciphertextCommitment> <stateVersion> <proof.json> [--model <modelHash>]
  *     Build a commit_encrypted_state instruction.
  *
- *   clawd-zk-agent verify <proof.json>
+ *   zk-shark-agent verify <proof.json>
  *     Off-chain Groth16 sanity check (point sizes + public input packing).
  *
- *   clawd-zk-agent nullifier <context>
+ *   zk-shark-agent nullifier <context>
  *     Derive a deterministic 32-byte nullifier for the given context.
  *
- *   clawd-zk-agent ask "<natural language>"
+ *   zk-shark-agent ask "<natural language>"
  *     Use the deterministic intent router to map the text to an action,
  *     then dispatch it.
  *
- *   clawd-zk-agent help
+ *   zk-shark-agent help
  *     Print this help.
  */
 import { Buffer } from "node:buffer";
-import { pathToFileURL } from "node:url";
-import { ClawdZkAgent } from "./agent.js";
-import { dispatchRoute, routeIntent } from "./intents.js";
-const BANNER = "🦞🔐 clawd-zk-agent";
+import { resolve as resolvePath } from "node:path";
+import { fileURLToPath } from "node:url";
+import { ZkSharkAgent } from "./agent.js";
+import { routeIntent } from "./intents.js";
+const CLI_NAME = "zk-shark-agent";
+const BANNER = "ZK Shark - Shark of All Streets";
 function printUsage() {
     console.log(`${BANNER} — subcommands
 
@@ -58,13 +60,15 @@ function printUsage() {
       Print this help.
 
 Environment:
-  CLAWD_ZK_RPC_URL          (required)  Solana RPC endpoint.
-  CLAWD_ZK_PROGRAM_ID       (optional)  clawd-zk program id.
-  CLAWD_ZK_PHOTON_URL       (optional)  Photon indexer URL.
-  CLAWD_ZK_API_KEY          (optional)  RPC API key.
-  CLAWD_ZK_COMMITMENT       (optional)  processed | confirmed | finalized.
-  CLAWD_ZK_KEYPAIR          (optional)  Path to a Solana keypair JSON.
-  CLAWD_ZK_NETWORK          (optional)  mainnet | devnet | localnet.
+  ZK_SHARK_RPC_URL          (required)  Solana RPC endpoint.
+  ZK_SHARK_PROGRAM_ID       (optional)  ZK Shark program id.
+  ZK_SHARK_PHOTON_URL       (optional)  Photon indexer URL.
+  ZK_SHARK_API_KEY          (optional)  RPC API key.
+  ZK_SHARK_COMMITMENT       (optional)  processed | confirmed | finalized.
+  ZK_SHARK_KEYPAIR          (optional)  Path to a Solana keypair JSON.
+  ZK_SHARK_NETWORK          (optional)  mainnet | devnet | localnet.
+
+Legacy CLAWD_ZK_* variables are still accepted as fallbacks.
 `);
 }
 function readFlag(args, flag) {
@@ -87,28 +91,25 @@ async function main() {
     const sub = argv[0];
     const tail = argv.slice(1);
     if (sub === "inspect") {
-        const agent = await ClawdZkAgent.fromEnvOrDefaults();
+        const agent = await ZkSharkAgent.fromEnv();
         console.log(agent.describe());
         return;
     }
     if (sub === "ask") {
         const text = tail.join(" ").trim();
         if (!text)
-            throw new Error('Usage: clawd-zk-agent ask "<natural language>"');
-        const agent = await ClawdZkAgent.fromEnvOrDefaults();
+            throw new Error(`Usage: ${CLI_NAME} ask "<natural language>"`);
+        const agent = await ZkSharkAgent.fromEnv();
         const route = routeIntent(text, agent);
-        const result = await dispatchRoute(route, agent).catch((error) => ({
-            error: error instanceof Error ? error.message : String(error),
-        }));
-        console.log(JSON.stringify({ route, result }, null, 2));
+        console.log(JSON.stringify({ route }, null, 2));
         return;
     }
     if (sub === "verify") {
         const proofPath = tail[0];
         if (!proofPath)
-            throw new Error("Usage: clawd-zk-agent verify <proof.json>");
-        const agent = await ClawdZkAgent.fromEnvOrDefaults();
-        const proof = await ClawdZkAgent.loadProof(proofPath);
+            throw new Error(`Usage: ${CLI_NAME} verify <proof.json>`);
+        const agent = await ZkSharkAgent.fromEnv();
+        const proof = await ZkSharkAgent.loadProof(proofPath);
         const result = agent.verifyProof({ proof });
         console.log(JSON.stringify(result, null, 2));
         return;
@@ -116,20 +117,20 @@ async function main() {
     if (sub === "nullifier") {
         const context = tail[0];
         if (!context)
-            throw new Error("Usage: clawd-zk-agent nullifier <context>");
-        const agent = await ClawdZkAgent.fromEnvOrDefaults();
+            throw new Error(`Usage: ${CLI_NAME} nullifier <context>`);
+        const agent = await ZkSharkAgent.fromEnv();
         const nullifier = await agent.computeNullifierFor(new Uint8Array(32), context);
-        console.log(`🦞🔐 nullifier: 0x${Buffer.from(nullifier).toString("hex")}`);
+        console.log(`ZK Shark nullifier: 0x${Buffer.from(nullifier).toString("hex")}`);
         return;
     }
     if (sub === "attest") {
         const [modelHashHex, payloadCommitmentHex, proofPath] = tail;
         if (!modelHashHex || !payloadCommitmentHex || !proofPath) {
-            throw new Error("Usage: clawd-zk-agent attest <modelHash> <payloadCommitment> <proof.json> [--context <ctx>]");
+            throw new Error(`Usage: ${CLI_NAME} attest <modelHash> <payloadCommitment> <proof.json> [--context <ctx>]`);
         }
         const context = readFlag(tail, "--context") ?? `model-attest:v1:${modelHashHex.slice(0, 12)}`;
-        const agent = await ClawdZkAgent.fromEnv();
-        const proof = await ClawdZkAgent.loadProof(proofPath);
+        const agent = await ZkSharkAgent.fromEnv();
+        const proof = await ZkSharkAgent.loadProof(proofPath);
         const result = await agent.attestModel({
             modelHash: parseHex32("modelHash", modelHashHex),
             payloadCommitment: parseHex32("payloadCommitment", payloadCommitmentHex),
@@ -144,12 +145,12 @@ async function main() {
     if (sub === "commit") {
         const [ciphertextCommitmentHex, stateVersionStr, proofPath] = tail;
         if (!ciphertextCommitmentHex || !stateVersionStr || !proofPath) {
-            throw new Error("Usage: clawd-zk-agent commit <ciphertextCommitment> <stateVersion> <proof.json> [--model <modelHash>]");
+            throw new Error(`Usage: ${CLI_NAME} commit <ciphertextCommitment> <stateVersion> <proof.json> [--model <modelHash>]`);
         }
         const modelHashHex = readFlag(tail, "--model");
         const stateVersion = BigInt(stateVersionStr);
-        const agent = await ClawdZkAgent.fromEnv();
-        const proof = await ClawdZkAgent.loadProof(proofPath);
+        const agent = await ZkSharkAgent.fromEnv();
+        const proof = await ZkSharkAgent.loadProof(proofPath);
         const result = await agent.commitEncryptedState({
             modelHash: (modelHashHex
                 ? parseHex32("modelHash", modelHashHex)
@@ -162,12 +163,12 @@ async function main() {
         console.log(result.summary);
         return;
     }
-    throw new Error(`Unknown subcommand: ${sub}. Run "clawd-zk-agent help".`);
+    throw new Error(`Unknown subcommand: ${sub}. Run "${CLI_NAME} help".`);
 }
 /** Exported for testing — wraps the CLI body in a try/catch and exits with the right code. */
 export async function runCli(argv = process.argv.slice(2)) {
     try {
-        process.argv = ["node", "clawd-zk-agent", ...argv];
+        process.argv = ["node", CLI_NAME, ...argv];
         await main();
         return 0;
     }
@@ -180,7 +181,7 @@ export async function runCli(argv = process.argv.slice(2)) {
 // Only run main when invoked as a binary (not when imported by tests).
 const invokedAsBinary = typeof process !== "undefined" &&
     process.argv[1] != null &&
-    import.meta.url === pathToFileURL(process.argv[1]).href;
+    resolvePath(process.argv[1]) === fileURLToPath(import.meta.url);
 if (invokedAsBinary) {
     runCli().then((code) => {
         if (code !== 0)

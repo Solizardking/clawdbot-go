@@ -1,8 +1,8 @@
 /**
- * ClawdZkAgent — agent-shaped wrapper around the ZK primitive SDK.
+ * ZkSharkAgent - the Shark of All Streets wrapper around the ZK primitive SDK.
  *
- * Exposes the four core operations a Clawd agent would want to do with
- * the `clawd-zk` program as named methods, and wires in the
+ * Exposes the four core operations a ZK Shark agent would want to do with
+ * the ZK program as named methods, and wires in the
  * nullifier / proof / Light Protocol plumbing automatically:
  *
  *   agent.attestModel(...)        — publish an attestation for a model
@@ -14,7 +14,7 @@
  * routing (see `./intents.ts`).
  *
  * ```ts
- * const agent = await ClawdZkAgent.fromEnv();
+ * const agent = await ZkSharkAgent.fromEnv();
  * const { signature, nullifier } = await agent.attestModel({
  *   modelHash: ...,
  *   payloadCommitment: ...,
@@ -25,16 +25,17 @@
  */
 import { TransactionInstruction, Keypair } from "@solana/web3.js";
 import { ClawdZkClient, type Groth16Proof, type Bytes32 } from "@clawd/zk-client";
-import { type ZkAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
+import { type ZkSharkAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 import { type IntentContext, type IntentRoute } from "./intents.js";
-export interface ClawdZkAgentOptions {
+export interface ZkSharkAgentOptions {
     /** Pre-built config. If omitted, the agent reads from `process.env`. */
-    config?: ZkAgentConfig;
+    config?: ZkSharkAgentConfig;
     /** Pre-built ClawdZkClient. If omitted, the agent constructs one. */
     client?: ClawdZkClient;
     /** Optional keypair for signing. */
     signer?: Keypair;
 }
+export type ClawdZkAgentOptions = ZkSharkAgentOptions;
 export interface AttestModelArgs {
     /** 32-byte hash identifying the model being attested to. */
     modelHash: Bytes32;
@@ -80,9 +81,6 @@ export interface VerifyProofArgs {
     payloadCommitment?: Bytes32;
     nullifier?: Bytes32;
     attester?: Uint8Array;
-    ciphertextCommitment?: Bytes32;
-    stateVersion?: number | bigint;
-    committer?: Uint8Array;
 }
 export interface VerifyProofResult {
     ok: boolean;
@@ -90,19 +88,16 @@ export interface VerifyProofResult {
     /** Computed public inputs (if the agent derived them). */
     publicInputsPackedHex?: string;
 }
-export declare class ClawdZkAgent {
-    readonly config: ZkAgentConfig;
+export declare class ZkSharkAgent {
+    readonly config: ZkSharkAgentConfig;
     readonly client: ClawdZkClient;
     /** Optional signer; the agent can attest / commit without one (instruction-only). */
     signer?: Keypair;
     private constructor();
     /** Construct from an explicit config + optional client + optional signer. */
-    static create(opts: ClawdZkAgentOptions): ClawdZkAgent;
+    static create(opts: ZkSharkAgentOptions): ZkSharkAgent;
     /** Construct from environment variables. */
-    static fromEnv(): Promise<ClawdZkAgent>;
-    /** Construct from env when present, otherwise with offline-safe defaults. */
-    static fromEnvOrDefaults(): Promise<ClawdZkAgent>;
-    private static fromLoadedConfig;
+    static fromEnv(): Promise<ZkSharkAgent>;
     /**
      * Convenience: load a proof JSON file from disk and return it as a
      * `Groth16Proof` with hex → bytes conversion.
@@ -135,14 +130,15 @@ export declare class ClawdZkAgent {
     commitEncryptedState(args: CommitStateModelArgs): Promise<CommitStateResult>;
     /**
      * Natural-language intent router. Recognises the same phrases that
-     * the `clawd-zk-agent` CLI exposes as subcommands and dispatches to
+     * the `zk-shark-agent` CLI exposes as subcommands and dispatches to
      * the matching method.
      */
     runIntent(text: string, ctx?: IntentContext): Promise<IntentRoute>;
-    /** Pretty-print the active configuration (handy for `clawd-zk-agent inspect`). */
+    /** Pretty-print the active configuration (handy for `zk-shark-agent inspect`). */
     describe(): string;
     private trySend;
 }
+export { ZkSharkAgent as ClawdZkAgent };
 export { DEFAULT_PROGRAM_ID };
 export type { Groth16Proof, Bytes32 };
 export type { Keypair as SolanaKeypair } from "@solana/web3.js";

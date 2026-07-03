@@ -1,8 +1,8 @@
 /**
- * ClawdZkAgent — agent-shaped wrapper around the ZK primitive SDK.
+ * ZkSharkAgent - the Shark of All Streets wrapper around the ZK primitive SDK.
  *
- * Exposes the four core operations a Clawd agent would want to do with
- * the `clawd-zk` program as named methods, and wires in the
+ * Exposes the four core operations a ZK Shark agent would want to do with
+ * the ZK program as named methods, and wires in the
  * nullifier / proof / Light Protocol plumbing automatically:
  *
  *   agent.attestModel(...)        — publish an attestation for a model
@@ -14,7 +14,7 @@
  * routing (see `./intents.ts`).
  *
  * ```ts
- * const agent = await ClawdZkAgent.fromEnv();
+ * const agent = await ZkSharkAgent.fromEnv();
  * const { signature, nullifier } = await agent.attestModel({
  *   modelHash: ...,
  *   payloadCommitment: ...,
@@ -28,13 +28,13 @@ import { createSolanaRpc } from "@solana/kit";
 import { readFile } from "node:fs/promises";
 import { resolve as resolvePath } from "node:path";
 import { Buffer } from "node:buffer";
-import { ClawdZkClient, computeNullifier, verifyGroth16Offchain, buildCommitPublicInputs, buildPublishPublicInputs, packPublicInputs, } from "@clawd/zk-client";
+import { ClawdZkClient, computeNullifier, verifyGroth16Offchain, buildPublishPublicInputs, packPublicInputs, } from "@clawd/zk-client";
 import { loadAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 import { routeIntent } from "./intents.js";
 // ---------------------------------------------------------------------------
 // Implementation
 // ---------------------------------------------------------------------------
-const CLAWD_BANNER = "🦞🔐 Clawd ZK Agent";
+const SHARK_BANNER = "ZK Shark - Shark of All Streets";
 function bytesToHex(b) {
     return Buffer.from(b).toString("hex");
 }
@@ -65,7 +65,7 @@ async function loadProofFromFile(path) {
         verifyingKey: json.verifyingKey ? hexToBytes(json.verifyingKey) : new Uint8Array(0),
     };
 }
-export class ClawdZkAgent {
+export class ZkSharkAgent {
     config;
     client;
     /** Optional signer; the agent can attest / commit without one (instruction-only). */
@@ -86,26 +86,18 @@ export class ClawdZkAgent {
                 apiKey: config.apiKey,
                 commitment: config.commitment,
             });
-        return new ClawdZkAgent(config, client, opts.signer);
+        return new ZkSharkAgent(config, client, opts.signer);
     }
     /** Construct from environment variables. */
     static async fromEnv() {
         const config = loadAgentConfig();
-        return ClawdZkAgent.fromLoadedConfig(config);
-    }
-    /** Construct from env when present, otherwise with offline-safe defaults. */
-    static async fromEnvOrDefaults() {
-        const config = loadAgentConfig(process.env, { requireRpcUrl: false });
-        return ClawdZkAgent.fromLoadedConfig(config);
-    }
-    static async fromLoadedConfig(config) {
         let signer;
         if (config.keypairPath) {
             const raw = await readFile(resolvePath(config.keypairPath), "utf-8");
             const parsed = JSON.parse(raw);
             signer = Keypair.fromSecretKey(Uint8Array.from(parsed));
         }
-        return ClawdZkAgent.create({ config, signer });
+        return ZkSharkAgent.create({ config, signer });
     }
     /**
      * Convenience: load a proof JSON file from disk and return it as a
@@ -143,22 +135,11 @@ export class ClawdZkAgent {
                     nullifier: ensure32("nullifier", args.nullifier),
                 });
             }
-            else if (args.modelHash &&
-                args.ciphertextCommitment &&
-                args.stateVersion != null &&
-                args.committer) {
-                publicInputs = buildCommitPublicInputs({
-                    committer: args.committer,
-                    modelHash: ensure32("modelHash", args.modelHash),
-                    ciphertextCommitment: ensure32("ciphertextCommitment", args.ciphertextCommitment),
-                    stateVersion: args.stateVersion,
-                });
-            }
         }
         if (!publicInputs) {
             return {
                 ok: false,
-                reason: "Either `publicInputs` or publish inputs (attester + modelHash + payloadCommitment + nullifier) or commit inputs (committer + modelHash + ciphertextCommitment + stateVersion) must be provided.",
+                reason: "Either `publicInputs` or (attester + modelHash + payloadCommitment + nullifier) must be provided.",
             };
         }
         const result = verifyGroth16Offchain({ proof: args.proof, publicInputs });
@@ -206,7 +187,7 @@ export class ClawdZkAgent {
             nullifier,
         }));
         const summary = [
-            `${CLAWD_BANNER} attestModel`,
+            `${SHARK_BANNER} attestModel`,
             `  program       : ${this.config.programId.toBase58()}`,
             `  attester      : ${attesterPubkey.toBase58()}`,
             `  modelHash     : 0x${bytesToHex(modelHash)}`,
@@ -247,36 +228,30 @@ export class ClawdZkAgent {
             proof: args.proof,
         };
         const instruction = await this.client.commitEncryptedState(commitArgs);
-        const publicInputsPacked = packPublicInputs(buildCommitPublicInputs({
-            committer: attesterPubkey.toBytes(),
-            modelHash,
-            ciphertextCommitment,
-            stateVersion,
-        }));
         const summary = [
-            `${CLAWD_BANNER} commitEncryptedState`,
+            `${SHARK_BANNER} commitEncryptedState`,
             `  program        : ${this.config.programId.toBase58()}`,
             `  committer      : ${attesterPubkey.toBase58()}`,
             `  modelHash      : 0x${bytesToHex(modelHash)}`,
             `  ciphertext     : 0x${bytesToHex(ciphertextCommitment)}`,
             `  stateVersion   : ${stateVersion.toString()}`,
-            `  public inputs  : 0x${bytesToHex(publicInputsPacked)}`,
         ].join("\n");
-        return { instruction, publicInputsPackedHex: bytesToHex(publicInputsPacked), summary };
+        return { instruction, publicInputsPackedHex: "", summary };
     }
     /**
      * Natural-language intent router. Recognises the same phrases that
-     * the `clawd-zk-agent` CLI exposes as subcommands and dispatches to
+     * the `zk-shark-agent` CLI exposes as subcommands and dispatches to
      * the matching method.
      */
     async runIntent(text, ctx = {}) {
         return routeIntent(text, this, ctx);
     }
-    /** Pretty-print the active configuration (handy for `clawd-zk-agent inspect`). */
+    /** Pretty-print the active configuration (handy for `zk-shark-agent inspect`). */
     describe() {
+        const defaultSuffix = this.config.programId.equals(DEFAULT_PROGRAM_ID) ? "  (default)" : "";
         return [
-            `${CLAWD_BANNER} configuration`,
-            `  program        : ${this.config.programId.toBase58()}  ${this.config.programId.equals(DEFAULT_PROGRAM_ID) ? "(default)" : ""}`.trim(),
+            `${SHARK_BANNER} configuration`,
+            `  program        : ${this.config.programId.toBase58()}${defaultSuffix}`,
             `  network        : ${this.config.network}`,
             `  rpc            : ${this.config.rpcUrl}`,
             `  photon         : ${this.config.photonUrl}`,
@@ -308,7 +283,8 @@ function randomSecret() {
     }
     return out;
 }
+export { ZkSharkAgent as ClawdZkAgent };
 // Re-export for callers that want to build their own agent without
-// `ClawdZkAgent.create`.
+// `ZkSharkAgent.create`.
 export { DEFAULT_PROGRAM_ID };
 //# sourceMappingURL=agent.js.map

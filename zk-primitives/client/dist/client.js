@@ -9,7 +9,7 @@ import { PublicKey, TransactionInstruction } from "@solana/web3.js";
 import { buildCommitPublicInputs, buildPublishPublicInputs, packPublicInputs, serializeProof, } from "./proof.js";
 import { fetchAddressTreeV2, fetchRandomStateTreeV2, fetchValidityProofV2, packAccounts, } from "./state.js";
 import { deriveNullifierAddress } from "./nullifier.js";
-const PROGRAM_IDENTITY = new PublicKey(new Uint8Array(32).fill(1));
+const PROGRAM_IDENTITY = new PublicKey("4vJ9JU1bJJE96FWSVKmnrL3xFU5jSBSVdk9x4La2vzhn");
 export class ClawdZkClient {
     rpc;
     programId;

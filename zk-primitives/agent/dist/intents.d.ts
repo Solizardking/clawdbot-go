@@ -1,16 +1,16 @@
 /**
- * Natural-language intent router for the Clawd ZK Agent.
+ * Natural-language intent router for ZK Shark, the Shark of All Streets.
  *
  * Maps a free-form text input (e.g. "attest this model with hash 0xab12…")
  * to one of the agent's typed methods. Used by:
- *   - the `clawd-zk-agent` CLI (`clawd-zk-agent ask "…"`)
- *   - the Clawd REPL bridge (`clawd-code code "use the zk agent to attest…"`)
+ *   - the `zk-shark-agent` CLI (`zk-shark-agent ask "..."`)
+ *   - the Clawd REPL bridge (`clawd-code code "use the zk shark agent to attest..."`)
  *   - any external LLM that wants to drive the agent
  *
  * The router is deliberately deterministic and rule-based — no model
  * calls — so it is fast, predictable, and CI-testable.
  */
-import { ClawdZkAgent } from "./agent.js";
+import { ZkSharkAgent } from "./agent.js";
 /** Intents the agent knows how to handle. */
 export declare const KNOWN_INTENTS: readonly ["attest-model", "commit-state", "verify-proof", "compute-nullifier", "inspect", "help"];
 export type KnownIntent = (typeof KNOWN_INTENTS)[number];
@@ -34,7 +34,6 @@ export interface IntentContext {
     stateVersion?: number | bigint;
     context?: string;
     proofPath?: string;
-    nullifier?: string;
 }
 /**
  * Route a free-form text input to a typed intent + args.
@@ -42,10 +41,10 @@ export interface IntentContext {
  * Pure function — does NOT call any agent methods. The caller invokes
  * the returned `action` on the agent.
  */
-export declare function routeIntent(text: string, _agent: ClawdZkAgent, ctx?: IntentContext): IntentRoute;
+export declare function routeIntent(text: string, _agent: ZkSharkAgent, ctx?: IntentContext): IntentRoute;
 /**
  * Execute a route against an agent. Convenience wrapper for the
  * CLI / REPL — single call that does the route + dispatch.
  */
-export declare function dispatchRoute(route: IntentRoute, agent: ClawdZkAgent): Promise<unknown>;
+export declare function dispatchRoute(route: IntentRoute, agent: ZkSharkAgent): Promise<unknown>;
 //# sourceMappingURL=intents.d.ts.map

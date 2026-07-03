@@ -1,17 +1,17 @@
 /**
- * Natural-language intent router for the Clawd ZK Agent.
+ * Natural-language intent router for ZK Shark, the Shark of All Streets.
  *
  * Maps a free-form text input (e.g. "attest this model with hash 0xab12…")
  * to one of the agent's typed methods. Used by:
- *   - the `clawd-zk-agent` CLI (`clawd-zk-agent ask "…"`)
- *   - the Clawd REPL bridge (`clawd-code code "use the zk agent to attest…"`)
+ *   - the `zk-shark-agent` CLI (`zk-shark-agent ask "..."`)
+ *   - the Clawd REPL bridge (`clawd-code code "use the zk shark agent to attest..."`)
  *   - any external LLM that wants to drive the agent
  *
  * The router is deliberately deterministic and rule-based — no model
  * calls — so it is fast, predictable, and CI-testable.
  */
-import { ClawdZkAgent } from "./agent.js";
-// `ClawdZkAgent` is also used as a value (in `dispatchRoute` below),
+import { ZkSharkAgent } from "./agent.js";
+// `ZkSharkAgent` is also used as a value (in `dispatchRoute` below),
 // so this is a regular import, not `import type`.
 /** Intents the agent knows how to handle. */
 export const KNOWN_INTENTS = [
@@ -84,9 +84,7 @@ export function routeIntent(text, _agent, ctx = {}) {
                 proofPath: ctx.proofPath,
                 modelHash: ctx.modelHash,
                 payloadCommitment: ctx.payloadCommitment,
-                ciphertextCommitment: ctx.ciphertextCommitment,
-                stateVersion: ctx.stateVersion,
-                nullifier: ctx.nullifier,
+                nullifier: ctx.ciphertextCommitment, // user supplies a hex if needed
             },
         });
     }
@@ -154,7 +152,7 @@ export async function dispatchRoute(route, agent) {
                 throw new Error("attestModel intent requires a payloadCommitment (hex).");
             if (!proofPath)
                 throw new Error("attestModel intent requires a proofPath (JSON file).");
-            const proof = await ClawdZkAgent.loadProof(proofPath);
+            const proof = await ZkSharkAgent.loadProof(proofPath);
             const hexToBytes = (s) => Uint8Array.from(s.replace(/^0x/i, "").match(/.{1,2}/g)?.map((b) => parseInt(b, 16)) ?? []);
             return agent.attestModel({
                 modelHash: hexToBytes(modelHash),
@@ -169,7 +167,7 @@ export async function dispatchRoute(route, agent) {
                 throw new Error("commitEncryptedState intent requires a ciphertextCommitment (hex).");
             if (!proofPath)
                 throw new Error("commitEncryptedState intent requires a proofPath (JSON file).");
-            const proof = await ClawdZkAgent.loadProof(proofPath);
+            const proof = await ZkSharkAgent.loadProof(proofPath);
             const hexToBytes = (s) => Uint8Array.from(s.replace(/^0x/i, "").match(/.{1,2}/g)?.map((b) => parseInt(b, 16)) ?? []);
             return agent.commitEncryptedState({
                 modelHash: (modelHash ? hexToBytes(modelHash) : new Uint8Array(32)),
@@ -183,7 +181,7 @@ export async function dispatchRoute(route, agent) {
             const { proofPath } = route.args;
             if (!proofPath)
                 throw new Error("verifyProof intent requires a proofPath (JSON file).");
-            const proof = await ClawdZkAgent.loadProof(proofPath);
+            const proof = await ZkSharkAgent.loadProof(proofPath);
             return agent.verifyProof({ proof });
         }
         case "computeNullifier": {
@@ -201,7 +199,7 @@ export async function dispatchRoute(route, agent) {
             throw new Error(`Unhandled action: ${route.action}`);
     }
 }
-const HELP_TEXT = `🦞🔐 clawd-zk-agent — recognised intents
+const HELP_TEXT = `ZK Shark - Shark of All Streets: recognised intents
 
   attest <modelHash> <payloadCommitment> <proof.json>  → agent.attestModel
   commit <ciphertextCommitment> <stateVersion> <proof.json> → agent.commitEncryptedState
@@ -212,6 +210,6 @@ const HELP_TEXT = `🦞🔐 clawd-zk-agent — recognised intents
 
 You can also use the natural-language router:
 
-  clawd-zk-agent ask "attest this model 0xab12… with proof.json"
+  zk-shark-agent ask "attest this model 0xab12... with proof.json"
 `;
 //# sourceMappingURL=intents.js.map

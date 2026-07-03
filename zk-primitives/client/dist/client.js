@@ -73,7 +73,7 @@ export class ClawdZkClient {
             verifyingKey: [...proof.verifyingKey],
             publicInputsPacked: [...packPublicInputs(publicInputs)],
             stateData: {
-                proof: { 0: [...validity.compressedProof] },
+                proof: { 0: validity.compressedProof },
                 stateTreeInfo: {
                     stateMerkleTreePubkeyIndex: outputStateTreeIndex,
                     outputQueuePubkeyIndex: outputStateTreeIndex,
@@ -83,7 +83,7 @@ export class ClawdZkClient {
                 systemAccountsOffset,
             },
             nullifierData: {
-                proof: { 0: [...validity.compressedProof] },
+                proof: { 0: validity.compressedProof },
                 addressTreeInfo: {
                     addressMerkleTreePubkeyIndex: addressMerkleTreeIndex,
                     addressQueuePubkeyIndex: addressMerkleTreeIndex,
@@ -99,8 +99,7 @@ export class ClawdZkClient {
             programId: this.programId,
             keys: [
                 { pubkey: args.signer, isSigner: true, isWritable: true },
-                // ...remaining accounts appended by `packed.to_account_metas()`
-                ...packed.to_account_metas(),
+                ...toRemainingAccountMetas(packed),
             ],
             data: encodeInstructionData(discriminator, data),
         });
@@ -148,7 +147,7 @@ export class ClawdZkClient {
             verifyingKey: [...proof.verifyingKey],
             publicInputsPacked: [...packPublicInputs(publicInputs)],
             stateData: {
-                proof: { 0: [...validity.compressedProof] },
+                proof: { 0: validity.compressedProof },
                 stateTreeInfo: {
                     stateMerkleTreePubkeyIndex: outputStateTreeIndex,
                     outputQueuePubkeyIndex: outputStateTreeIndex,
@@ -163,7 +162,7 @@ export class ClawdZkClient {
             programId: this.programId,
             keys: [
                 { pubkey: args.signer, isSigner: true, isWritable: true },
-                ...packed.to_account_metas(),
+                ...toRemainingAccountMetas(packed),
             ],
             data: encodeInstructionData(discriminator, data),
         });
@@ -185,5 +184,14 @@ function encodeInstructionData(discriminator, data) {
     const json = JSON.stringify(data);
     const jsonBytes = new TextEncoder().encode(json);
     return Buffer.concat([Buffer.from(discriminator), Buffer.from(jsonBytes)]);
+}
+function toRemainingAccountMetas(packed) {
+    if (typeof packed.toAccountMetas === "function") {
+        return packed.toAccountMetas().remainingAccounts ?? [];
+    }
+    if (typeof packed.to_account_metas === "function") {
+        return packed.to_account_metas();
+    }
+    return [];
 }
 //# sourceMappingURL=client.js.map

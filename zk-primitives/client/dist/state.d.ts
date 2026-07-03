@@ -7,13 +7,26 @@
  */
 import type { PublicKey } from "@solana/web3.js";
 import type { Bytes32 } from "./types.js";
+export interface CompressedValidityProof {
+    a: number[];
+    b: number[];
+    c: number[];
+}
 export interface ValidityProof {
-    /** Compressed proof, 128 bytes (Groth16 over the Merkle proof). */
-    compressedProof: Uint8Array;
+    /** Compressed proof over the Merkle proof. */
+    compressedProof: CompressedValidityProof;
     /** Root indices for each leaf. */
     rootIndices: number[];
-    /** Addresses (optional, for create-with-address flows). */
-    addresses?: Uint8Array[];
+}
+export interface HashWithTreeInput {
+    hash: Bytes32;
+    tree: PublicKey;
+    queue?: PublicKey;
+}
+export interface AddressWithTreeInput {
+    address: PublicKey | Bytes32;
+    tree: PublicKey;
+    queue?: PublicKey;
 }
 export interface PackedAddressTreeInfo {
     addressMerkleTreePubkeyIndex: number;
@@ -28,11 +41,8 @@ export interface PackedStateTreeInfo {
 /** Fetch a non-inclusion proof for a list of nullifier addresses. */
 export declare function fetchValidityProofV2(args: {
     rpc: any;
-    hashes?: Uint8Array[];
-    addressesWithTrees?: {
-        address: Bytes32;
-        tree: PublicKey;
-    }[];
+    hashes?: HashWithTreeInput[];
+    addressesWithTrees?: AddressWithTreeInput[];
 }): Promise<ValidityProof>;
 /** Fetch the current v2 address tree info. */
 export declare function fetchAddressTreeV2(rpc: any): Promise<PublicKey>;

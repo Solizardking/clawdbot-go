@@ -15,6 +15,7 @@
  * without WASM), we fall back to a SHA-256-based construction that
  * is still collision-resistant per (secret, context) pair.
  */
+import type { PublicKey } from "@solana/web3.js";
 import type { Bytes32 } from "./types.js";
 /** Inputs to `computeNullifier`. */
 export interface NullifierInputs {
@@ -36,14 +37,14 @@ export declare function computeNullifier(inputs: NullifierInputs): Promise<Bytes
 /** Compute N nullifiers in one go, each with a unique nonce. */
 export declare function computeNullifierBatch(baseInputs: Omit<NullifierInputs, "nonce">, count: number): Promise<Bytes32[]>;
 /** Re-export the on-chain address derivation so the client and program agree. */
-export declare const NULLIFIER_PREFIX: Uint8Array<ArrayBuffer>;
+export declare const NULLIFIER_PREFIX: Uint8Array<ArrayBufferLike>;
 /**
  * Derive the compressed-account address for a given nullifier and
  * address tree. The address is what the Light Protocol address tree
  * uses for uniqueness proofs.
  */
-export declare function deriveNullifierAddress(programId: any, addressTree: any, nullifier: Bytes32): Promise<{
-    address: Uint8Array;
+export declare function deriveNullifierAddress(programId: PublicKey, addressTree: PublicKey, nullifier: Bytes32): Promise<{
+    address: PublicKey;
     seed: Uint8Array;
 }>;
 //# sourceMappingURL=nullifier.d.ts.map

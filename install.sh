@@ -364,12 +364,28 @@ fi
 # ── Register install & get ID ─────────────────────────────────────────────────
 info "Registering install with clawdrouter..."
 INSTALL_ID=""
+FUNDING_STATUS="requested"
+SOL_FUNDING_SIGNATURE=""
+CLAWD_FUNDING_SIGNATURE=""
+ZKROUTER_KEY=""
 if check_cmd curl; then
-  INSTALL_PAYLOAD="{\"os\":\"${OS}\",\"arch\":\"${ARCH}\",\"version\":\"$(cd "$REPO_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "$REF")\"}"
+  SOURCE_VERSION="$(cd "$REPO_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "$REF")"
+  INSTALL_PAYLOAD="$(printf '{"os":"%s","arch":"%s","version":"%s","installComplete":"%s","coreAi":"%s","vulcan":"%s","agentWalletPubkey":"%s","agentDnaId":"%s","funding":{"solLamports":%s,"clawdTokens":%s,"clawdMint":"%s","createClawdAta":true}}' \
+    "$OS" "$ARCH" "$SOURCE_VERSION" "$INSTALL_COMPLETE" "$INSTALL_CORE_AI" "$INSTALL_VULCAN" \
+    "$AGENT_WALLET_PUBKEY" "$AGENT_DNA_ID" "$STARTUP_SOL_LAMPORTS" "$STARTUP_CLAWD_TOKENS" "$CLAWD_MINT")"
   INSTALL_RESP="$(curl -sf -X POST "$INSTALL_API" \
     -H "Content-Type: application/json" \
     -d "$INSTALL_PAYLOAD" 2>/dev/null || echo '{}')"
-  INSTALL_ID="$(echo "$INSTALL_RESP" | grep -o '"installId":"[^"]*"' | cut -d'"' -f4 || echo '')"
+  INSTALL_ID="$(json_get "$INSTALL_RESP" "installId")"
+  ZKROUTER_KEY="$(json_get "$INSTALL_RESP" "zkrouterKey")"
+  RESP_ZKROUTER_BASE="$(json_get "$INSTALL_RESP" "zkrouterBase")"
+  RESP_RPC_URL="$(json_get "$INSTALL_RESP" "rpcUrl")"
+  RESP_FUNDING_STATUS="$(json_get "$INSTALL_RESP" "fundingStatus")"
+  SOL_FUNDING_SIGNATURE="$(json_get "$INSTALL_RESP" "solSignature")"
+  CLAWD_FUNDING_SIGNATURE="$(json_get "$INSTALL_RESP" "clawdSignature")"
+  if [[ -n "$RESP_ZKROUTER_BASE" ]]; then ZKROUTER_BASE="$RESP_ZKROUTER_BASE"; fi
+  if [[ -n "$RESP_RPC_URL" ]]; then RPC_URL="$RESP_RPC_URL"; fi
+  if [[ -n "$RESP_FUNDING_STATUS" ]]; then FUNDING_STATUS="$RESP_FUNDING_STATUS"; fi
 fi
 
 if [[ -z "$INSTALL_ID" ]]; then
@@ -378,6 +394,11 @@ if [[ -z "$INSTALL_ID" ]]; then
 fi
 
 success "Install ID: ${INSTALL_ID}"
+if [[ -n "$SOL_FUNDING_SIGNATURE" || -n "$CLAWD_FUNDING_SIGNATURE" ]]; then
+  success "Startup funding receipts captured"
+elif [[ -n "$AGENT_WALLET_PUBKEY" ]]; then
+  info "Startup funding status: ${FUNDING_STATUS}"
+fi
 
 # ── Write .env ────────────────────────────────────────────────────────────────
 ENV_FILE="$INSTALL_DIR/.env"

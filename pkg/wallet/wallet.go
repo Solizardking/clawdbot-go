@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	solanago "github.com/gagliardetto/solana-go"
-	"github.com/gagliardetto/solana-go/base58"
+	"github.com/mr-tron/base58"
 )
 
 // Keypair holds a solana-go private key and its corresponding public key.

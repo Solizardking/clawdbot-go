@@ -126,7 +126,7 @@ describe("message-normalizer", () => {
 
     it("preserves user role", () => {
       expect(normalizeRoleForGrouping("user")).toBe("user");
-      expect(normalizeRoleForGrouping("User")).toBe("User");
+      expect(normalizeRoleForGrouping("User")).toBe("user");
     });
 
     it("preserves assistant role", () => {

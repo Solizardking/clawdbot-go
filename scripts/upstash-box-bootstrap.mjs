@@ -52,7 +52,8 @@ if (installClawdbot) {
       "bash",
     ].join(" "),
   );
-  process.stdout.write(install.result || "");
+  writeRunOutput(install);
+  requireSuccessfulRun(install, "ClawdBot install failed inside the box");
 }
 
 const env = {
@@ -87,17 +88,19 @@ if (treasurySecret) {
   env.CLAWDBOT_TREASURY_PRIVATE_KEY = treasurySecret;
 }
 
-const startCommand = [
-  "mkdir -p /tmp/clawdbot-box",
-  "pkill -f /tmp/clawdbot-box/server.mjs >/dev/null 2>&1 || true",
-  `${envPrefix(env)} nohup node /tmp/clawdbot-box/server.mjs > /tmp/clawdbot-box/server.log 2>&1 &`,
-  "sleep 1",
-  "cat /tmp/clawdbot-box/server.log || true",
-].join(" && ");
+const startCommand = `
+set -e
+mkdir -p /tmp/clawdbot-box
+pkill -f /tmp/clawdbot-box/server.mjs >/dev/null 2>&1 || true
+${envPrefix(env)} nohup node /tmp/clawdbot-box/server.mjs > /tmp/clawdbot-box/server.log 2>&1 &
+sleep 1
+cat /tmp/clawdbot-box/server.log || true
+`;
 
 console.log("Starting ClawdBot Box install API...");
 const started = await box.exec.command(startCommand);
-process.stdout.write(started.result || "");
+writeRunOutput(started);
+requireSuccessfulRun(started, "ClawdBot Box install API failed to start");
 
 console.log("\nBox bootstrap complete.");
 console.log("Use the preview URL on port 3000 as the install surface.");
@@ -116,6 +119,16 @@ function envPrefix(env) {
     .filter(([, value]) => value !== undefined && value !== "")
     .map(([key, value]) => `${key}=${shellQuote(value)}`)
     .join(" ");
+}
+
+function writeRunOutput(run) {
+  process.stdout.write(run.result || "");
+}
+
+function requireSuccessfulRun(run, message) {
+  if (run.exitCode === 0) return;
+  console.error(`\n${message} (exit ${run.exitCode ?? "unknown"}).`);
+  process.exit(run.exitCode || 1);
 }
 
 function shellQuote(value) {

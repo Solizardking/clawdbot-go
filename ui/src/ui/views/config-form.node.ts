@@ -91,6 +91,7 @@ export function renderNode(params: {
             ${literals.map((lit, idx) => html`
               <button
                 type="button"
+                aria-label=${`Set ${label} to ${String(lit)}`}
                 class="cfg-segmented__btn ${lit === resolvedValue || String(lit) === String(resolvedValue) ? 'active' : ''}"
                 ?disabled=${disabled}
                 @click=${() => onPatch(path, lit)}
@@ -150,6 +151,7 @@ export function renderNode(params: {
             ${options.map((opt) => html`
               <button
                 type="button"
+                aria-label=${`Set ${label} to ${String(opt)}`}
                 class="cfg-segmented__btn ${opt === resolvedValue || String(opt) === String(resolvedValue) ? 'active' : ''}"
                 ?disabled=${disabled}
                 @click=${() => onPatch(path, opt)}
@@ -265,6 +267,7 @@ function renderTextInput(params: {
           <button
             type="button"
             class="cfg-input__reset"
+            aria-label=${`Reset ${label} to default`}
             title="Reset to default"
             ?disabled=${disabled}
             @click=${() => onPatch(path, schema.default)}
@@ -503,6 +506,7 @@ function renderArray(params: {
         <button
           type="button"
           class="cfg-array__add"
+          aria-label=${`Add ${label} item`}
           ?disabled=${disabled}
           @click=${() => {
             const next = [...arr, defaultValue(itemsSchema)];
@@ -528,6 +532,7 @@ function renderArray(params: {
                 <button
                   type="button"
                   class="cfg-array__item-remove"
+                  aria-label="Remove item"
                   title="Remove item"
                   ?disabled=${disabled}
                   @click=${() => {
@@ -580,6 +585,7 @@ function renderMapField(params: {
         <button
           type="button"
           class="cfg-map__add"
+          aria-label="Add custom entry"
           ?disabled=${disabled}
           @click=${() => {
             const next = { ...(value ?? {}) };
@@ -663,6 +669,7 @@ function renderMapField(params: {
                 <button
                   type="button"
                   class="cfg-map__item-remove"
+                  aria-label=${`Remove entry ${key}`}
                   title="Remove entry"
                   ?disabled=${disabled}
                   @click=${() => {

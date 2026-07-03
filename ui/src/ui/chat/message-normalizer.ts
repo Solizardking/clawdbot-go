@@ -21,6 +21,16 @@ export function normalizeMessage(message: unknown): NormalizedMessage {
 
   const contentRaw = m.content;
   const contentItems = Array.isArray(contentRaw) ? contentRaw : null;
+  const hasTextContent =
+    Array.isArray(contentItems) &&
+    contentItems.some((item) => {
+      const x = item as Record<string, unknown>;
+      return (
+        String(x.type ?? "").toLowerCase() === "text" &&
+        typeof x.text === "string" &&
+        x.text.trim().length > 0
+      );
+    });
   const hasToolContent =
     Array.isArray(contentItems) &&
     contentItems.some((item) => {
@@ -43,7 +53,7 @@ export function normalizeMessage(message: unknown): NormalizedMessage {
     typeof (m as Record<string, unknown>).toolName === "string" ||
     typeof (m as Record<string, unknown>).tool_name === "string";
 
-  if (hasToolId || hasToolContent || hasToolName) {
+  if (hasToolId || hasToolName || (hasToolContent && !hasTextContent)) {
     role = "toolResult";
   }
 

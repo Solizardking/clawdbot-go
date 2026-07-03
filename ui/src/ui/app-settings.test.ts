@@ -1,8 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const polling = vi.hoisted(() => ({
+  startLogsPolling: vi.fn(),
+  stopLogsPolling: vi.fn(),
+  startDebugPolling: vi.fn(),
+  stopDebugPolling: vi.fn(),
+}));
+
+vi.mock("./app-polling", () => polling);
+
+import { setTabFromRoute } from "./app-settings";
 import type { Tab } from "./navigation";
 
-type SettingsHost = Parameters<typeof import("./app-settings").setTabFromRoute>[0];
+type SettingsHost = Parameters<typeof setTabFromRoute>[0];
 
 const createHost = (tab: Tab): SettingsHost => ({
   settings: {
@@ -34,58 +44,32 @@ const createHost = (tab: Tab): SettingsHost => ({
 
 describe("setTabFromRoute", () => {
   beforeEach(() => {
-    vi.resetModules();
+    vi.clearAllMocks();
   });
 
-  it("starts and stops log polling based on the tab", async () => {
-    const startLogsPolling = vi.fn();
-    const stopLogsPolling = vi.fn();
-    const startDebugPolling = vi.fn();
-    const stopDebugPolling = vi.fn();
-
-    vi.doMock("./app-polling", () => ({
-      startLogsPolling,
-      stopLogsPolling,
-      startDebugPolling,
-      stopDebugPolling,
-    }));
-
-    const { setTabFromRoute } = await import("./app-settings");
+  it("starts and stops log polling based on the tab", () => {
     const host = createHost("chat");
 
     setTabFromRoute(host, "logs");
-    expect(startLogsPolling).toHaveBeenCalledTimes(1);
-    expect(stopLogsPolling).not.toHaveBeenCalled();
-    expect(startDebugPolling).not.toHaveBeenCalled();
-    expect(stopDebugPolling).toHaveBeenCalledTimes(1);
+    expect(polling.startLogsPolling).toHaveBeenCalledTimes(1);
+    expect(polling.stopLogsPolling).not.toHaveBeenCalled();
+    expect(polling.startDebugPolling).not.toHaveBeenCalled();
+    expect(polling.stopDebugPolling).toHaveBeenCalledTimes(1);
 
     setTabFromRoute(host, "chat");
-    expect(stopLogsPolling).toHaveBeenCalledTimes(1);
+    expect(polling.stopLogsPolling).toHaveBeenCalledTimes(1);
   });
 
-  it("starts and stops debug polling based on the tab", async () => {
-    const startLogsPolling = vi.fn();
-    const stopLogsPolling = vi.fn();
-    const startDebugPolling = vi.fn();
-    const stopDebugPolling = vi.fn();
-
-    vi.doMock("./app-polling", () => ({
-      startLogsPolling,
-      stopLogsPolling,
-      startDebugPolling,
-      stopDebugPolling,
-    }));
-
-    const { setTabFromRoute } = await import("./app-settings");
+  it("starts and stops debug polling based on the tab", () => {
     const host = createHost("chat");
 
     setTabFromRoute(host, "debug");
-    expect(startDebugPolling).toHaveBeenCalledTimes(1);
-    expect(stopDebugPolling).not.toHaveBeenCalled();
-    expect(startLogsPolling).not.toHaveBeenCalled();
-    expect(stopLogsPolling).toHaveBeenCalledTimes(1);
+    expect(polling.startDebugPolling).toHaveBeenCalledTimes(1);
+    expect(polling.stopDebugPolling).not.toHaveBeenCalled();
+    expect(polling.startLogsPolling).not.toHaveBeenCalled();
+    expect(polling.stopLogsPolling).toHaveBeenCalledTimes(1);
 
     setTabFromRoute(host, "chat");
-    expect(stopDebugPolling).toHaveBeenCalledTimes(1);
+    expect(polling.stopDebugPolling).toHaveBeenCalledTimes(1);
   });
 });

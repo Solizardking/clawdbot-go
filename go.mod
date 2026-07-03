@@ -5,6 +5,7 @@ go 1.26.4
 require (
 	github.com/gagliardetto/solana-go v1.19.0
 	github.com/gdamore/tcell/v2 v2.13.8
+	github.com/mr-tron/base58 v1.2.0
 	github.com/rivo/tview v0.42.0
 	github.com/spf13/cobra v1.10.2
 )
@@ -28,7 +29,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mostynb/zstdpool-freelist v0.0.0-20201229113212-927304c0c3b1 // indirect
-	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/streamingfast/logging v0.0.0-20250404134358-92b15d2fbd2e // indirect

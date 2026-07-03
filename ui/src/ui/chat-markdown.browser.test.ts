@@ -46,8 +46,10 @@ describe("chat markdown rendering", () => {
 
     await app.updateComplete;
 
-    const toolCard = app.querySelector(".chat-tool-card") as HTMLElement | null;
-    expect(toolCard).not.toBeNull();
+    const toolCard = Array.from(app.querySelectorAll(".chat-tool-card")).find(
+      (card) => card.textContent?.includes("Hello **world**"),
+    ) as HTMLElement | undefined;
+    expect(toolCard).toBeTruthy();
     toolCard?.click();
 
     await app.updateComplete;

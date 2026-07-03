@@ -16,6 +16,10 @@ const RUNTIME_REPO = 'https://github.com/Solizardking/clawdbot-go';
 const HUB_REPO = 'https://github.com/solizardking/solana-clawd';
 const GATEWAY_URL = 'https://zk.x402.wtf';
 const TERMINAL_URL = 'https://cheshireterminal.ai';
+const BIRTH_SKILL_REPOS = [
+  'https://github.com/Solizardking/skills',
+  'https://github.com/samber/cc-skills-golang',
+];
 
 // ── Colors ───────────────────────────────────────────────────────────
 const C = {
@@ -354,6 +358,23 @@ async function main() {
   }, 'sparkle');
 
   console.log();
+
+  // ── Step 6b: Birth Skill Seed ───────────────────────────────────
+  if (process.env.CLAWDBOT_SKIP_SKILL_SEED !== '1') {
+    console.log(`${C.amber}  ── PHASE 6B: Birth Skills ──${C.reset}\n`);
+    const npx = run('command -v npx');
+    if (npx.ok) {
+      for (const repo of BIRTH_SKILL_REPOS) {
+        await withSpinner(`Seeding skills from ${repo}...`, async () => {
+          const r = run(`npx skills add ${repo} --all`, { cwd: ROOT, timeout: 300_000 });
+          if (!r.ok) throw new Error(r.output);
+        }, 'orbit');
+      }
+    } else {
+      console.log(`    ${C.amber}!${C.reset} npx not found; run ${C.teal}clawdbot skills birth --install${C.reset} later`);
+    }
+    console.log();
+  }
 
   // ── Step 7: Birdeye API Test ───────────────────────────────────
   console.log(`${C.amber}  ── PHASE 7: API Connectivity ──${C.reset}\n`);

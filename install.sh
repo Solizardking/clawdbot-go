@@ -180,6 +180,20 @@ if [[ ! -L "$HOME/.clawdbot" && "$INSTALL_DIR" != "$HOME/.clawdbot" ]]; then
   ln -sfn "$INSTALL_DIR" "$HOME/.clawdbot"
 fi
 
+# ── Birth skill seed ──────────────────────────────────────────────────────────
+if [[ "${CLAWDBOT_SKIP_SKILL_SEED:-0}" != "1" ]]; then
+  if check_cmd npx; then
+    info "Seeding birth skills from Solizardking/skills..."
+    npx skills add https://github.com/Solizardking/skills --all || warn "Solizardking skill seed failed; run: npx skills add https://github.com/Solizardking/skills --all"
+    info "Seeding Go runtime skills from samber/cc-skills-golang..."
+    npx skills add https://github.com/samber/cc-skills-golang --all || warn "Go skill seed failed; run: npx skills add https://github.com/samber/cc-skills-golang --all"
+  else
+    warn "npx not found; skipping birth skill seed"
+  fi
+else
+  warn "Skipping birth skill seed (CLAWDBOT_SKIP_SKILL_SEED=1)"
+fi
+
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo
 echo -e "${GREEN}${BOLD}  ══════════════════════════════════════════${RESET}"
@@ -191,6 +205,7 @@ echo -e "  ${CYAN}source ${ENV_FILE}${RESET}          # load env vars"
 echo -e "  ${CYAN}clawdbot version${RESET}             # verify install"
 echo -e "  ${CYAN}clawdbot agent${RESET}               # start AI REPL (free via zkrouter)"
 echo -e "  ${CYAN}clawdbot ooda --sim${RESET}          # paper trading mode"
+echo -e "  ${CYAN}clawdbot skills birth --install${RESET} # reseed birth skills"
 echo -e "  ${CYAN}clawdbot solana trending${RESET}     # top Solana tokens"
 echo
 echo -e "  ${BOLD}Edit your config:${RESET}  ${CYAN}nano ${ENV_FILE}${RESET}"

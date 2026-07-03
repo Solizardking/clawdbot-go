@@ -42,7 +42,7 @@ export default function TradePage() {
         <div className="mb-6">
           <h1 className="text-xl font-semibold text-zinc-100">Trade Solana</h1>
           <p className="text-xs text-zinc-500 mt-1">
-            Connect a wallet for manual swaps · Agent panel uses the server hot wallet for autonomous trades.
+            Connect a wallet for manual swaps · ClawdBot trader uses six-law risk gates and server hot-wallet caps.
           </p>
         </div>
 

@@ -25,9 +25,10 @@ interface AgentWalletInfo {
 
 const SUGGESTIONS = [
   "What's my SOL balance?",
+  "Score BONK risk before trade",
   "Buy 0.05 SOL of BONK",
   "Show me the price of JUP",
-  "Swap 10 USDC for SOL",
+  "Swap 10 USDC for SOL in paper mode",
 ];
 
 export function AgentTraderPanel() {
@@ -107,7 +108,7 @@ export function AgentTraderPanel() {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
           <Bot size={14} className="text-amber-400" />
-          DeepSeek Agent
+          ClawdBot Trader
         </h3>
         {agent && (
           <span className="text-[10px] text-zinc-500 font-mono truncate max-w-[140px]">
@@ -225,7 +226,7 @@ export function AgentTraderPanel() {
           }}
           rows={2}
           disabled={busy}
-          placeholder="Buy 0.05 SOL of BONK · What's my balance? · Sell 50% of JUP"
+          placeholder="Risk score BONK · Buy 0.05 SOL of BONK · Sell 50% of JUP"
           className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-600 resize-none disabled:opacity-50"
         />
         <div className="flex gap-2">
@@ -236,7 +237,7 @@ export function AgentTraderPanel() {
             className="flex-1 h-10 rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-black font-medium text-sm flex items-center justify-center gap-2"
           >
             {busy ? <Loader2 size={14} className="animate-spin" /> : <Bot size={14} />}
-            {busy ? "Running…" : "Run agent"}
+            {busy ? "Running…" : "Run trader"}
           </button>
           {busy && (
             <button
@@ -251,8 +252,7 @@ export function AgentTraderPanel() {
       </div>
 
       <p className="text-[10px] text-zinc-600">
-        Powered by <span className="text-zinc-400">DeepSeek-v4-pro</span> via Anthropic API ·{" "}
-        <span className="text-zinc-400">DEEPSEEK_API_KEY</span> in .env.local
+        Six-law risk gate · server hot-wallet cap · <span className="text-zinc-400">DEEPSEEK_API_KEY</span> in .env.local
       </p>
     </div>
   );

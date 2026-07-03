@@ -4,7 +4,9 @@
   "slug": "clawd-zk-primitives",
   "status": "scaffold-production-facing",
   "category": "infrastructure",
-  "description": "Nullifiers, Groth16 proof preparation, and Light Protocol compressed-state helpers for Solana-native Clawd agents.",
+  "description": "Nullifiers, Groth16 proof preparation, and Light Protocol compressed-state helpers for Solana-native Clawd and ZK Shark agents.",
+  "integratedFrom": "/Users/8bit/zk-router/zk-primitives",
+  "packageManager": "pnpm",
   "roots": {
     "agent": "agent",
     "client": "client",
@@ -15,11 +17,12 @@
   },
   "packages": {
     "agent": {
-      "name": "@clawd/zk-agent",
+      "name": "@clawd/zk-shark-agent",
       "path": "agent",
       "skill": "agent/SKILL.md",
       "manifest": "agent/agent.json",
-      "binary": "clawd-zk-agent"
+      "binary": "zk-shark-agent",
+      "binaryAliases": ["shark-of-all-streets", "clawd-zk-agent"]
     },
     "client": {
       "name": "@clawd/zk-client",
@@ -46,7 +49,14 @@
       "CLAWD_ZK_API_KEY",
       "CLAWD_ZK_COMMITMENT",
       "CLAWD_ZK_KEYPAIR",
-      "CLAWD_ZK_NETWORK"
+      "CLAWD_ZK_NETWORK",
+      "ZK_SHARK_RPC_URL",
+      "ZK_SHARK_PROGRAM_ID",
+      "ZK_SHARK_PHOTON_URL",
+      "ZK_SHARK_API_KEY",
+      "ZK_SHARK_COMMITMENT",
+      "ZK_SHARK_KEYPAIR",
+      "ZK_SHARK_NETWORK"
     ]
   },
   "catalogIntegration": {

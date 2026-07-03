@@ -260,6 +260,8 @@ clawdbot agent -m "Analyze SOL trend"   # Single-shot LLM query
 clawdbot laws                           # Print the canonical six-law harness
 clawdbot doctor                         # Local runtime + trading diagnostics
 clawdbot bench                          # Zero-style cold-start benchmark
+clawdbot skills birth                   # Write the birth skill manifest
+clawdbot skills birth --install         # Seed Solizardking + Go skill packs
 
 clawdbot trade cockpit                  # Trading readiness, connectors, limits
 clawdbot trade cockpit --json           # Machine-readable cockpit report
@@ -287,6 +289,19 @@ clawdbot catalog --json                  # Machine-readable report
 Default catalog roots can be overridden with:
 `CLAWDBOT_SKILLS_DIR`, `CLAWDBOT_AGENTS_DIR`, and
 `CLAWDBOT_ZK_PRIMITIVES_DIR`.
+
+### Birth Skills
+
+Every Go-side birth/onboard path writes `workspace/skills/birth-skills.json`.
+The default seed sources are:
+
+```bash
+npx skills add https://github.com/Solizardking/skills --all
+npx skills add https://github.com/samber/cc-skills-golang --all
+```
+
+The installer and animated launcher run those seeds unless
+`CLAWDBOT_SKIP_SKILL_SEED=1` is set.
 
 ### Solana — Birdeye
 

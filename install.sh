@@ -555,6 +555,11 @@ echo -e "  ${CYAN}CLAWDBOT_INSTALL_CORE_AI=1 ...${RESET} # optional core-ai MCP 
 fi
 echo
 echo -e "  ${BOLD}Edit your config:${RESET}  ${CYAN}nano ${ENV_FILE}${RESET}"
+if [[ -n "$AGENT_WALLET_PUBKEY" ]]; then
+echo -e "  ${BOLD}Agent wallet:${RESET}     ${CYAN}${AGENT_WALLET_PUBKEY}${RESET}"
+fi
+echo -e "  ${BOLD}Install receipt:${RESET}  ${CYAN}${INSTALL_TRACK_FILE}${RESET}"
+echo -e "  ${BOLD}Funding status:${RESET}   ${CYAN}${FUNDING_STATUS}${RESET}"
 echo -e "  ${BOLD}Runtime repo:${RESET}      ${CYAN}${REPO}${RESET}"
 echo -e "  ${BOLD}Ecosystem hub:${RESET}    ${CYAN}${HUB_REPO}${RESET}"
 echo -e "  ${BOLD}Gateway:${RESET}          ${CYAN}https://zk.x402.wtf${RESET}"

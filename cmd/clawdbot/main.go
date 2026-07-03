@@ -23,6 +23,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/8bitlabs/clawdbot/pkg/agent"
+	"github.com/8bitlabs/clawdbot/pkg/birthfund"
 	"github.com/8bitlabs/clawdbot/pkg/bus"
 	"github.com/8bitlabs/clawdbot/pkg/catalog"
 	"github.com/8bitlabs/clawdbot/pkg/channels"
@@ -1028,6 +1029,7 @@ func NewSolanaCommand() *cobra.Command {
 
 	cmd.AddCommand(
 		NewSolanaWalletCommand(),
+		NewSolanaFundAgentCommand(),
 		&cobra.Command{
 			Use:   "research [mint]",
 			Short: "Deep research a Solana token via Birdeye",
@@ -1154,6 +1156,131 @@ func NewSolanaCommand() *cobra.Command {
 		NewSolanaSPLCommand(),
 	)
 
+	return cmd
+}
+
+func NewSolanaFundAgentCommand() *cobra.Command {
+	var (
+		send        bool
+		jsonOut     bool
+		solAmount   string
+		solLamports string
+		clawdAmount string
+		clawdMint   string
+		rpcURL      string
+		ledgerPath  string
+		timeoutSec  int
+	)
+
+	cmd := &cobra.Command{
+		Use:     "fund-agent [recipient-pubkey]",
+		Aliases: []string{"fund"},
+		Short:   "Plan or send startup SOL + $CLAWD funding to an agent wallet",
+		Long: `Plan or send startup funding for a registered agent wallet.
+
+By default this is a dry-run plan. To send real funds, pass --send and provide
+CLAWDBOT_TREASURY_KEYPAIR or CLAWDBOT_TREASURY_PRIVATE_KEY in the environment.
+Private keys are never written to config, receipts, or command output.`,
+		Args: cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.Load()
+			if err != nil {
+				return fmt.Errorf("config error: %w", err)
+			}
+			recipient := ""
+			if len(args) > 0 {
+				recipient = strings.TrimSpace(args[0])
+			}
+			if recipient == "" {
+				recipient = strings.TrimSpace(cfg.Solana.WalletPubkey)
+			}
+			if recipient == "" && strings.TrimSpace(cfg.Solana.WalletKeyPath) != "" {
+				if kp, err := walletPkg.Load(expandUserPath(cfg.Solana.WalletKeyPath)); err == nil {
+					recipient = kp.Pubkey()
+				}
+			}
+			if recipient == "" {
+				return fmt.Errorf("recipient required; pass [recipient-pubkey] or run `clawdbot solana wallet init`")
+			}
+
+			funding := birthfund.FromEnv(recipient, config.DefaultWorkspacePath())
+			funding.Enabled = true
+			if send {
+				funding.Send = true
+			}
+			if solAmount != "" {
+				funding.SOLAmount = solAmount
+			}
+			if solLamports != "" {
+				lamports, err := strconv.ParseUint(solLamports, 10, 64)
+				if err != nil {
+					return fmt.Errorf("invalid --sol-lamports: %w", err)
+				}
+				funding.SOLAmount = strconv.FormatFloat(float64(lamports)/1_000_000_000, 'f', 9, 64)
+			}
+			if clawdAmount != "" {
+				funding.CLAWDAmount = clawdAmount
+			}
+			if clawdMint != "" {
+				funding.CLAWDMint = clawdMint
+			}
+			if rpcURL != "" {
+				funding.RPCURL = rpcURL
+			}
+			if ledgerPath != "" {
+				funding.LedgerPath = expandUserPath(ledgerPath)
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeoutSec)*time.Second)
+			defer cancel()
+			result, err := birthfund.Fund(ctx, funding, birthfund.ExecRunner{})
+			if jsonOut {
+				_ = writeJSON(result)
+			}
+			if err != nil {
+				return err
+			}
+			if jsonOut {
+				return nil
+			}
+
+			fmt.Printf("%sAgent startup funding%s\n", colorGreen, colorReset)
+			fmt.Printf("status:    %s\n", result.Status)
+			fmt.Printf("recipient: %s\n", result.Recipient)
+			fmt.Printf("sol:       %s SOL (%d lamports)\n", result.SOLAmount, result.SOLLamports)
+			fmt.Printf("clawd:     %s tokens\n", result.CLAWDAmount)
+			fmt.Printf("mint:      %s\n", result.CLAWDMint)
+			fmt.Printf("rpc:       %s\n", result.RPCURL)
+			if len(result.SOLCommand) > 0 {
+				fmt.Printf("sol cmd:   %s\n", strings.Join(result.SOLCommand, " "))
+			}
+			if len(result.CLAWDCommand) > 0 {
+				fmt.Printf("clawd cmd: %s\n", strings.Join(result.CLAWDCommand, " "))
+			}
+			if result.SOLSignature != "" {
+				fmt.Printf("sol sig:   %s\n", result.SOLSignature)
+			}
+			if result.CLAWDSignature != "" {
+				fmt.Printf("clawd sig: %s\n", result.CLAWDSignature)
+			}
+			for _, warning := range result.Warnings {
+				fmt.Printf("%swarning:%s %s\n", colorAmber, colorReset, warning)
+			}
+			if !result.Send {
+				fmt.Printf("%sdry-run only; pass --send and set CLAWDBOT_TREASURY_KEYPAIR or CLAWDBOT_TREASURY_PRIVATE_KEY to move funds.%s\n", colorDim, colorReset)
+			}
+			return nil
+		},
+	}
+	cmd.Flags().BoolVar(&send, "send", false, "Send real transactions; otherwise only print and record the funding plan")
+	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
+	cmd.Flags().StringVar(&solAmount, "sol", "", "SOL amount to send (default: env or 0.069420)")
+	cmd.Flags().StringVar(&solLamports, "sol-lamports", "", "Lamports to send; overrides --sol")
+	cmd.Flags().StringVar(&clawdAmount, "clawd", "", "$CLAWD token amount to send (default: env or 1000)")
+	cmd.Flags().StringVar(&clawdMint, "clawd-mint", "", "$CLAWD token mint (default: env or installer mint)")
+	cmd.Flags().StringVar(&rpcURL, "rpc-url", "", "Solana RPC URL")
+	cmd.Flags().StringVar(&ledgerPath, "ledger", "", "JSONL funding ledger path")
+	cmd.Flags().IntVar(&timeoutSec, "timeout", 120, "Funding command timeout in seconds")
 	return cmd
 }
 

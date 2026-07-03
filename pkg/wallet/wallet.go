@@ -6,6 +6,7 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -65,7 +66,7 @@ func Ensure(path string) (*Keypair, bool, error) {
 	}
 	if existing, err := Load(path); err == nil {
 		return existing, false, nil
-	} else if !os.IsNotExist(err) {
+	} else if !errors.Is(err, os.ErrNotExist) {
 		return nil, false, err
 	}
 	kp, err := Generate()

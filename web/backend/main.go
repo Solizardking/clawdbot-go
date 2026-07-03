@@ -10,6 +10,9 @@
 package main
 
 import (
+	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -22,13 +25,16 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/8bitlabs/clawdbot/pkg/birthfund"
 	"github.com/8bitlabs/clawdbot/pkg/config"
 	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
 	"github.com/8bitlabs/clawdbot/pkg/doctor"
 	"github.com/8bitlabs/clawdbot/pkg/laws"
 	"github.com/8bitlabs/clawdbot/pkg/trading"
+	"github.com/8bitlabs/clawdbot/pkg/wallet"
 )
 
 const banner = `
@@ -135,6 +141,9 @@ func main() {
 			"agent":  "clawdbot-go",
 		})
 	})
+
+	mux.HandleFunc("/api/install", installAPIHandler())
+	mux.HandleFunc("/api/installs", installsAPIHandler())
 
 	// API: Connectors status
 	mux.HandleFunc("/api/connectors", func(w http.ResponseWriter, r *http.Request) {
@@ -304,6 +313,381 @@ func ecosystemLinks() map[string]string {
 		"gateway":      config.GatewayURL,
 		"terminal":     config.TerminalURL,
 	}
+}
+
+var installLedgerMu sync.Mutex
+
+type installFundingRequest struct {
+	SOLLamports   uint64      `json:"solLamports"`
+	CLAWDTokens   json.Number `json:"clawdTokens"`
+	CLAWDMint     string      `json:"clawdMint"`
+	CreateCLAWDATA bool        `json:"createClawdAta"`
+}
+
+type installRequest struct {
+	InstallID        string                `json:"installId"`
+	OS               string                `json:"os"`
+	Arch             string                `json:"arch"`
+	Version          string                `json:"version"`
+	InstallComplete  string                `json:"installComplete"`
+	CoreAI           string                `json:"coreAi"`
+	Vulcan           string                `json:"vulcan"`
+	AgentWalletPubkey string              `json:"agentWalletPubkey"`
+	AgentDNAID       string                `json:"agentDnaId"`
+	Funding          installFundingRequest `json:"funding"`
+}
+
+type installRecord struct {
+	InstallID         string            `json:"installId"`
+	RemoteIP          string            `json:"remoteIp"`
+	UserAgent         string            `json:"userAgent"`
+	OS                string            `json:"os,omitempty"`
+	Arch              string            `json:"arch,omitempty"`
+	Version           string            `json:"version,omitempty"`
+	InstallComplete   string            `json:"installComplete,omitempty"`
+	CoreAI            string            `json:"coreAi,omitempty"`
+	Vulcan            string            `json:"vulcan,omitempty"`
+	AgentWalletPubkey string            `json:"agentWalletPubkey,omitempty"`
+	AgentDNAID        string            `json:"agentDnaId,omitempty"`
+	FundingStatus     string            `json:"fundingStatus"`
+	FundingError      string            `json:"fundingError,omitempty"`
+	Funding           *birthfund.Result `json:"funding,omitempty"`
+	CreatedAt         string            `json:"createdAt"`
+}
+
+func installAPIHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", http.MethodPost)
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var req installRequest
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<20))
+		dec.UseNumber()
+		if err := dec.Decode(&req); err != nil {
+			http.Error(w, "invalid install payload", http.StatusBadRequest)
+			return
+		}
+
+		installID := strings.TrimSpace(req.InstallID)
+		if installID == "" {
+			installID = randomInstallID()
+		}
+		ledgerPath := installLedgerPath()
+		recipient := strings.TrimSpace(req.AgentWalletPubkey)
+		record := installRecord{
+			InstallID:         installID,
+			RemoteIP:          clientIP(r),
+			UserAgent:         r.UserAgent(),
+			OS:                strings.TrimSpace(req.OS),
+			Arch:              strings.TrimSpace(req.Arch),
+			Version:           strings.TrimSpace(req.Version),
+			InstallComplete:   strings.TrimSpace(req.InstallComplete),
+			CoreAI:            strings.TrimSpace(req.CoreAI),
+			Vulcan:            strings.TrimSpace(req.Vulcan),
+			AgentWalletPubkey: recipient,
+			AgentDNAID:        strings.TrimSpace(req.AgentDNAID),
+			FundingStatus:     "skipped",
+			CreatedAt:         time.Now().UTC().Format(time.RFC3339),
+		}
+
+		resp := map[string]any{
+			"ok":             true,
+			"installId":      installID,
+			"zkrouterKey":    firstNonEmptyEnv("ZKROUTER_API_KEY", "clawdbot-free"),
+			"zkrouterBase":   firstNonEmptyEnv("ZKROUTER_BASE_URL", config.ZkRouterBaseURL),
+			"rpcUrl":         firstNonEmptyEnv("SOLANA_RPC_URL", firstNonEmptyEnv("HELIUS_RPC_URL", config.PublicRPCURL)),
+			"fundingStatus":  record.FundingStatus,
+			"installLedger":  ledgerPath,
+		}
+
+		if recipient == "" {
+			record.FundingStatus = "skipped_no_wallet"
+			resp["fundingStatus"] = record.FundingStatus
+			_ = appendInstallRecord(ledgerPath, record)
+			writeJSONResponse(w, resp)
+			return
+		}
+		if !wallet.IsValidPubkey(recipient) {
+			record.FundingStatus = "skipped_invalid_wallet"
+			resp["fundingStatus"] = record.FundingStatus
+			_ = appendInstallRecord(ledgerPath, record)
+			writeJSONResponse(w, resp)
+			return
+		}
+
+		if prior, ok := findPriorFunding(ledgerPath, installID, recipient); ok {
+			record.FundingStatus = "already_recorded"
+			record.Funding = prior.Funding
+			resp["fundingStatus"] = prior.FundingStatus
+			if prior.Funding != nil {
+				resp["solSignature"] = prior.Funding.SOLSignature
+				resp["clawdSignature"] = prior.Funding.CLAWDSignature
+			}
+			_ = appendInstallRecord(ledgerPath, record)
+			writeJSONResponse(w, resp)
+			return
+		}
+
+		if !webEnvBool("CLAWDBOT_INSTALL_FUNDING_ENABLED") {
+			record.FundingStatus = "queued"
+			resp["fundingStatus"] = record.FundingStatus
+			_ = appendInstallRecord(ledgerPath, record)
+			writeJSONResponse(w, resp)
+			return
+		}
+
+		if ok, reason := installFundingWithinCaps(ledgerPath, record.RemoteIP); !ok {
+			record.FundingStatus = "rate_limited"
+			record.FundingError = reason
+			resp["fundingStatus"] = record.FundingStatus
+			resp["fundingError"] = reason
+			_ = appendInstallRecord(ledgerPath, record)
+			writeJSONResponse(w, resp)
+			return
+		}
+
+		fundCfg := birthfund.FromEnv(recipient, config.DefaultWorkspacePath())
+		fundCfg.Enabled = true
+		fundCfg.Send = webEnvBool("CLAWDBOT_INSTALL_FUNDING_SEND") || webEnvBool("CLAWDBOT_BIRTH_FUNDING_SEND")
+		fundCfg.InstallID = installID
+		fundCfg.LedgerPath = firstNonEmptyEnv("CLAWDBOT_BIRTH_FUNDING_LEDGER", filepath.Join(filepath.Dir(ledgerPath), "funding.jsonl"))
+		if req.Funding.SOLLamports > 0 {
+			fundCfg.SOLAmount = strconv.FormatFloat(float64(req.Funding.SOLLamports)/1_000_000_000, 'f', 9, 64)
+		}
+		if strings.TrimSpace(req.Funding.CLAWDTokens.String()) != "" {
+			fundCfg.CLAWDAmount = strings.TrimSpace(req.Funding.CLAWDTokens.String())
+		}
+		if strings.TrimSpace(req.Funding.CLAWDMint) != "" {
+			fundCfg.CLAWDMint = strings.TrimSpace(req.Funding.CLAWDMint)
+		}
+
+		ctx, cancel := context.WithTimeout(r.Context(), time.Duration(envInt("CLAWDBOT_INSTALL_FUNDING_TIMEOUT_SECONDS", 180))*time.Second)
+		defer cancel()
+		result, err := birthfund.Fund(ctx, fundCfg, birthfund.ExecRunner{})
+		record.Funding = &result
+		record.FundingStatus = result.Status
+		resp["fundingStatus"] = result.Status
+		resp["solSignature"] = result.SOLSignature
+		resp["clawdSignature"] = result.CLAWDSignature
+		if err != nil {
+			record.FundingError = sanitizeFundingError(err.Error())
+			resp["fundingError"] = record.FundingError
+		}
+
+		_ = appendInstallRecord(ledgerPath, record)
+		writeJSONResponse(w, resp)
+	}
+}
+
+func installsAPIHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			w.Header().Set("Allow", http.MethodGet)
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		adminToken := strings.TrimSpace(os.Getenv("CLAWDBOT_INSTALL_ADMIN_TOKEN"))
+		if adminToken == "" || bearerToken(r) != adminToken {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+		limit := envInt("CLAWDBOT_INSTALLS_API_LIMIT", 100)
+		if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
+			if parsed, err := strconv.Atoi(raw); err == nil && parsed > 0 && parsed <= 1000 {
+				limit = parsed
+			}
+		}
+		records := readInstallRecords(installLedgerPath())
+		if len(records) > limit {
+			records = records[len(records)-limit:]
+		}
+		writeJSONResponse(w, map[string]any{
+			"ok":       true,
+			"count":    len(records),
+			"installs": records,
+		})
+	}
+}
+
+func writeJSONResponse(w http.ResponseWriter, value any) {
+	w.Header().Set("Content-Type", "application/json")
+	enc := json.NewEncoder(w)
+	enc.SetIndent("", "  ")
+	_ = enc.Encode(value)
+}
+
+func installLedgerPath() string {
+	if path := strings.TrimSpace(os.Getenv("CLAWDBOT_INSTALL_LEDGER")); path != "" {
+		return path
+	}
+	if info, err := os.Stat("/data"); err == nil && info.IsDir() {
+		return "/data/installs.jsonl"
+	}
+	return filepath.Join(config.DefaultWorkspacePath(), "installs.jsonl")
+}
+
+func appendInstallRecord(path string, record installRecord) error {
+	installLedgerMu.Lock()
+	defer installLedgerMu.Unlock()
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return err
+	}
+	data, err := json.Marshal(record)
+	if err != nil {
+		return err
+	}
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = f.Write(append(data, '\n'))
+	return err
+}
+
+func readInstallRecords(path string) []installRecord {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	lines := strings.Split(string(data), "\n")
+	records := make([]installRecord, 0, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		var record installRecord
+		if err := json.Unmarshal([]byte(line), &record); err == nil {
+			records = append(records, record)
+		}
+	}
+	return records
+}
+
+func findPriorFunding(path, installID, recipient string) (installRecord, bool) {
+	records := readInstallRecords(path)
+	for i := len(records) - 1; i >= 0; i-- {
+		record := records[i]
+		if record.AgentWalletPubkey != recipient && record.InstallID != installID {
+			continue
+		}
+		if record.Funding == nil {
+			continue
+		}
+		if record.Funding.Status == "sent" || record.Funding.SOLSignature != "" || record.Funding.CLAWDSignature != "" {
+			return record, true
+		}
+	}
+	return installRecord{}, false
+}
+
+func installFundingWithinCaps(path, remoteIP string) (bool, string) {
+	records := readInstallRecords(path)
+	since := time.Now().UTC().Add(-24 * time.Hour)
+	perIP := 0
+	total := 0
+	for _, record := range records {
+		if record.Funding == nil {
+			continue
+		}
+		if record.Funding.Status != "sent" && record.Funding.SOLSignature == "" && record.Funding.CLAWDSignature == "" {
+			continue
+		}
+		createdAt, err := time.Parse(time.RFC3339, record.CreatedAt)
+		if err != nil || createdAt.Before(since) {
+			continue
+		}
+		total++
+		if record.RemoteIP == remoteIP {
+			perIP++
+		}
+	}
+	maxPerIP := envInt("CLAWDBOT_INSTALL_FUNDING_MAX_PER_IP_DAY", 3)
+	maxPerDay := envInt("CLAWDBOT_INSTALL_FUNDING_MAX_PER_DAY", 100)
+	if maxPerIP > 0 && perIP >= maxPerIP {
+		return false, fmt.Sprintf("daily per-IP funding cap reached (%d)", maxPerIP)
+	}
+	if maxPerDay > 0 && total >= maxPerDay {
+		return false, fmt.Sprintf("daily global funding cap reached (%d)", maxPerDay)
+	}
+	return true, ""
+}
+
+func randomInstallID() string {
+	var buf [16]byte
+	if _, err := rand.Read(buf[:]); err != nil {
+		return fmt.Sprintf("cb_%d", time.Now().UnixNano())
+	}
+	return "cb_" + hex.EncodeToString(buf[:])
+}
+
+func clientIP(r *http.Request) string {
+	for _, key := range []string{"Fly-Client-IP", "CF-Connecting-IP", "X-Real-IP"} {
+		value := strings.TrimSpace(r.Header.Get(key))
+		if value != "" {
+			return value
+		}
+	}
+	if forwarded := strings.TrimSpace(r.Header.Get("X-Forwarded-For")); forwarded != "" {
+		parts := strings.Split(forwarded, ",")
+		if len(parts) > 0 {
+			return strings.TrimSpace(parts[0])
+		}
+	}
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err == nil {
+		return host
+	}
+	return r.RemoteAddr
+}
+
+func bearerToken(r *http.Request) string {
+	auth := strings.TrimSpace(r.Header.Get("Authorization"))
+	prefix := "Bearer "
+	if strings.HasPrefix(auth, prefix) {
+		return strings.TrimSpace(strings.TrimPrefix(auth, prefix))
+	}
+	return ""
+}
+
+func firstNonEmptyEnv(key, fallback string) string {
+	if value := strings.TrimSpace(os.Getenv(key)); value != "" {
+		return value
+	}
+	return fallback
+}
+
+func webEnvBool(key string) bool {
+	switch strings.ToLower(strings.TrimSpace(os.Getenv(key))) {
+	case "1", "true", "yes", "on":
+		return true
+	default:
+		return false
+	}
+}
+
+func envInt(key string, fallback int) int {
+	value := strings.TrimSpace(os.Getenv(key))
+	if value == "" {
+		return fallback
+	}
+	parsed, err := strconv.Atoi(value)
+	if err != nil {
+		return fallback
+	}
+	return parsed
+}
+
+func sanitizeFundingError(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return ""
+	}
+	return strings.ReplaceAll(value, os.TempDir(), "<tmp>")
 }
 
 func getLocalIP() string {

@@ -1,4 +1,4 @@
-// Package catalog reads local Clawd agent, skill, and ZK primitive catalogs.
+// Package catalog reads local Clawd agent, skill, and zk surface catalogs.
 package catalog
 
 import (
@@ -63,7 +63,6 @@ type AgentEntry struct {
 type ZKSurface struct {
 	Root             string   `json:"root"`
 	SkillFile        string   `json:"skillFile,omitempty"`
-	AgentManifest    string   `json:"agentManifest,omitempty"`
 	AgentPackageDir  string   `json:"agentPackageDir,omitempty"`
 	AgentPackageName string   `json:"agentPackageName,omitempty"`
 	AgentBinary      string   `json:"agentBinary,omitempty"`
@@ -88,7 +87,8 @@ func DefaultRoots() Roots {
 func BuildReport(roots Roots) Report {
 	report := Report{Roots: roots}
 
-	if skills, err := LoadSkills(roots.SkillsDir); err != nil {
+	skills, err := LoadSkills(roots.SkillsDir)
+	if err != nil {
 		report.Warnings = append(report.Warnings, fmt.Sprintf("skills: %v", err))
 	} else {
 		report.Skills = append(report.Skills, skills...)
@@ -102,21 +102,15 @@ func BuildReport(roots Roots) Report {
 		}
 	}
 
-	if agents, err := LoadAgents(roots.AgentsDir); err != nil {
+	agents, err := LoadAgents(roots.AgentsDir)
+	if err != nil {
 		report.Warnings = append(report.Warnings, fmt.Sprintf("agents: %v", err))
 	} else {
 		report.Agents = agents
 	}
 
-	if roots.ZKPrimitivesDir != "" {
-		zkAgent := filepath.Join(roots.ZKPrimitivesDir, "agent", "agent.json")
-		if entry, ok, err := readAgentFile(zkAgent); err == nil && ok {
-			entry.Source = "zk-primitives"
-			report.Agents = append(report.Agents, entry)
-		}
-	}
-
-	if zk, err := LoadZKSurface(roots.ZKPrimitivesDir); err != nil {
+	zk, err := LoadZKSurface(roots.ZKPrimitivesDir)
+	if err != nil {
 		report.Warnings = append(report.Warnings, fmt.Sprintf("zk-primitives: %v", err))
 	} else {
 		report.ZK = &zk
@@ -197,23 +191,13 @@ func LoadZKSurface(root string) (ZKSurface, error) {
 	}
 
 	surface := ZKSurface{
-		Root: root,
-		Operations: []string{
-			"publish_attestation",
-			"consume_attestation",
-			"commit_encrypted_state",
-			"verify_proof",
-			"compute_nullifier",
-		},
+		Root:       root,
+		Operations: []string{"publish_attestation", "consume_attestation", "commit_encrypted_state", "verify_proof", "compute_nullifier"},
 	}
 
 	skillFile := filepath.Join(root, "agent", "SKILL.md")
 	if fileExists(skillFile) {
 		surface.SkillFile = skillFile
-	}
-	agentManifest := filepath.Join(root, "agent", "agent.json")
-	if fileExists(agentManifest) {
-		surface.AgentManifest = agentManifest
 	}
 
 	agentDir := filepath.Join(root, "agent")
@@ -247,7 +231,7 @@ func LoadZKSurface(root string) (ZKSurface, error) {
 	if fileExists(configFile) {
 		surface.ConfigFile = configFile
 	}
-	for _, doc := range []string{"README.md", "zk.md", filepath.Join("docs", "ARCHITECTURE.md"), filepath.Join("docs", "INTEGRATION.md")} {
+	for _, doc := range []string{"README.md", "zk.md", filepath.Join("docs", "ARCHITECTURE.md")} {
 		path := filepath.Join(root, doc)
 		if fileExists(path) {
 			surface.Docs = append(surface.Docs, path)
@@ -307,10 +291,10 @@ func loadSkillsCatalog(root, catalogPath string) ([]SkillEntry, error) {
 		return nil, err
 	}
 	var raw []struct {
-		Slug        string   `json:"slug"`
-		Name        string   `json:"name"`
-		Description string   `json:"description"`
-		Category    string   `json:"category"`
+		Slug        string `json:"slug"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Category    string `json:"category"`
 		Tags        []string `json:"tags"`
 	}
 	if err := json.Unmarshal(data, &raw); err != nil {
@@ -434,9 +418,9 @@ func readCargoName(path string) string {
 	for _, line := range strings.Split(string(data), "\n") {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "name") {
-			_, value, ok := strings.Cut(line, "=")
-			if ok {
-				return stripQuotes(strings.TrimSpace(value))
+			parts := strings.SplitN(line, "=", 2)
+			if len(parts) == 2 {
+				return stripQuotes(strings.TrimSpace(parts[1]))
 			}
 		}
 	}

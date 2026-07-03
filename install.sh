@@ -279,12 +279,16 @@ mkdir -p "$BIN_DIR"
 cp "$INSTALL_DIR/bin/clawdbot" "$BIN_DIR/clawdbot"
 success "Installed to $BIN_DIR/clawdbot"
 
-info "Generating starter agent DNA..."
-"$INSTALL_DIR/bin/clawdbot" dna generate \
-  --if-missing \
-  --out "$INSTALL_DIR/workspace/agent-dna.json" \
-  --agent-name "ClawdBot" \
-  --role "sovereign Solana trading intelligence" || warn "Agent DNA generation failed; run: clawdbot dna generate"
+if "$INSTALL_DIR/bin/clawdbot" dna --help >/dev/null 2>&1; then
+  info "Generating starter agent DNA..."
+  "$INSTALL_DIR/bin/clawdbot" dna generate \
+    --if-missing \
+    --out "$INSTALL_DIR/workspace/agent-dna.json" \
+    --agent-name "ClawdBot" \
+    --role "sovereign Solana trading intelligence" || warn "Agent DNA generation failed; run: clawdbot dna generate"
+else
+  warn "Installed clawdbot binary does not expose dna; skipping starter DNA"
+fi
 
 install_vulcan
 
@@ -333,7 +337,7 @@ if [[ ! -f "$ENV_FILE" ]]; then
 CLAWDBOT_INSTALL_ID=${INSTALL_ID}
 
 # ── Free AI via zk.x402.wtf / zkrouter (no key needed) ───────────
-# Public gateway backed by the sovereign $CLAWD router
+# Public gateway backed by the sovereign \$CLAWD router
 ZKROUTER_BASE_URL=${ZKROUTER_BASE}
 ZKROUTER_API_KEY=clawdbot-free
 
@@ -410,7 +414,9 @@ echo
 echo -e "  ${BOLD}Get started:${RESET}"
 echo -e "  ${CYAN}source ${ENV_FILE}${RESET}          # load env vars"
 echo -e "  ${CYAN}clawdbot version${RESET}             # verify install"
+if "$INSTALL_DIR/bin/clawdbot" dna --help >/dev/null 2>&1; then
 echo -e "  ${CYAN}clawdbot dna show${RESET}           # inspect starter agent DNA"
+fi
 echo -e "  ${CYAN}clawdbot agent${RESET}               # start AI REPL (free via zkrouter)"
 echo -e "  ${CYAN}clawdbot ooda --sim${RESET}          # paper trading mode"
 echo -e "  ${CYAN}clawdbot skills birth --install${RESET} # reseed birth skills"

@@ -11,14 +11,14 @@
 
 ### 🦞 Sovereign Solana Trading Intelligence
 
-**Autonomous OODA Agent · ZK Primitives · Privacy by Default · Helius DAS · Vulcan/Phoenix Perpetuals · Jupiter Swaps · Hardware I2C · Web Console**
+**Autonomous OODA Agent · Agent DNA · ZK Primitives · Privacy by Default · Helius DAS · Vulcan/Phoenix Perpetuals · Jupiter Swaps · Hardware I2C · Web Console**
 
 [![Go](https://img.shields.io/badge/Go-1.25+-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
 [![Solana](https://img.shields.io/badge/Solana-Mainnet-14F195?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![License](https://img.shields.io/badge/License-MIT-9945FF?style=for-the-badge)](LICENSE)
 
-**80 Go source files · 41 packages · 21,300+ lines · 3 binaries · <10MB RAM · Grok-first**
+**70 Go source files · 42 packages · 21,400+ lines · 3 binaries · <10MB RAM · Grok-first**
 
 [Quick Start](#-quick-start) · [Architecture](#-architecture) · [The Six Laws](#-the-six-law-harness) · [CLI Reference](#-cli-reference) · [Deployment](#-deployment)
 
@@ -47,6 +47,7 @@ The system compiles to three standalone binaries that run on everything from NVI
 | Capability | Description |
 |:---|:---|
 | **OODA Trading Loop** | Autonomous Observe → Orient → Decide → Act cycle with RSI/EMA/ATR strategy engine, auto-optimization, ClawVault memory journaling, and hardware I2C controls |
+| **Agent DNA Generator** | Go-native first-run DNA profile — synthetic A/C/G/T sequence, motif metrics, trait scores, proof hash, nullifier, pending Solana attestation seed |
 | **Birdeye v3 Analytics** | 22 API endpoints, 19 LLM-callable agent tools — token overview, OHLCV, trade feeds, security audits, trending, wallet analytics |
 | **Helius DAS + RPC** | Digital Asset Standard queries (get-asset, owner-assets, search), SPL token operations (balance, supply, largest holders), raw RPC forwarding |
 | **ZK + Privacy Primitives** | Nullifiers, attestations, encrypted state commitments, and privacy-preserving proof flows under `zk-primitives/` |
@@ -84,6 +85,7 @@ After install:
 
 ```bash
 source ~/.clawdbot/.env          # load env vars
+clawdbot dna show                # inspect generated starter DNA
 clawdbot agent                   # AI REPL — free via zkrouter
 clawdbot ooda --sim              # paper trading mode
 clawdbot solana trending         # top Solana tokens
@@ -111,6 +113,7 @@ go mod download && go mod tidy
 # Build (choose one)
 make build         # CLI binary only
 make all           # CLI + TUI
+make web           # Web backend + frontend
 make cross         # All platforms (x86, ARM64, RISC-V, macOS)
 
 # Frontend (optional — required for web console UI)
@@ -118,6 +121,8 @@ cd web/frontend && npm install && npm run build && cd ../..
 
 # Run
 ./build/clawdbot version
+./build/clawdbot onboard                         # config, workspace, agent DNA
+./build/clawdbot dna show                        # inspect starter DNA
 ./build/clawdbot agent -m "What is SOL price?"   # single-shot AI query
 ./build/clawdbot agent                            # interactive REPL
 ./build/clawdbot solana trending

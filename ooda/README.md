@@ -24,6 +24,11 @@ npx tsx ooda/loop.ts --ticks 200 --sleep 0.4 --tui | npx tsx ooda/tui.ts
 npx tsx ooda/loop.ts --goblin --ticks 100 --llm
 ```
 
+For the Go runtime identity seed, run `clawdbot onboard` or
+`clawdbot dna generate` from the repo root. That writes
+`~/.clawdbot/workspace/agent-dna.json`, which is the starter agent DNA profile
+used by the Go CLI, doctor checks, and web console.
+
 ## Architecture
 
 ```text

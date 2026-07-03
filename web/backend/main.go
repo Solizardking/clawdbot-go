@@ -25,8 +25,8 @@ import (
 	"time"
 
 	"github.com/8bitlabs/clawdbot/pkg/config"
-	"github.com/8bitlabs/clawdbot/pkg/doctor"
 	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
+	"github.com/8bitlabs/clawdbot/pkg/doctor"
 	"github.com/8bitlabs/clawdbot/pkg/laws"
 	"github.com/8bitlabs/clawdbot/pkg/trading"
 )

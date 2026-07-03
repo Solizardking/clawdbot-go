@@ -33,15 +33,15 @@ type Options struct {
 }
 
 type AgentDNA struct {
-	SchemaVersion string      `json:"schemaVersion"`
-	GeneratedAt   string      `json:"generatedAt"`
+	SchemaVersion string       `json:"schemaVersion"`
+	GeneratedAt   string       `json:"generatedAt"`
 	Agent         AgentProfile `json:"agent"`
-	Sequence      Sequence    `json:"sequence"`
-	Metrics       Metrics     `json:"metrics"`
-	Traits        Traits      `json:"traits"`
-	Proof         Proof       `json:"proof"`
-	Attestation   Attestation `json:"attestation"`
-	Safety        string      `json:"safety"`
+	Sequence      Sequence     `json:"sequence"`
+	Metrics       Metrics      `json:"metrics"`
+	Traits        Traits       `json:"traits"`
+	Proof         Proof        `json:"proof"`
+	Attestation   Attestation  `json:"attestation"`
+	Safety        string       `json:"safety"`
 }
 
 type AgentProfile struct {
@@ -73,13 +73,13 @@ type MotifHit struct {
 }
 
 type Traits struct {
-	Observation  int `json:"observation"`
-	Orientation  int `json:"orientation"`
-	Decision     int `json:"decision"`
-	Action       int `json:"action"`
-	Risk         int `json:"risk"`
-	Privacy      int `json:"privacy"`
-	Attestation  int `json:"attestation"`
+	Observation int `json:"observation"`
+	Orientation int `json:"orientation"`
+	Decision    int `json:"decision"`
+	Action      int `json:"action"`
+	Risk        int `json:"risk"`
+	Privacy     int `json:"privacy"`
+	Attestation int `json:"attestation"`
 }
 
 type Proof struct {
@@ -171,7 +171,7 @@ func Generate(opts Options) (AgentDNA, error) {
 			Status:  "local_pending",
 			Network: "solana-devnet",
 			Schema:  SchemaVersion,
-			PDASeed: "sas-devnet-" + hashHex("sas:"+dnaID+":"+nullifier)[:32],
+			PDASeed: "sas-devnet-" + hashHex("sas:" + dnaID + ":" + nullifier)[:32],
 		},
 		Safety: "Synthetic agent DNA for identity, scoring, and attestation metadata. Not biological or clinical instruction.",
 	}, nil

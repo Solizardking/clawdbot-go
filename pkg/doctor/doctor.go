@@ -161,9 +161,9 @@ func dnaCheck(workspacePath string) Check {
 		Status:  StatusPass,
 		Message: fmt.Sprintf("%s utility=%d/100", value.Proof.DNAID, value.Metrics.UtilityScore),
 		Details: map[string]any{
-			"path":       path,
-			"sequence":   value.Sequence.Length,
-			"gcContent":  value.Metrics.GCContent,
+			"path":        path,
+			"sequence":    value.Sequence.Length,
+			"gcContent":   value.Metrics.GCContent,
 			"attestation": value.Attestation.Status,
 		},
 	}

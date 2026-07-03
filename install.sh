@@ -2,6 +2,7 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║  ClawdBot — One-Shot Installer                                               ║
 # ║  curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | bash
+# ║  Branded edge aliases can serve this script from onchainai.fund / x402.wtf. ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 set -euo pipefail
@@ -271,7 +272,7 @@ info "Building clawdbot binary..."
 mkdir -p "$INSTALL_DIR/bin"
 cd "$REPO_DIR"
 go mod download -x 2>/dev/null | tail -3 || true
-go build -ldflags="-s -w" -o "$INSTALL_DIR/bin/clawdbot" ./cmd/clawdbot/
+go build -buildvcs=false -trimpath -ldflags="-s -w" -o "$INSTALL_DIR/bin/clawdbot" ./cmd/clawdbot/
 success "Binary built: $INSTALL_DIR/bin/clawdbot"
 
 # ── Install to PATH ────────────────────────────────────────────────────────────

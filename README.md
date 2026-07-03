@@ -77,6 +77,15 @@ Vulcan/Phoenix perps tooling:
 curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
 ```
 
+After the Cloudflare Worker in this repo is deployed, the same complete install
+can be exposed through branded DNS:
+
+```bash
+curl -fsSL https://install.onchainai.fund | bash
+curl -fsSL https://install.x402.wtf | bash
+curl -fsSL https://x402.wtf/clawdbot | bash
+```
+
 > **Free AI included** — no API keys required to get started.  
 > The installer pre-configures [zkrouter](https://zk.x402.wtf) (free AI routing) and a  
 > SolanaTracker-backed RPC endpoint. Bring your own keys to lift rate limits.
@@ -181,6 +190,39 @@ rm -rf ~/.clawdbot/src
 curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
 ```
 
+### Cloudflare / DNS Install Surface
+
+`wrangler.toml` and `cloudflare/install-worker.js` define a small Cloudflare
+Worker that turns the canonical GitHub installer into branded install commands.
+The Worker keeps GitHub as the source of truth, serves `/install.sh` as the raw
+installer, and serves `/`, `/complete`, and `/full` as complete-install wrappers
+that set `CLAWDBOT_INSTALL_COMPLETE=1`.
+
+Deploy it with:
+
+```bash
+npx wrangler deploy
+```
+
+Configured surfaces:
+
+```text
+https://install.onchainai.fund
+https://install.x402.wtf
+https://x402.wtf/clawdbot
+https://zk.x402.wtf/clawdbot
+```
+
+Smoke tests:
+
+```bash
+curl -fsSL https://install.onchainai.fund/healthz
+curl -fsSL https://install.onchainai.fund/.well-known/clawdbot-install.json
+curl -fsSL https://install.onchainai.fund/install.sh | bash -n
+```
+
+See `cloudflare/README.md` for the DNS and route checklist.
+
 ### Module Path Compatibility
 
 The public repository is:
@@ -222,7 +264,7 @@ clawdbot-go/
 │   │   └── hardware.go          I2C sensor commands (scan/test/monitor/demo)
 │   └── clawdbot-tui/             TUI launcher (tcell/tview)
 │
-├── pkg/                         ── 41 Packages, 21K+ lines ──
+├── pkg/                         ── 42 Packages, 21K+ lines ──
 │   │
 │   │  ┌─ Core Agent ────────────────────────────────────────┐
 │   ├── agent/                   OODA loop, hooks, tool executor, prompts

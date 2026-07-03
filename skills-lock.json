@@ -19,6 +19,12 @@
       "skillPath": "apple-reminders/SKILL.md",
       "computedHash": "017ad3751babf289cc71de172d49316bdebb2d53217a8065825cb31d6dbc8d75"
     },
+    "ask-mcp": {
+      "source": "Solizardking/skills",
+      "sourceType": "github",
+      "skillPath": "ask-mcp/SKILL.md",
+      "computedHash": "e099d45e00d063547779e2eefd88bbc34fb9f139482aa9aa4f44fa62ccdbe0fd"
+    },
     "bear-notes": {
       "source": "Solizardking/skills",
       "sourceType": "github",
@@ -108,6 +114,18 @@
       "sourceType": "github",
       "skillPath": "coding-agent/SKILL.md",
       "computedHash": "a92a22e5f84eb853f95541597aac4aeea137b08719fce76225bdaff181b7d7ea"
+    },
+    "compressed-pda": {
+      "source": "Solizardking/skills",
+      "sourceType": "github",
+      "skillPath": "compressed-pda/SKILL.md",
+      "computedHash": "567a54eb19a311916d36f38e9f454cce3790f2f861003c59f37e981c54c4b341"
+    },
+    "compressed-token": {
+      "source": "Solizardking/skills",
+      "sourceType": "github",
+      "skillPath": "compressed-token/SKILL.md",
+      "computedHash": "27f57c41ea113c384a3dada92d39f4d555e237ac83fea9ea68911bf4f7ee7e95"
     },
     "dex-screener-scanner": {
       "source": "Solizardking/skills",
@@ -623,7 +641,7 @@
       "source": "Solizardking/skills",
       "sourceType": "github",
       "skillPath": "solana-formal-verification/SKILL.md",
-      "computedHash": "05774c7f736f5fe9e9d18744d194c93276afb8a7b2eb6e963f4cf8abfa8a7ec9"
+      "computedHash": "b3f091e84ba063fef760ddcb94e8b7c08eee4c2ba98574152239572c874a4e79"
     },
     "sag": {
       "source": "Solizardking/skills",
@@ -676,8 +694,14 @@
     "solana-redpill-verifier": {
       "source": "Solizardking/skills",
       "sourceType": "github",
-      "skillPath": "solana-tee/SKILL.md",
-      "computedHash": "380b27e8d6a280dc75042882428ff1f80b7cf11565a5d6f452d3181010a9717e"
+      "skillPath": "solana-redpill-verifier/SKILL.md",
+      "computedHash": "b83f4e4b90dcd5aacad21bac35e071d57ff37d1ac45d268d3f79d66095c08879"
+    },
+    "solana-rent-free-dev": {
+      "source": "Solizardking/skills",
+      "sourceType": "github",
+      "skillPath": "solana-rent-free-dev/SKILL.md",
+      "computedHash": "6a932a54b60ff7871cac00df02fd42550a18f9776d6e10d5a47fa1937f1e1d6a"
     },
     "songsee": {
       "source": "Solizardking/skills",
@@ -702,6 +726,12 @@
       "sourceType": "github",
       "skillPath": "summarize/SKILL.md",
       "computedHash": "c47769178d729554aaec6e2dc7d0ceb423d48abacac67855a436a6f0b93f9233"
+    },
+    "testing": {
+      "source": "Solizardking/skills",
+      "sourceType": "github",
+      "skillPath": "testing/SKILL.md",
+      "computedHash": "f00cf8444f494873d7a715bbc3500f24ef8416b19f1f8e7237d806873f4863bb"
     },
     "things-mac": {
       "source": "Solizardking/skills",
@@ -822,6 +852,12 @@
       "sourceType": "github",
       "skillPath": "weather/SKILL.md",
       "computedHash": "3607a21e58d9e4c80c37089ac46f6a18207d39830c2aaa347c92e3c7d4ef575a"
+    },
+    "zk": {
+      "source": "Solizardking/skills",
+      "sourceType": "github",
+      "skillPath": "zk/SKILL.md",
+      "computedHash": "13ceeaf9e5d8f4aa1fe132485d5219b8aa26fb2eb1ad67ce139496e8ec5a8da3"
     },
     "zkrouter": {
       "source": "Solizardking/skills",

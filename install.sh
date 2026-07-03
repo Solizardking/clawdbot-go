@@ -30,6 +30,9 @@ STARTUP_SOL_LAMPORTS="${CLAWDBOT_STARTUP_SOL_LAMPORTS:-69420000}"
 STARTUP_CLAWD_TOKENS="${CLAWDBOT_STARTUP_CLAWD_TOKENS:-1000}"
 AGENT_WALLET_PATH="${CLAWDBOT_AGENT_WALLET_PATH:-$INSTALL_DIR/workspace/agent-wallet.json}"
 INSTALL_TRACK_FILE="${CLAWDBOT_INSTALL_TRACK_FILE:-$INSTALL_DIR/install.json}"
+LOCAL_SKILLS_DIR="${CLAWDBOT_SKILLS_DIR:-$HOME/skills/skills}"
+LOCAL_AGENTS_DIR="${CLAWDBOT_AGENTS_DIR:-$HOME/agents/agents/src}"
+LOCAL_ZK_PRIMITIVES_DIR="${CLAWDBOT_ZK_PRIMITIVES_DIR:-$INSTALL_DIR/src/zk-primitives}"
 
 if [[ "$INSTALL_COMPLETE" == "1" ]]; then
   INSTALL_CORE_AI=1
@@ -400,6 +403,34 @@ elif [[ -n "$AGENT_WALLET_PUBKEY" ]]; then
   info "Startup funding status: ${FUNDING_STATUS}"
 fi
 
+# ── Optional local treasury funding ───────────────────────────────────────────
+if [[ -n "$AGENT_WALLET_PUBKEY" && "${CLAWDBOT_LOCAL_STARTUP_FUNDING:-0}" == "1" ]]; then
+  info "Running local treasury startup funding plan..."
+  FUND_ARGS=(
+    "solana" "fund-agent" "$AGENT_WALLET_PUBKEY"
+    "--json"
+    "--sol-lamports" "$STARTUP_SOL_LAMPORTS"
+    "--clawd" "$STARTUP_CLAWD_TOKENS"
+    "--clawd-mint" "$CLAWD_MINT"
+    "--ledger" "$INSTALL_DIR/workspace/install-funding.jsonl"
+  )
+  if [[ "${CLAWDBOT_BIRTH_FUNDING_SEND:-0}" == "1" ]]; then
+    FUND_ARGS+=("--send")
+  fi
+  LOCAL_FUNDING_JSON="$(CLAWDBOT_HOME="$INSTALL_DIR" CLAWDBOT_INSTALL_ID="$INSTALL_ID" "$INSTALL_DIR/bin/clawdbot" "${FUND_ARGS[@]}" 2>/dev/null || echo '{}')"
+  LOCAL_FUNDING_STATUS="$(json_get "$LOCAL_FUNDING_JSON" "status")"
+  LOCAL_SOL_SIGNATURE="$(json_get "$LOCAL_FUNDING_JSON" "solSignature")"
+  LOCAL_CLAWD_SIGNATURE="$(json_get "$LOCAL_FUNDING_JSON" "clawdSignature")"
+  if [[ -n "$LOCAL_FUNDING_STATUS" ]]; then
+    FUNDING_STATUS="local_${LOCAL_FUNDING_STATUS}"
+    info "Local startup funding status: ${FUNDING_STATUS}"
+  else
+    warn "Local startup funding did not return a status"
+  fi
+  if [[ -n "$LOCAL_SOL_SIGNATURE" ]]; then SOL_FUNDING_SIGNATURE="$LOCAL_SOL_SIGNATURE"; fi
+  if [[ -n "$LOCAL_CLAWD_SIGNATURE" ]]; then CLAWD_FUNDING_SIGNATURE="$LOCAL_CLAWD_SIGNATURE"; fi
+fi
+
 # ── Local install receipt ─────────────────────────────────────────────────────
 mkdir -p "$(dirname "$INSTALL_TRACK_FILE")"
 cat > "$INSTALL_TRACK_FILE" << JSONEOF
@@ -447,6 +478,11 @@ ZKROUTER_API_KEY=${ZKROUTER_KEY:-clawdbot-free}
 SOLANA_RPC_URL=${RPC_URL}
 HELIUS_RPC_URL=${RPC_URL}
 
+# ── Local Clawd catalogs (instant read-only discovery) ───────────
+CLAWDBOT_SKILLS_DIR=${LOCAL_SKILLS_DIR}
+CLAWDBOT_AGENTS_DIR=${LOCAL_AGENTS_DIR}
+CLAWDBOT_ZK_PRIMITIVES_DIR=${LOCAL_ZK_PRIMITIVES_DIR}
+
 # ── Optional: bring your own keys for higher limits ──────────────
 # OPENROUTER_API_KEY=sk-or-...
 # HELIUS_API_KEY=your-helius-key
@@ -466,6 +502,10 @@ CLAWDBOT_STARTUP_CLAWD_TOKENS=${STARTUP_CLAWD_TOKENS}
 CLAWDBOT_INSTALL_FUNDING_STATUS=${FUNDING_STATUS}
 CLAWDBOT_SOL_FUNDING_SIGNATURE=${SOL_FUNDING_SIGNATURE}
 CLAWDBOT_CLAWD_FUNDING_SIGNATURE=${CLAWD_FUNDING_SIGNATURE}
+# CLAWDBOT_LOCAL_STARTUP_FUNDING=1
+# CLAWDBOT_BIRTH_FUNDING_SEND=1
+# CLAWDBOT_TREASURY_KEYPAIR=~/.config/solana/id.json
+# CLAWDBOT_TREASURY_PRIVATE_KEY=base58-secret-key
 
 # ── Optional channels ─────────────────────────────────────────────
 # TELEGRAM_BOT_TOKEN=your-telegram-token
@@ -489,6 +529,9 @@ append_env_if_missing "AGENT_WALLET_PUBLIC_KEY" "$AGENT_WALLET_PUBKEY"
 append_env_if_missing "AGENT_WALLET_KEYPAIR" "$AGENT_WALLET_PATH"
 append_env_if_missing "SOLANA_WALLET_PUBKEY" "$AGENT_WALLET_PUBKEY"
 append_env_if_missing "SOLANA_WALLET_KEYPAIR" "$AGENT_WALLET_PATH"
+append_env_if_missing "CLAWDBOT_SKILLS_DIR" "$LOCAL_SKILLS_DIR"
+append_env_if_missing "CLAWDBOT_AGENTS_DIR" "$LOCAL_AGENTS_DIR"
+append_env_if_missing "CLAWDBOT_ZK_PRIMITIVES_DIR" "$LOCAL_ZK_PRIMITIVES_DIR"
 append_env_if_missing "CLAWD_TOKEN_MINT" "$CLAWD_MINT"
 append_env_if_missing "CLAWDBOT_STARTUP_SOL_LAMPORTS" "$STARTUP_SOL_LAMPORTS"
 append_env_if_missing "CLAWDBOT_STARTUP_CLAWD_TOKENS" "$STARTUP_CLAWD_TOKENS"

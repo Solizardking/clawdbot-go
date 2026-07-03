@@ -22,6 +22,7 @@ import (
 
 	"github.com/8bitlabs/clawdbot/pkg/agent"
 	"github.com/8bitlabs/clawdbot/pkg/bus"
+	"github.com/8bitlabs/clawdbot/pkg/catalog"
 	"github.com/8bitlabs/clawdbot/pkg/channels"
 	"github.com/8bitlabs/clawdbot/pkg/config"
 	"github.com/8bitlabs/clawdbot/pkg/hardware"
@@ -107,6 +108,7 @@ Public surfaces:
 		NewGatewayCommand(),
 		NewOnboardCommand(),
 		NewStatusCommand(),
+		NewCatalogCommand(),
 		NewOODACommand(),
 		NewSolanaCommand(),
 		NewHardwareCommand(),
@@ -342,6 +344,158 @@ func NewStatusCommand() *cobra.Command {
 
 	cmd.Flags().IntVar(&hwBus, "hw-bus", 1, "I2C bus number to check for Modulino® hardware")
 	return cmd
+}
+
+// ── Catalog Command ─────────────────────────────────────────────────
+
+func NewCatalogCommand() *cobra.Command {
+	roots := catalog.DefaultRoots()
+	var jsonOut bool
+
+	report := func() catalog.Report {
+		return catalog.BuildReport(roots)
+	}
+
+	cmd := &cobra.Command{
+		Use:   "catalog",
+		Short: "Inspect local Clawd skills, agents, and ZK primitives",
+		Long: `Inspect the local Clawd ecosystem indexes that ClawdBot can use:
+  • /Users/8bit/skills/skills        local AgentSkill library
+  • /Users/8bit/agents/agents/src    local agent catalog JSON definitions
+  • ./zk-primitives                  Clawd ZK agent/client/program surface
+
+The command is read-only. It does not install skills, execute tools, or call live
+trading endpoints.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			r := report()
+			if jsonOut {
+				return writeJSON(r)
+			}
+			fmt.Printf("%s🦞 Clawd Catalog%s\n\n", colorGreen, colorReset)
+			fmt.Printf("Skills:       %d\n", len(r.Skills))
+			fmt.Printf("Agents:       %d\n", len(r.Agents))
+			if r.ZK != nil {
+				fmt.Printf("ZK agent:     %s", r.ZK.AgentPackageName)
+				if r.ZK.AgentBinary != "" {
+					fmt.Printf(" (%s)", r.ZK.AgentBinary)
+				}
+				fmt.Println()
+				fmt.Printf("ZK client:    %s\n", r.ZK.ClientPackage)
+				fmt.Printf("ZK program:   %s\n", r.ZK.ProgramName)
+			}
+			fmt.Printf("\n%sRoots:%s\n", colorTeal, colorReset)
+			fmt.Printf("  Skills: %s\n", r.Roots.SkillsDir)
+			fmt.Printf("  Agents: %s\n", r.Roots.AgentsDir)
+			fmt.Printf("  ZK:     %s\n", r.Roots.ZKPrimitivesDir)
+			printCatalogWarnings(r.Warnings)
+			return nil
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&roots.SkillsDir, "skills-dir", roots.SkillsDir, "Skill catalog root")
+	cmd.PersistentFlags().StringVar(&roots.AgentsDir, "agents-dir", roots.AgentsDir, "Agent catalog JSON root")
+	cmd.PersistentFlags().StringVar(&roots.ZKPrimitivesDir, "zk-dir", roots.ZKPrimitivesDir, "ZK primitives root")
+	cmd.PersistentFlags().BoolVar(&jsonOut, "json", false, "Print JSON")
+
+	cmd.AddCommand(&cobra.Command{
+		Use:   "skills [query]",
+		Short: "List local skills",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			r := report()
+			query := strings.Join(args, " ")
+			skills := catalog.FilterSkills(r.Skills, query)
+			if jsonOut {
+				return writeJSON(skills)
+			}
+			fmt.Printf("%sSkills (%d)%s\n", colorGreen, len(skills), colorReset)
+			for _, skill := range skills {
+				category := skill.Category
+				if category == "" {
+					category = "uncategorized"
+				}
+				fmt.Printf("  %s%-32s%s %-24s %s\n", colorTeal, skill.Slug, colorReset, category, truncate(skill.Description, 110))
+			}
+			printCatalogWarnings(r.Warnings)
+			return nil
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use:   "agents [query]",
+		Short: "List local agents",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			r := report()
+			query := strings.Join(args, " ")
+			agents := catalog.FilterAgents(r.Agents, query)
+			if jsonOut {
+				return writeJSON(agents)
+			}
+			fmt.Printf("%sAgents (%d)%s\n", colorGreen, len(agents), colorReset)
+			for _, agent := range agents {
+				category := agent.Category
+				if category == "" {
+					category = "catalog"
+				}
+				fmt.Printf("  %s%-42s%s %-16s %s\n", colorTeal, agent.ID, colorReset, category, truncate(agent.Description, 100))
+			}
+			printCatalogWarnings(r.Warnings)
+			return nil
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use:   "zk",
+		Short: "Show the Clawd ZK primitive surface",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			r := report()
+			if r.ZK == nil {
+				return fmt.Errorf("zk surface not available")
+			}
+			if jsonOut {
+				return writeJSON(r.ZK)
+			}
+			zk := r.ZK
+			fmt.Printf("%sClawd ZK Primitives%s\n", colorGreen, colorReset)
+			fmt.Printf("  Root:       %s\n", zk.Root)
+			fmt.Printf("  Skill:      %s\n", zk.SkillFile)
+			fmt.Printf("  Manifest:   %s\n", zk.AgentManifest)
+			fmt.Printf("  Agent:      %s", zk.AgentPackageName)
+			if zk.AgentBinary != "" {
+				fmt.Printf(" (%s)", zk.AgentBinary)
+			}
+			fmt.Println()
+			fmt.Printf("  Client:     %s\n", zk.ClientPackage)
+			fmt.Printf("  Program:    %s\n", zk.ProgramName)
+			fmt.Printf("  Config:     %s\n", zk.ConfigFile)
+			fmt.Printf("  Operations: %s\n", strings.Join(zk.Operations, ", "))
+			if len(zk.Docs) > 0 {
+				fmt.Println("  Docs:")
+				for _, doc := range zk.Docs {
+					fmt.Printf("    - %s\n", doc)
+				}
+			}
+			printCatalogWarnings(r.Warnings)
+			return nil
+		},
+	})
+
+	return cmd
+}
+
+func writeJSON(v any) error {
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	return enc.Encode(v)
+}
+
+func printCatalogWarnings(warnings []string) {
+	if len(warnings) == 0 {
+		return
+	}
+	fmt.Printf("\n%sWarnings:%s\n", colorAmber, colorReset)
+	for _, warning := range warnings {
+		fmt.Printf("  - %s\n", warning)
+	}
 }
 
 // ── OODA Command — fully wired ─────────────────────────────────────────
@@ -1768,9 +1922,20 @@ func truncate(s string, maxLen int) string {
 }
 
 func main() {
-	fmt.Print(banner)
+	if shouldPrintBanner(os.Args[1:]) {
+		fmt.Print(banner)
+	}
 	cmd := NewClawdBotCommand()
 	if err := cmd.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func shouldPrintBanner(args []string) bool {
+	for _, arg := range args {
+		if arg == "--json" || strings.HasPrefix(arg, "--json=") {
+			return false
+		}
+	}
+	return true
 }

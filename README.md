@@ -172,6 +172,7 @@ clawdbot-go/
 │   ├── hardware/                I2C Modulino® adapter + drivers
 │   ├── providers/               LLM abstraction (OpenRouter, etc.)
 │   ├── channels/                Telegram, Discord, WebSocket
+│   ├── catalog/                 Local /Users/8bit skills + agents + ZK index
 │   ├── mcp/                     Model Context Protocol server
 │   ├── auth/                    Authentication + pairing
 │   ├── bus/                     Event bus (pub/sub)
@@ -185,6 +186,15 @@ clawdbot-go/
 ├── IDENTITY.md                  Sovereign identity document
 ├── SOUL.md                      Inner character and trading philosophy
 ├── three-laws.md                Immutable on-chain laws (hash-attested)
+│
+├── zk-primitives/               ZK agent, TypeScript client, Anchor program
+│   ├── MANIFEST.json            Machine-readable subsystem index
+│   ├── agent/                   @clawd/zk-agent + SKILL.md
+│   ├── client/                  @clawd/zk-client
+│   ├── configs/                 Light tree and runtime config examples
+│   ├── docs/                    Architecture + integration notes
+│   ├── programs/                clawd-zk Anchor program
+│   └── tests/                   Off-chain and on-chain test notes
 │
 ├── web/                         ── Web Console ──
 │   ├── backend/                 Go HTTP server (API + embedded SPA)
@@ -252,6 +262,22 @@ clawdbot ooda --sim                     # Force simulated mode (paper trading)
 clawdbot ooda --hw-bus 1                # Enable hardware I2C integration
 clawdbot ooda --no-hw                   # Explicitly disable hardware probing
 ```
+
+### Ecosystem Catalog
+
+```bash
+clawdbot catalog                         # Summary of local skills, agents, and ZK surface
+clawdbot catalog skills                  # List /Users/8bit/skills/skills entries
+clawdbot catalog skills zk               # Filter skills for ZK capability
+clawdbot catalog agents                  # List /Users/8bit/agents/agents/src entries
+clawdbot catalog agents zk               # Filter agents for ZK capability
+clawdbot catalog zk                      # Inspect zk-primitives package/program/docs
+clawdbot catalog --json                  # Machine-readable report
+```
+
+Default catalog roots can be overridden with:
+`CLAWDBOT_SKILLS_DIR`, `CLAWDBOT_AGENTS_DIR`, and
+`CLAWDBOT_ZK_PRIMITIVES_DIR`.
 
 ### Solana — Birdeye
 

@@ -37,6 +37,7 @@ const { nullifierHex, signature } = await agent.attestModel({
 agent/
 ├── package.json
 ├── tsconfig.json
+├── agent.json                        ← local Clawd agent catalog entry
 ├── README.md                         ← you are here
 ├── SKILL.md                          ← loadable by Clawd Code / Claude / Cursor
 ├── src/
@@ -48,6 +49,10 @@ agent/
 └── tests/
     └── agent.test.ts                 ← vitest, off-chain only
 ```
+
+`agent.json` is the catalog-facing identity for the Go runtime and local
+`/Users/8bit/agents` integration. `SKILL.md` is the instruction surface loaded
+by coding agents. `package.json` is the npm package/binary contract.
 
 ## Install (inside the monorepo)
 

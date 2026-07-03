@@ -155,6 +155,9 @@ The proof JSON shape:
 - The Anchor program is at `zk-primitives/programs/clawd-zk/`.
 - The deep dive (cost model, security assumptions, instruction
   layouts) is in `zk-primitives/docs/ARCHITECTURE.md`.
+- Runtime/catalog wiring is in `zk-primitives/docs/INTEGRATION.md`.
+- Machine-readable package and trust-gate metadata is in
+  `zk-primitives/MANIFEST.json`.
 - The full agent catalog is at the repo root `AGENTS.md`.
 - The harness that drives every Clawd agent is `clawd-code/`
   (Grok-first).

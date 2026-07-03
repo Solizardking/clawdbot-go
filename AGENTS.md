@@ -9,6 +9,20 @@ Public surfaces for the current ecosystem:
 - **x402 gateway** — `https://zk.x402.wtf`
 - **Terminal** — `https://cheshireterminal.ai`
 
+Local runtime catalog roots:
+- **Skills** — `/Users/8bit/skills/skills` (`CLAWDBOT_SKILLS_DIR`)
+- **Agents** — `/Users/8bit/agents/agents/src` (`CLAWDBOT_AGENTS_DIR`)
+- **ZK primitives** — `./zk-primitives` (`CLAWDBOT_ZK_PRIMITIVES_DIR`)
+
+Inspect the integrated local view with:
+
+```bash
+clawdbot catalog
+clawdbot catalog skills
+clawdbot catalog agents
+clawdbot catalog zk
+```
+
 ---
 
 ## Agent Catalog

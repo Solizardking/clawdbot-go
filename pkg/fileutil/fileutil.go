@@ -38,9 +38,22 @@ func WriteFileSafe(workspace, relPath string, data []byte) error {
 // SafeJoin joins a workspace root with a relative path,
 // rejecting directory traversal attempts.
 func SafeJoin(root, relPath string) (string, error) {
-	abs := filepath.Join(root, relPath)
-	clean := filepath.Clean(abs)
-	if !strings.HasPrefix(clean, filepath.Clean(root)) {
+	if strings.TrimSpace(root) == "" {
+		return "", fmt.Errorf("workspace root is required")
+	}
+	if !filepath.IsLocal(relPath) {
+		return "", fmt.Errorf("path escapes workspace: %s", relPath)
+	}
+	cleanRoot, err := filepath.Abs(root)
+	if err != nil {
+		return "", err
+	}
+	clean := filepath.Join(cleanRoot, filepath.Clean(relPath))
+	rel, err := filepath.Rel(cleanRoot, clean)
+	if err != nil {
+		return "", err
+	}
+	if rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
 		return "", fmt.Errorf("path escapes workspace: %s", relPath)
 	}
 	return clean, nil

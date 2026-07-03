@@ -3,6 +3,8 @@
 
 # Generated build output should not dominate diffs or language stats.
 .cache/** linguist-generated=true
+**/.next/** linguist-generated=true
+**/target/** linguist-generated=true
 dist/** linguist-generated=true
 web/frontend/dist/** linguist-generated=true
 zk-primitives/**/dist/** linguist-generated=true
@@ -16,6 +18,9 @@ ui/ClawdBrowser/tsconfig.tsbuildinfo linguist-generated=true
 agent/** export-ignore
 build/** export-ignore
 /clawdbot export-ignore
+**/.next/** export-ignore
+**/target/** export-ignore
+*.tsbuildinfo export-ignore
 *.DS_Store export-ignore
 dist/** export-ignore
 **/package-lock.json export-ignore

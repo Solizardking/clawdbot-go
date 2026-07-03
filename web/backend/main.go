@@ -12,6 +12,7 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"crypto/subtle"
 	"encoding/hex"
 	"encoding/json"
 	"flag"
@@ -19,6 +20,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -125,12 +127,26 @@ func main() {
 	// API: Config read
 	mux.HandleFunc("/api/config", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		data, err := os.ReadFile(absPath)
+		if r.Method != http.MethodGet {
+			w.Header().Set("Allow", http.MethodGet)
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		if webEnvBool("CLAWDBOT_WEB_EXPOSE_SECRETS") {
+			data, err := os.ReadFile(absPath)
+			if err != nil {
+				http.Error(w, err.Error(), 500)
+				return
+			}
+			w.Write(data)
+			return
+		}
+		cfg, err := loadRuntimeConfig(absPath)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
 		}
-		w.Write(data)
+		json.NewEncoder(w).Encode(redactedConfig(cfg))
 	})
 
 	// API: Health
@@ -255,7 +271,15 @@ func main() {
 		}()
 	}
 
-	if err := http.ListenAndServe(addr, handler); err != nil {
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           handler,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       time.Duration(envInt("CLAWDBOT_WEB_READ_TIMEOUT_SECONDS", 15)) * time.Second,
+		WriteTimeout:      time.Duration(envInt("CLAWDBOT_WEB_WRITE_TIMEOUT_SECONDS", 300)) * time.Second,
+		IdleTimeout:       time.Duration(envInt("CLAWDBOT_WEB_IDLE_TIMEOUT_SECONDS", 120)) * time.Second,
+	}
+	if err := srv.ListenAndServe(); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }
@@ -306,6 +330,40 @@ func loadRuntimeConfig(path string) (*config.Config, error) {
 	return cfg, nil
 }
 
+func redactedConfig(cfg *config.Config) config.Config {
+	if cfg == nil {
+		return *config.DefaultConfig()
+	}
+	out := *cfg
+	out.ModelList = append([]config.ModelEntry(nil), cfg.ModelList...)
+	for i := range out.ModelList {
+		out.ModelList[i].APIKey = redactSecret(out.ModelList[i].APIKey)
+	}
+	out.Channels.Telegram.Token = redactSecret(out.Channels.Telegram.Token)
+	out.Channels.Discord.Token = redactSecret(out.Channels.Discord.Token)
+	out.Providers.OpenRouter.APIKey = redactSecret(out.Providers.OpenRouter.APIKey)
+	out.Providers.Anthropic.APIKey = redactSecret(out.Providers.Anthropic.APIKey)
+	out.Providers.OpenAI.APIKey = redactSecret(out.Providers.OpenAI.APIKey)
+	out.Providers.Groq.APIKey = redactSecret(out.Providers.Groq.APIKey)
+	out.Providers.Ollama.APIKey = redactSecret(out.Providers.Ollama.APIKey)
+	out.Providers.NVIDIA.APIKey = redactSecret(out.Providers.NVIDIA.APIKey)
+	out.Solana.HeliusAPIKey = redactSecret(out.Solana.HeliusAPIKey)
+	out.Solana.BirdeyeAPIKey = redactSecret(out.Solana.BirdeyeAPIKey)
+	out.Solana.JupiterAPIKey = redactSecret(out.Solana.JupiterAPIKey)
+	out.Solana.AsterAPIKey = redactSecret(out.Solana.AsterAPIKey)
+	out.Solana.AsterAPISecret = redactSecret(out.Solana.AsterAPISecret)
+	out.Solana.WalletKeyPath = redactSecret(out.Solana.WalletKeyPath)
+	out.Supabase.ServiceKey = redactSecret(out.Supabase.ServiceKey)
+	return out
+}
+
+func redactSecret(value string) string {
+	if strings.TrimSpace(value) == "" {
+		return ""
+	}
+	return "<redacted>"
+}
+
 func ecosystemLinks() map[string]string {
 	return map[string]string{
 		"runtime_repo": config.RuntimeRepoURL,
@@ -318,23 +376,23 @@ func ecosystemLinks() map[string]string {
 var installLedgerMu sync.Mutex
 
 type installFundingRequest struct {
-	SOLLamports   uint64      `json:"solLamports"`
-	CLAWDTokens   json.Number `json:"clawdTokens"`
-	CLAWDMint     string      `json:"clawdMint"`
+	SOLLamports    uint64      `json:"solLamports"`
+	CLAWDTokens    json.Number `json:"clawdTokens"`
+	CLAWDMint      string      `json:"clawdMint"`
 	CreateCLAWDATA bool        `json:"createClawdAta"`
 }
 
 type installRequest struct {
-	InstallID        string                `json:"installId"`
-	OS               string                `json:"os"`
-	Arch             string                `json:"arch"`
-	Version          string                `json:"version"`
-	InstallComplete  string                `json:"installComplete"`
-	CoreAI           string                `json:"coreAi"`
-	Vulcan           string                `json:"vulcan"`
-	AgentWalletPubkey string              `json:"agentWalletPubkey"`
-	AgentDNAID       string                `json:"agentDnaId"`
-	Funding          installFundingRequest `json:"funding"`
+	InstallID         string                `json:"installId"`
+	OS                string                `json:"os"`
+	Arch              string                `json:"arch"`
+	Version           string                `json:"version"`
+	InstallComplete   string                `json:"installComplete"`
+	CoreAI            string                `json:"coreAi"`
+	Vulcan            string                `json:"vulcan"`
+	AgentWalletPubkey string                `json:"agentWalletPubkey"`
+	AgentDNAID        string                `json:"agentDnaId"`
+	Funding           installFundingRequest `json:"funding"`
 }
 
 type installRecord struct {
@@ -394,13 +452,13 @@ func installAPIHandler() http.HandlerFunc {
 		}
 
 		resp := map[string]any{
-			"ok":             true,
-			"installId":      installID,
-			"zkrouterKey":    firstNonEmptyEnv("ZKROUTER_API_KEY", "clawdbot-free"),
-			"zkrouterBase":   firstNonEmptyEnv("ZKROUTER_BASE_URL", config.ZkRouterBaseURL),
-			"rpcUrl":         firstNonEmptyEnv("SOLANA_RPC_URL", firstNonEmptyEnv("HELIUS_RPC_URL", config.PublicRPCURL)),
-			"fundingStatus":  record.FundingStatus,
-			"installLedger":  ledgerPath,
+			"ok":            true,
+			"installId":     installID,
+			"zkrouterKey":   firstNonEmptyEnv("ZKROUTER_API_KEY", "clawdbot-free"),
+			"zkrouterBase":  firstNonEmptyEnv("ZKROUTER_BASE_URL", config.ZkRouterBaseURL),
+			"rpcUrl":        firstNonEmptyEnv("SOLANA_RPC_URL", firstNonEmptyEnv("HELIUS_RPC_URL", config.PublicRPCURL)),
+			"fundingStatus": record.FundingStatus,
+			"installLedger": ledgerPath,
 		}
 
 		if recipient == "" {
@@ -490,7 +548,7 @@ func installsAPIHandler() http.HandlerFunc {
 			return
 		}
 		adminToken := strings.TrimSpace(os.Getenv("CLAWDBOT_INSTALL_ADMIN_TOKEN"))
-		if adminToken == "" || bearerToken(r) != adminToken {
+		if adminToken == "" || !constantTimeEqual(bearerToken(r), adminToken) {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -626,16 +684,18 @@ func randomInstallID() string {
 }
 
 func clientIP(r *http.Request) string {
-	for _, key := range []string{"Fly-Client-IP", "CF-Connecting-IP", "X-Real-IP"} {
-		value := strings.TrimSpace(r.Header.Get(key))
-		if value != "" {
-			return value
+	if webEnvBool("CLAWDBOT_TRUST_PROXY_HEADERS") {
+		for _, key := range []string{"Fly-Client-IP", "CF-Connecting-IP", "X-Real-IP"} {
+			value := strings.TrimSpace(r.Header.Get(key))
+			if value != "" {
+				return value
+			}
 		}
-	}
-	if forwarded := strings.TrimSpace(r.Header.Get("X-Forwarded-For")); forwarded != "" {
-		parts := strings.Split(forwarded, ",")
-		if len(parts) > 0 {
-			return strings.TrimSpace(parts[0])
+		if forwarded := strings.TrimSpace(r.Header.Get("X-Forwarded-For")); forwarded != "" {
+			parts := strings.Split(forwarded, ",")
+			if len(parts) > 0 {
+				return strings.TrimSpace(parts[0])
+			}
 		}
 	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -643,6 +703,13 @@ func clientIP(r *http.Request) string {
 		return host
 	}
 	return r.RemoteAddr
+}
+
+func constantTimeEqual(a, b string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	return subtle.ConstantTimeCompare([]byte(a), []byte(b)) == 1
 }
 
 func bearerToken(r *http.Request) string {
@@ -720,15 +787,58 @@ func openBrowser(url string) error {
 
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		origin := strings.TrimSpace(r.Header.Get("Origin"))
+		if origin != "" {
+			if !corsAllowedOrigin(r, origin) {
+				http.Error(w, "cors origin not allowed", http.StatusForbidden)
+				return
+			}
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Vary", "Origin")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		}
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(204)
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+func corsAllowedOrigin(r *http.Request, origin string) bool {
+	configured := strings.TrimSpace(os.Getenv("CLAWDBOT_CORS_ORIGINS"))
+	if configured != "" {
+		for _, allowed := range strings.Split(configured, ",") {
+			allowed = strings.TrimSpace(allowed)
+			if allowed == "*" || strings.EqualFold(allowed, origin) {
+				return true
+			}
+		}
+	}
+
+	parsed, err := url.Parse(origin)
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+		return false
+	}
+	if parsed.Scheme != "http" && parsed.Scheme != "https" {
+		return false
+	}
+	return sameHost(parsed.Host, r.Host)
+}
+
+func sameHost(a, b string) bool {
+	ahost, aport := splitHostPort(a)
+	bhost, bport := splitHostPort(b)
+	return strings.EqualFold(ahost, bhost) && aport == bport
+}
+
+func splitHostPort(value string) (string, string) {
+	host, port, err := net.SplitHostPort(value)
+	if err == nil {
+		return strings.Trim(strings.ToLower(host), "[]"), port
+	}
+	return strings.Trim(strings.ToLower(value), "[]"), ""
 }
 
 func loggerMiddleware(next http.Handler) http.Handler {

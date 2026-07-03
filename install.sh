@@ -10,7 +10,7 @@ set -euo pipefail
 REPO="https://github.com/Solizardking/clawdbot-go"
 HUB_REPO="https://github.com/solizardking/solana-clawd"
 TERMINAL_URL="https://cheshireterminal.ai"
-INSTALL_API="https://zk.x402.wtf/api/install"
+INSTALL_API="${CLAWDBOT_INSTALL_API:-https://zk.x402.wtf/api/install}"
 ZKROUTER_BASE="https://clawdrouter-zk.fly.dev/v1"
 RPC_URL="https://zk.x402.wtf/api/solana/rpc-public"
 INSTALL_DIR="${CLAWDBOT_INSTALL_DIR:-$HOME/.clawdbot}"

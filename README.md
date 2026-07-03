@@ -69,10 +69,11 @@ The system compiles to three standalone binaries that run on everything from NVI
 curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | bash
 ```
 
-For the complete Solizardking/core-ai sidecar install:
+For the complete installation, including the `Solizardking/core-ai` sidecar and
+Vulcan/Phoenix perps tooling:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_CORE_AI=1 bash
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
 ```
 
 > **Free AI included** — no API keys required to get started.  
@@ -141,7 +142,7 @@ beside it as an optional sidecar.
 The installer supports that model with:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_CORE_AI=1 bash
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
 ```
 
 That fetches the slim integration branch into `~/.clawdbot/core-ai`, builds the
@@ -154,7 +155,9 @@ local MCP packages when `npm` is available, and writes:
 Relevant knobs:
 
 ```bash
+CLAWDBOT_INSTALL_COMPLETE=1
 CLAWDBOT_INSTALL_CORE_AI=1
+CLAWDBOT_INSTALL_VULCAN=1
 CLAWDBOT_CORE_AI_REPO=https://github.com/Solizardking/core-ai
 CLAWDBOT_CORE_AI_REF=clawd-stack-integration
 CLAWDBOT_CORE_AI_DIR=~/.clawdbot/core-ai
@@ -163,7 +166,15 @@ CLAWDBOT_CORE_AI_MCP_CONFIG=~/.clawdbot/core-ai.mcp.json
 
 Use `CLAWDBOT_SOURCE_MODE=archive` for small installs. Use
 `CLAWDBOT_SOURCE_MODE=git` only when the installed source must be a mutable git
-checkout.
+checkout. The installer validates the downloaded source before building; if a
+source archive is missing `cmd/clawdbot/`, it retries with a git checkout.
+
+To force a clean reinstall:
+
+```bash
+rm -rf ~/.clawdbot/src
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
+```
 
 ### Module Path Compatibility
 
@@ -189,8 +200,9 @@ reseeds those pieces instead of shipping them inside the Go source package.
 
 For a default Go install, the required payload is the Go source, docs,
 `README.md`, `install.sh`, `go.mod`, `go.sum`, and runtime config examples. For
-a complete Solana tooling install, use `CLAWDBOT_INSTALL_CORE_AI=1` so the Node
-tooling is fetched and built as a sidecar after the Go binary is installed.
+a complete Solana tooling install, use `CLAWDBOT_INSTALL_COMPLETE=1` so the Node
+tooling, MCP config, and Vulcan/Phoenix CLI are fetched and built as sidecars
+after the Go binary is installed.
 
 ---
 

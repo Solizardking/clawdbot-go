@@ -20,8 +20,14 @@ CORE_AI_REPO="${CLAWDBOT_CORE_AI_REPO:-https://github.com/Solizardking/core-ai}"
 CORE_AI_REF="${CLAWDBOT_CORE_AI_REF:-clawd-stack-integration}"
 CORE_AI_DIR="${CLAWDBOT_CORE_AI_DIR:-$INSTALL_DIR/core-ai}"
 CORE_AI_MCP_CONFIG="${CLAWDBOT_CORE_AI_MCP_CONFIG:-$INSTALL_DIR/core-ai.mcp.json}"
+INSTALL_COMPLETE="${CLAWDBOT_INSTALL_COMPLETE:-0}"
 INSTALL_CORE_AI="${CLAWDBOT_INSTALL_CORE_AI:-0}"
 INSTALL_VULCAN="${CLAWDBOT_INSTALL_VULCAN:-1}"
+
+if [[ "$INSTALL_COMPLETE" == "1" ]]; then
+  INSTALL_CORE_AI=1
+  INSTALL_VULCAN=1
+fi
 
 # ── Colours ──────────────────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
@@ -95,6 +101,45 @@ install_source_archive() {
   rm -rf "$tmp"
 }
 
+install_source_git() {
+  local repo_url="$1"
+  local ref="$2"
+  local dest="$3"
+  local label="$4"
+  local tmp repo
+
+  check_cmd git || die "git is required to install $label from git"
+
+  tmp="$(mktemp -d)"
+  repo="$tmp/repo"
+  if ! git clone --depth=1 --branch "$ref" --quiet "$repo_url" "$repo" 2>/dev/null; then
+    rm -rf "$repo"
+    git clone --depth=1 --quiet "$repo_url" "$repo"
+    if ! git -C "$repo" checkout --quiet "$ref" 2>/dev/null; then
+      git -C "$repo" fetch --depth=1 origin "$ref" --quiet
+      git -C "$repo" checkout --quiet FETCH_HEAD
+    fi
+  fi
+
+  rm -rf "$dest"
+  mkdir -p "$(dirname "$dest")"
+  mv "$repo" "$dest"
+  rm -rf "$tmp"
+}
+
+ensure_go_source() {
+  if [[ -f "$REPO_DIR/go.mod" && -d "$REPO_DIR/cmd/clawdbot" ]]; then
+    return
+  fi
+
+  warn "Source archive is missing Go CLI sources; retrying with git checkout"
+  install_source_git "$REPO" "$REF" "$REPO_DIR" "clawdbot-go"
+
+  if [[ ! -f "$REPO_DIR/go.mod" || ! -d "$REPO_DIR/cmd/clawdbot" ]]; then
+    die "Downloaded source is incomplete: expected go.mod and cmd/clawdbot/"
+  fi
+}
+
 write_core_ai_mcp_config() {
   mkdir -p "$(dirname "$CORE_AI_MCP_CONFIG")"
   cat > "$CORE_AI_MCP_CONFIG" << JSONEOF
@@ -134,7 +179,7 @@ install_core_ai() {
   elif [[ "$SOURCE_MODE" == "archive" ]]; then
     install_source_archive "$CORE_AI_REPO" "$CORE_AI_REF" "$CORE_AI_DIR" "core-ai"
   else
-    git clone --depth=1 --branch "$CORE_AI_REF" --quiet "$CORE_AI_REPO" "$CORE_AI_DIR"
+    install_source_git "$CORE_AI_REPO" "$CORE_AI_REF" "$CORE_AI_DIR" "core-ai"
   fi
 
   if check_cmd npm; then
@@ -216,8 +261,9 @@ elif [[ -d "$REPO_DIR/.git" ]]; then
   git -C "$REPO_DIR" pull --ff-only --quiet
 else
   info "Cloning clawdbot-go..."
-  git clone --depth=1 --branch "$REF" --quiet "$REPO" "$REPO_DIR"
+  install_source_git "$REPO" "$REF" "$REPO_DIR" "clawdbot-go"
 fi
+ensure_go_source
 success "Source ready at $REPO_DIR"
 
 # ── Build ──────────────────────────────────────────────────────────────────────
@@ -300,7 +346,9 @@ HELIUS_RPC_URL=${RPC_URL}
 # TELEGRAM_BOT_TOKEN=your-telegram-token
 
 # ── Optional core-ai sidecar ──────────────────────────────────────
-# Install with: curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_CORE_AI=1 bash
+# Complete install: curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
+# CLAWDBOT_INSTALL_CORE_AI=${INSTALL_CORE_AI}
+# CLAWDBOT_INSTALL_VULCAN=${INSTALL_VULCAN}
 # CLAWDBOT_CORE_AI_DIR=${CORE_AI_DIR}
 # CLAWDBOT_CORE_AI_REF=${CORE_AI_REF}
 # CLAWDBOT_CORE_AI_MCP_CONFIG=${CORE_AI_MCP_CONFIG}
@@ -322,6 +370,9 @@ if [[ "$INSTALL_CORE_AI" == "1" ]]; then
     cat >> "$ENV_FILE" << ENVEOF
 
 # ── core-ai sidecar ───────────────────────────────────────────────
+CLAWDBOT_INSTALL_COMPLETE=${INSTALL_COMPLETE}
+CLAWDBOT_INSTALL_CORE_AI=${INSTALL_CORE_AI}
+CLAWDBOT_INSTALL_VULCAN=${INSTALL_VULCAN}
 CLAWDBOT_CORE_AI_DIR=${CORE_AI_DIR}
 CLAWDBOT_CORE_AI_REF=${CORE_AI_REF}
 CLAWDBOT_CORE_AI_MCP_CONFIG=${CORE_AI_MCP_CONFIG}

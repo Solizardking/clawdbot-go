@@ -486,6 +486,24 @@ func applyEnvOverrides(cfg *Config) {
 	if v := os.Getenv("JUPITER_ENDPOINT"); v != "" {
 		cfg.Solana.JupiterEndpoint = v
 	}
+	if v := os.Getenv("AGENT_WALLET_PUBLIC_KEY"); v != "" {
+		cfg.Solana.WalletPubkey = v
+	}
+	if v := os.Getenv("SOLANA_WALLET_PUBKEY"); v != "" {
+		cfg.Solana.WalletPubkey = v
+	}
+	if v := os.Getenv("WALLET_ADDRESS"); v != "" {
+		cfg.Solana.WalletPubkey = v
+	}
+	if v := os.Getenv("AGENT_WALLET_KEYPAIR"); v != "" {
+		cfg.Solana.WalletKeyPath = v
+	}
+	if v := os.Getenv("SOLANA_WALLET_KEYPAIR"); v != "" {
+		cfg.Solana.WalletKeyPath = v
+	}
+	if v := os.Getenv("WALLET_KEYPAIR"); v != "" {
+		cfg.Solana.WalletKeyPath = v
+	}
 	if v := os.Getenv("ASTER_API_KEY"); v != "" {
 		cfg.Solana.AsterAPIKey = v
 	}

@@ -38,6 +38,7 @@ import (
 	"github.com/8bitlabs/clawdbot/pkg/solana"
 	"github.com/8bitlabs/clawdbot/pkg/trading"
 	"github.com/8bitlabs/clawdbot/pkg/vulcan"
+	walletPkg "github.com/8bitlabs/clawdbot/pkg/wallet"
 )
 
 const (

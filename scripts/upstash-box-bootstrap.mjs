@@ -6,7 +6,9 @@ import { Agent, Box } from "@upstash/box";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const serverSource = readFileSync(join(here, "upstash-box-server.mjs"), "utf8");
-const apiKey = process.env.UPSTASH_BOX_API_KEY || process.env.UPSTASH_BOX_KEY;
+const apiKey = validateBoxApiKey(
+  process.env.UPSTASH_BOX_API_KEY || process.env.UPSTASH_BOX_KEY || "",
+);
 
 if (!apiKey) {
   console.error("Set UPSTASH_BOX_API_KEY or UPSTASH_BOX_KEY before running this bootstrap.");
@@ -128,4 +130,23 @@ function envBool(key, fallback) {
 
 function randomAdminToken() {
   return `box_${Math.random().toString(16).slice(2)}${Date.now().toString(16)}`;
+}
+
+function validateBoxApiKey(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith(".")) {
+    console.error(
+      "UPSTASH_BOX_API_KEY starts with a dot. Remove the leading '.' so it starts with box_.",
+    );
+    process.exit(1);
+  }
+  if (trimmed.includes(" ")) {
+    console.error("UPSTASH_BOX_API_KEY contains whitespace. Re-copy the key and export it again.");
+    process.exit(1);
+  }
+  if (!trimmed.startsWith("box_")) {
+    console.warn("UPSTASH_BOX_API_KEY does not start with box_; continuing in case Upstash changed the format.");
+  }
+  return trimmed;
 }

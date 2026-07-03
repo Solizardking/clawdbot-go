@@ -218,7 +218,7 @@ clawdbot-go/
 │
 ├── cmd/                         ── Executables ──
 │   ├── clawdbot/                 CLI agent (1,193 lines, cobra)
-│   │   ├── main.go              58 cobra commands, Birdeye/Helius CLI
+│   │   ├── main.go              60+ cobra commands, Birdeye/Helius CLI, DNA
 │   │   └── hardware.go          I2C sensor commands (scan/test/monitor/demo)
 │   └── clawdbot-tui/             TUI launcher (tcell/tview)
 │
@@ -242,6 +242,7 @@ clawdbot-go/
 │   │
 │   │  ┌─ Infrastructure ───────────────────────────────────-┐
 │   ├── config/                  Config loading, env overrides
+│   ├── dna/                     Synthetic agent DNA generator + proof metadata
 │   ├── hardware/                I2C Modulino® adapter + drivers
 │   ├── providers/               LLM abstraction (OpenRouter, etc.)
 │   ├── channels/                Telegram, Discord, WebSocket
@@ -333,6 +334,8 @@ clawdbot agent -m "Analyze SOL trend"   # Single-shot LLM query
 clawdbot laws                           # Print the canonical six-law harness
 clawdbot doctor                         # Local runtime + trading diagnostics
 clawdbot bench                          # Zero-style cold-start benchmark
+clawdbot dna show                       # Inspect workspace/agent-dna.json
+clawdbot dna generate --agent-name scout --role "research agent"
 clawdbot skills birth                   # Write the birth skill manifest
 clawdbot skills birth --install         # Seed Solizardking + Go skill packs
 
@@ -375,6 +378,20 @@ npx skills add https://github.com/samber/cc-skills-golang --all
 
 The installer and animated launcher run those seeds unless
 `CLAWDBOT_SKIP_SKILL_SEED=1` is set.
+
+### Agent DNA
+
+Every Go-side install/onboard path creates `workspace/agent-dna.json`. The file
+is a synthetic agent identity profile, not biological instruction: it contains
+an A/C/G/T sequence, GC content, PAM/TATA motif counts, OODA trait scores, a
+sequence hash, nullifier, and a local-pending Solana attestation seed.
+
+```bash
+clawdbot dna show
+clawdbot dna generate --agent-name "Research Scout" --role "DeSci signal agent"
+clawdbot dna generate --seed fixed-seed --length 512 --force
+clawdbot dna generate --json
+```
 
 ### Phoenix Perps Via Vulcan
 
@@ -499,6 +516,7 @@ go build -o build/clawdbot-web ./web/backend
 | Endpoint | Method | Description |
 |:---------|:-------|:------------|
 | `/api/status` | GET | Agent status (version, Go runtime, uptime, mode, goroutines) |
+| `/api/dna` | GET | Ensure and return starter agent DNA, metrics, proof, and attestation seed |
 | `/api/health` | GET | Health check |
 | `/api/connectors` | GET | Connector status (Helius, Birdeye, Jupiter, Vulcan, Aster, LLM, Supabase) |
 | `/api/laws` | GET | Canonical six-law harness |
@@ -586,10 +604,10 @@ ssh user@orin-nano './clawdbot ooda --hw-bus 1 --interval 60'
 
 | Metric | Value |
 |:-------|:------|
-| Go source files | 53 |
-| Packages | 31 |
-| Total Go lines | 15,600+ |
-| CLI commands | 58 |
+| Go source files | 70 |
+| Packages | 42 |
+| Total Go lines | 21,400+ |
+| CLI commands | 60+ |
 | Birdeye API methods | 22 |
 | Birdeye agent tools | 19 |
 | Helius DAS commands | 6 |

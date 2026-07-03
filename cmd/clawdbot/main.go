@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -25,10 +26,14 @@ import (
 	"github.com/8bitlabs/clawdbot/pkg/catalog"
 	"github.com/8bitlabs/clawdbot/pkg/channels"
 	"github.com/8bitlabs/clawdbot/pkg/config"
+	"github.com/8bitlabs/clawdbot/pkg/doctor"
 	"github.com/8bitlabs/clawdbot/pkg/hardware"
+	"github.com/8bitlabs/clawdbot/pkg/laws"
+	"github.com/8bitlabs/clawdbot/pkg/perfbench"
 	"github.com/8bitlabs/clawdbot/pkg/phoenix"
 	"github.com/8bitlabs/clawdbot/pkg/providers"
 	"github.com/8bitlabs/clawdbot/pkg/solana"
+	"github.com/8bitlabs/clawdbot/pkg/trading"
 )
 
 const (
@@ -88,6 +93,8 @@ Powered by the PicoClaw Go runtime, adapted for NVIDIA Orin Nano hardware.
 Features:
   • OODA Loop (Observe → Orient → Decide → Act)
   • ClawVault persistent memory (known/learned/inferred)
+  • Six-law trading harness (3 on-chain + 3 off-chain)
+  • Trading cockpit, risk gate, doctor, and performance bench
   • ClawdBot Strategy: RSI + EMA cross + ATR signal engine
   • Solana: Jupiter swaps, Birdeye analytics, Helius RPC, Aster perps
   • Arduino Modulino® I2C: LEDs, buzzer, buttons, knob, sensors
@@ -109,6 +116,10 @@ Public surfaces:
 		NewOnboardCommand(),
 		NewStatusCommand(),
 		NewCatalogCommand(),
+		NewLawsCommand(),
+		NewDoctorCommand(),
+		NewBenchCommand(),
+		NewTradeCommand(),
 		NewOODACommand(),
 		NewSolanaCommand(),
 		NewHardwareCommand(),
@@ -117,6 +128,203 @@ Public surfaces:
 		NewPerpsCommand(),
 	)
 
+	return cmd
+}
+
+// ── Laws Command ─────────────────────────────────────────────────────
+
+func NewLawsCommand() *cobra.Command {
+	var jsonOut bool
+	cmd := &cobra.Command{
+		Use:   "laws",
+		Short: "Print the Clawd six-law trading harness",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if err := laws.Validate(); err != nil {
+				return err
+			}
+			if jsonOut {
+				return writeJSON(laws.Six)
+			}
+			fmt.Print(laws.Markdown())
+			return nil
+		},
+	}
+	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
+	return cmd
+}
+
+// ── Doctor Command ───────────────────────────────────────────────────
+
+func NewDoctorCommand() *cobra.Command {
+	var jsonOut bool
+	var fail bool
+	cmd := &cobra.Command{
+		Use:   "doctor",
+		Short: "Run local ClawdBot runtime and trading diagnostics",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.Load()
+			if err != nil {
+				return fmt.Errorf("config error: %w", err)
+			}
+			report := doctor.Run(doctor.Options{
+				Config:        cfg,
+				ConfigPath:    config.DefaultConfigPath(),
+				WorkspacePath: config.DefaultWorkspacePath(),
+				ProjectRoot:   projectRootFromWD(),
+			})
+			if jsonOut {
+				if err := writeJSON(report); err != nil {
+					return err
+				}
+			} else {
+				fmt.Println(doctor.Format(report))
+			}
+			if fail && !report.OK {
+				return fmt.Errorf("doctor found failing checks")
+			}
+			return nil
+		},
+	}
+	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
+	cmd.Flags().BoolVar(&fail, "fail", false, "Exit non-zero when a failing check is found")
+	return cmd
+}
+
+// ── Bench Command ────────────────────────────────────────────────────
+
+func NewBenchCommand() *cobra.Command {
+	var (
+		iterations int
+		warmup     int
+		jsonOut    bool
+		fail       bool
+		coldWarn   float64
+		firstWarn  float64
+		timeoutSec int
+	)
+	cmd := &cobra.Command{
+		Use:   "bench",
+		Short: "Run a fast Zero-style ClawdBot startup benchmark",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeoutSec)*time.Second)
+			defer cancel()
+			result, err := perfbench.Run(ctx, perfbench.Options{
+				Iterations:       iterations,
+				WarmupIterations: warmup,
+				Thresholds: perfbench.Thresholds{
+					ColdStartP95Ms:   coldWarn,
+					FirstOutputP95Ms: firstWarn,
+				},
+			})
+			if err != nil {
+				return err
+			}
+			if jsonOut {
+				if err := perfbench.WriteJSON(os.Stdout, result); err != nil {
+					return err
+				}
+			} else {
+				fmt.Println(perfbench.Format(result))
+			}
+			if fail && len(result.Warnings) > 0 {
+				return fmt.Errorf("benchmark exceeded warning thresholds")
+			}
+			return nil
+		},
+	}
+	cmd.Flags().IntVar(&iterations, "iterations", 5, "Measured benchmark iterations")
+	cmd.Flags().IntVar(&warmup, "warmup", 1, "Warmup iterations")
+	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
+	cmd.Flags().BoolVar(&fail, "fail-on-warning", false, "Exit non-zero when thresholds are exceeded")
+	cmd.Flags().Float64Var(&coldWarn, "cold-start-warn-ms", perfbench.DefaultThresholds.ColdStartP95Ms, "Cold-start p95 warning threshold")
+	cmd.Flags().Float64Var(&firstWarn, "first-output-warn-ms", perfbench.DefaultThresholds.FirstOutputP95Ms, "First-output p95 warning threshold")
+	cmd.Flags().IntVar(&timeoutSec, "timeout", 30, "Benchmark timeout in seconds")
+	return cmd
+}
+
+// ── Trade Command ────────────────────────────────────────────────────
+
+func NewTradeCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "trade",
+		Short: "Trading cockpit and local risk tools",
+		Long:  "Trading-native operator surface for readiness, guardrails, and local token risk scoring.",
+	}
+	cmd.AddCommand(newTradeCockpitCommand(), newTradeRiskCommand())
+	return cmd
+}
+
+func newTradeCockpitCommand() *cobra.Command {
+	var jsonOut bool
+	cmd := &cobra.Command{
+		Use:   "cockpit",
+		Short: "Show trading readiness, connectors, limits, and six-law state",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, err := config.Load()
+			if err != nil {
+				return fmt.Errorf("config error: %w", err)
+			}
+			report := trading.BuildCockpitReport(cfg, time.Now())
+			if jsonOut {
+				return writeJSON(report)
+			}
+			fmt.Println(trading.FormatCockpit(report))
+			return nil
+		},
+	}
+	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
+	return cmd
+}
+
+func newTradeRiskCommand() *cobra.Command {
+	var (
+		symbol     string
+		price      float64
+		change24h  float64
+		volume24h  float64
+		liquidity  float64
+		top10      float64
+		mutable    bool
+		mintAuth   bool
+		freezeAuth bool
+		jsonOut    bool
+	)
+	cmd := &cobra.Command{
+		Use:   "risk [symbol]",
+		Short: "Score a token against ClawdBot trading risk gates",
+		Args:  cobra.RangeArgs(0, 1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 0 && symbol == "" {
+				symbol = args[0]
+			}
+			assessment := trading.AssessToken(trading.TokenSnapshot{
+				Symbol:         symbol,
+				Price:          price,
+				Change24hPct:   change24h,
+				Volume24hUSD:   volume24h,
+				LiquidityUSD:   liquidity,
+				Top10HolderPct: top10,
+				Mutable:        mutable,
+				HasMintAuth:    mintAuth,
+				HasFreezeAuth:  freezeAuth,
+			})
+			if jsonOut {
+				return writeJSON(assessment)
+			}
+			fmt.Println(trading.FormatRisk(assessment))
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&symbol, "symbol", "", "Token symbol")
+	cmd.Flags().Float64Var(&price, "price", 0, "Token price")
+	cmd.Flags().Float64Var(&change24h, "change24h", 0, "24h percent price change")
+	cmd.Flags().Float64Var(&volume24h, "volume24h", 0, "24h volume in USD")
+	cmd.Flags().Float64Var(&liquidity, "liquidity", 0, "Liquidity in USD")
+	cmd.Flags().Float64Var(&top10, "top10", 0, "Top 10 holder percentage")
+	cmd.Flags().BoolVar(&mutable, "mutable", false, "Token metadata is mutable")
+	cmd.Flags().BoolVar(&mintAuth, "mint-auth", false, "Mint authority is active")
+	cmd.Flags().BoolVar(&freezeAuth, "freeze-auth", false, "Freeze authority is active")
+	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
 	return cmd
 }
 
@@ -1296,6 +1504,23 @@ func sanitizeJSONInput(raw string) string {
 		}
 	}
 	return strings.TrimSpace(s)
+}
+
+func projectRootFromWD() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "."
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "."
+		}
+		dir = parent
+	}
 }
 
 // ── Version Command ──────────────────────────────────────────────────

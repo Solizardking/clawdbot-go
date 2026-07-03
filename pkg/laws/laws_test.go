@@ -1,6 +1,9 @@
 package laws
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestValidateSixLawHarness(t *testing.T) {
 	if err := Validate(); err != nil {
@@ -17,12 +20,8 @@ func TestValidateSixLawHarness(t *testing.T) {
 func TestMarkdownContainsAllLaws(t *testing.T) {
 	markdown := Markdown()
 	for _, law := range Six {
-		if !contains(markdown, "Law "+law.ID) {
+		if !strings.Contains(markdown, "Law "+law.ID) {
 			t.Fatalf("Markdown() missing law %s", law.ID)
 		}
 	}
-}
-
-func contains(s, sub string) bool {
-	return len(sub) == 0 || len(s) >= len(sub) && (s == sub || contains(s[1:], sub) || s[:len(sub)] == sub)
 }

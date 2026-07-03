@@ -16,6 +16,7 @@ import (
 	"github.com/8bitlabs/clawdbot/pkg/config"
 	"github.com/8bitlabs/clawdbot/pkg/solana"
 	"github.com/8bitlabs/clawdbot/pkg/strategy"
+	"github.com/8bitlabs/clawdbot/pkg/trading"
 )
 
 // ── OODA Agent ───────────────────────────────────────────────────────
@@ -62,6 +63,10 @@ type Signal struct {
 	ATR        float64   `json:"atr"`
 	StopLoss   float64   `json:"stopLoss"`
 	TakeProfit float64   `json:"takeProfit"`
+	RiskScore  int       `json:"riskScore"`
+	RiskGrade  string    `json:"riskGrade"`
+	RiskDecision string  `json:"riskDecision"`
+	RiskReasons []string `json:"riskReasons,omitempty"`
 	Reasoning  string    `json:"reasoning"`
 	Sources    []string  `json:"sources"`
 }
@@ -411,6 +416,15 @@ func (a *OODAAgent) evaluateWatchlist(obs *Observation) {
 
 			a.hooks.OnSignalDetected(sig.Symbol, sig.Direction, sig.Strength, sig.Confidence)
 
+			if a.cfg.OODA.Mode == "live" && sig.RiskDecision != string(trading.DecisionAllow) {
+				log.Printf("[OODA] Live trade skipped by risk gate: %s %s score=%d decision=%s",
+					sig.Symbol, sig.Direction, sig.RiskScore, sig.RiskDecision)
+				a.vault.Remember(fmt.Sprintf("RISK GATE: skipped live %s %s score=%d decision=%s reasons=%s",
+					sig.Direction, sig.Symbol, sig.RiskScore, sig.RiskDecision, strings.Join(sig.RiskReasons, "; ")),
+					"decisions", 0.8)
+				continue
+			}
+
 			a.mu.RLock()
 			_, alreadyOpen := a.openPositions[entry.Address]
 			a.mu.RUnlock()
@@ -438,6 +452,22 @@ func (a *OODAAgent) evaluateToken(entry WatchlistEntry) *Signal {
 		Confidence: 0.4,
 		Sources:    []string{"birdeye_overview"},
 	}
+	risk := trading.AssessToken(trading.TokenSnapshot{
+		Address:      entry.Address,
+		Symbol:       entry.Symbol,
+		Price:        entry.Price,
+		Change24hPct: entry.Change24h,
+		Volume24hUSD: entry.Volume24h,
+		LiquidityUSD: entry.Liquidity,
+	})
+	base.RiskScore = risk.Score
+	base.RiskGrade = risk.Grade
+	base.RiskDecision = string(risk.Decision)
+	base.RiskReasons = risk.Reasons
+	if risk.Decision == trading.DecisionBlock {
+		base.Reasoning = "Risk gate BLOCK: " + strings.Join(risk.Reasons, "; ")
+		return base
+	}
 
 	// ── Full strategy path: requires OHLCV ──────────────────────────
 	if a.birdeye != nil && entry.Volume24h >= 500_000 && entry.Liquidity >= 100_000 {
@@ -455,19 +485,24 @@ func (a *OODAAgent) evaluateToken(entry WatchlistEntry) *Signal {
 			sig := strategy.Evaluate(closes, highs, lows, params)
 
 			if sig.Direction != "neutral" {
+				confidence := trading.AdjustConfidence(0.7, risk)
 				return &Signal{
 					Timestamp:  time.Now(),
 					Asset:      entry.Address,
 					Symbol:     entry.Symbol,
 					Direction:  sig.Direction,
 					Strength:   sig.Strength,
-					Confidence: 0.7,
+					Confidence: confidence,
 					RSI:        sig.RSI,
 					EMACross:   sig.EMACross,
 					ATR:        sig.ATR,
 					StopLoss:   sig.StopLoss,
 					TakeProfit: sig.TakeProfit,
-					Reasoning:  sig.Reasoning,
+					RiskScore:  risk.Score,
+					RiskGrade:  risk.Grade,
+					RiskDecision: string(risk.Decision),
+					RiskReasons: risk.Reasons,
+					Reasoning:  fmt.Sprintf("%s | risk=%s/%d decision=%s", sig.Reasoning, risk.Grade, risk.Score, risk.Decision),
 					Sources:    []string{"birdeye_ohlcv", "clawdbot_strategy"},
 				}
 			}
@@ -486,13 +521,13 @@ func (a *OODAAgent) evaluateToken(entry WatchlistEntry) *Signal {
 	if entry.Change24h > 8 && entry.Volume24h > 2_000_000 && entry.Liquidity > 200_000 {
 		base.Direction = "long"
 		base.Strength = clampFloat(entry.Change24h/30.0, 0, 1)
-		base.Confidence = 0.55
+		base.Confidence = trading.AdjustConfidence(0.55, risk)
 		base.Reasoning = fmt.Sprintf("Momentum LONG: %s +%.1f%% vol=$%.0fM",
 			entry.Symbol, entry.Change24h, entry.Volume24h/1e6)
 	} else if entry.Change24h < -10 && params.UsePerps {
 		base.Direction = "short"
 		base.Strength = clampFloat(-entry.Change24h/30.0, 0, 1)
-		base.Confidence = 0.45
+		base.Confidence = trading.AdjustConfidence(0.45, risk)
 		base.Reasoning = fmt.Sprintf("Momentum SHORT: %s %.1f%% (low vol guard)",
 			entry.Symbol, entry.Change24h)
 	}

@@ -1760,9 +1760,10 @@ func NewWebCommand() *cobra.Command {
 
 func NewPerpsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "perps",
-		Aliases: []string{"phoenix"},
-		Short:   "Phoenix perpetual futures through Vulcan — paper, dry-run, live-ready",
+		Use:          "perps",
+		Aliases:      []string{"phoenix"},
+		Short:        "Phoenix perpetual futures through Vulcan — paper, dry-run, live-ready",
+		SilenceUsage: true,
 		Long: `Phoenix perpetual futures command group.
 
 Use this surface to inspect markets, fetch pricing/candle data, inspect

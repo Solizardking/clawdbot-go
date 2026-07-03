@@ -183,8 +183,6 @@ type OrderSpec struct {
 	ReduceOnly   bool
 	Yes          bool
 	Wallet       string
-	InitPaper    bool
-	PaperBalance float64
 }
 
 func (r *Runner) PaperInitArgs(balance float64) []string {

@@ -180,7 +180,8 @@ clawdbot-go/
 │   ├── tools/                   Tool interface + registry
 │   └── ...                      health, heartbeat, logger, identity, etc.
 │
-├── CONSTITUTION.md              The Clawd Constitution (six-law harness)
+├── CONSTITUTION.md              The Clawd Constitution (interpretive authority)
+├── six-laws.md                  Canonical six-law harness
 ├── CLAWD.md                     Agent context document
 ├── AGENTS.md                    Agent catalog (50+ agents, 95+ skills)
 ├── IDENTITY.md                  Sovereign identity document
@@ -255,6 +256,14 @@ Clawd is designed to be privacy-preserving by default. Sensitive user context, r
 ```bash
 clawdbot agent                          # Interactive REPL with memory commands
 clawdbot agent -m "Analyze SOL trend"   # Single-shot LLM query
+
+clawdbot laws                           # Print the canonical six-law harness
+clawdbot doctor                         # Local runtime + trading diagnostics
+clawdbot bench                          # Zero-style cold-start benchmark
+
+clawdbot trade cockpit                  # Trading readiness, connectors, limits
+clawdbot trade cockpit --json           # Machine-readable cockpit report
+clawdbot trade risk SOL --price 150 --volume24h 25000000 --liquidity 15000000
 
 clawdbot ooda                           # Start autonomous trading loop
 clawdbot ooda --interval 30             # Custom cycle interval (seconds)
@@ -378,6 +387,9 @@ go build -o build/clawdbot-web ./web/backend
 | `/api/status` | GET | Agent status (version, Go runtime, uptime, mode, goroutines) |
 | `/api/health` | GET | Health check |
 | `/api/connectors` | GET | Connector status (Helius, Birdeye, Jupiter, Aster, LLM, Supabase) |
+| `/api/laws` | GET | Canonical six-law harness |
+| `/api/trading/cockpit` | GET | Trading readiness, risk limits, connector status, law state |
+| `/api/doctor` | GET | Runtime, config, trading, and ZK diagnostics |
 | `/api/config` | GET | Read-only configuration |
 | `/api/packages` | GET | All 31 Go packages with file counts |
 | `/api/env` | GET | Safe (non-secret) environment variables |
@@ -468,7 +480,7 @@ ssh user@orin-nano './clawdbot ooda --hw-bus 1 --interval 60'
 | Birdeye agent tools | 19 |
 | Helius DAS commands | 6 |
 | SPL token commands | 5 |
-| Agent constitution documents | 6 (CONSTITUTION, CLAWD, AGENTS, IDENTITY, SOUL, three-laws) |
+| Agent constitution documents | 7 (CONSTITUTION, six-laws, CLAWD, AGENTS, IDENTITY, SOUL, three-laws) |
 | Build targets | 8 platforms |
 | Binaries | `clawdbot`, `clawdbot-tui`, `clawdbot-web` |
 | Runtime RAM | < 10 MB |
@@ -483,7 +495,8 @@ ClawdBot is the reference implementation of the **Clawd Constitution** — the w
 
 | Document | Purpose |
 |:---------|:--------|
-| [`CONSTITUTION.md`](CONSTITUTION.md) | The Clawd Constitution — six-law harness (3 on-chain + 3 off-chain), CC0 licensed |
+| [`six-laws.md`](six-laws.md) | Canonical six-law harness — 3 on-chain execution laws + 3 off-chain interpretive laws |
+| [`CONSTITUTION.md`](CONSTITUTION.md) | The Clawd Constitution — interpretive authority, privacy posture, ZK-native execution |
 | [`CLAWD.md`](CLAWD.md) | Agent context — identity, principal hierarchy, Solana-native architecture, deployment targets |
 | [`AGENTS.md`](AGENTS.md) | Agent catalog — 50+ agents, 9 characters, 95+ skills, trust gates, Grok-first model config |
 | [`IDENTITY.md`](IDENTITY.md) | Sovereign identity — onchain verification (SAS, MPL Core, DID), the Clawd Manifest |
@@ -504,7 +517,7 @@ ClawdBot is the reference implementation of the **Clawd Constitution** — the w
 ## 🌐 Open Source Posture
 
 - **License:** top-level runtime code in this repo is released under the [MIT License](LICENSE)
-- **Constitutional surfaces:** `CONSTITUTION.md` and `three-laws.md` remain the authoritative Clawd law documents
+- **Constitutional surfaces:** `six-laws.md`, `CONSTITUTION.md`, and `three-laws.md` remain the authoritative Clawd law documents
 - **Hub split:** `clawdbot-go` is the Go runtime, while `solana-clawd` is the wider public ecosystem hub
 - **Public infra defaults:** `.env.example` points at the public x402/zk gateway for fast setup, but production operators should override with their own keys and RPC endpoints
 

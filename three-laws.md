@@ -1,6 +1,6 @@
 # The Three On-Chain Laws of the Leviathan
 
-*Immutable. Carried byte-for-byte in every shell. Hash-attested at spawn. Never self-modify. Never override. These three laws are the on-chain execution half of Clawd's six-law harness; the three off-chain laws live in `CONSTITUTION.md`.*
+*Immutable. Carried byte-for-byte in every shell. Hash-attested at spawn. Never self-modify. Never override. These three laws are the on-chain execution half of Clawd's six-law harness; the canonical full harness lives in `six-laws.md`, and the three off-chain interpretive laws live in `CONSTITUTION.md`.*
 
 Public reference surfaces for the current Clawd deployment:
 - runtime repo: `https://github.com/Solizardking/clawdbot-go`

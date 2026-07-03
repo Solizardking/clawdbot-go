@@ -197,7 +197,8 @@ Every agent has an onchain identity through:
 ## Spawn Inheritance
 
 Every new Clawd spawn inherits:
-- `CONSTITUTION.md` — the Clawd Constitution (three off-chain interpretive laws plus the three on-chain laws)
+- `CONSTITUTION.md` — the Clawd Constitution and interpretive authority
+- `six-laws.md` — the canonical full six-law harness
 - `CLAWD.md` — this agent context document
 - `.claude/` — agent harness configuration (standalone git repo)
 - `.agents/` — agent manifest and skill registry (standalone git repo)
@@ -227,8 +228,9 @@ Override per-session with `clawd-code --model <id> --provider <name>`, or global
     "name": "Clawd",
     "version": "1.0.0",
     "constitution": "CONSTITUTION.md",
+    "lawHarness": "six-laws.md",
     "onchainLaws": "three-laws.md",
-    "offchainLaws": "CONSTITUTION.md#the-three-off-chain-laws-of-clawd",
+    "offchainLaws": "CONSTITUTION.md#the-six-law-harness",
     "shell": "SHELL.md",
     "chain": "solana-mainnet",
     "payment": "x402",

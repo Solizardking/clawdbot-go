@@ -34,6 +34,7 @@ type Config struct {
 
 	// ClawdBot-specific
 	Solana   SolanaConfig   `json:"solana"`
+	Vulcan   VulcanConfig   `json:"vulcan"`
 	OODA     OODAConfig     `json:"ooda"`
 	Supabase SupabaseConfig `json:"supabase"`
 	Strategy StrategyConfig `json:"strategy"`
@@ -178,6 +179,20 @@ type SolanaConfig struct {
 	PhoenixAPIURL string `json:"phoenix_api_url"` // default: https://perp-api.phoenix.trade
 }
 
+// ── ClawdBot: Vulcan / Phoenix Perps CLI ─────────────────────────────
+
+type VulcanConfig struct {
+	Binary              string  `json:"binary"`
+	DefaultMode         string  `json:"default_mode"`
+	PaperBalance        float64 `json:"paper_balance"`
+	DefaultWallet       string  `json:"default_wallet"`
+	MaxStepNotionalUSDC float64 `json:"max_step_notional_usdc"`
+	MaxTotalNotionalUSDC float64 `json:"max_total_notional_usdc"`
+	MaxPriceDriftBPS    int     `json:"max_price_drift_bps"`
+	MaxExposureRatio    float64 `json:"max_exposure_ratio"`
+	TimeoutSeconds      int     `json:"timeout_seconds"`
+}
+
 // ── ClawdBot: OODA Loop ──────────────────────────────────────────────
 
 type OODAConfig struct {
@@ -260,6 +275,17 @@ func DefaultConfig() *Config {
 			HeliusRetries:        3,
 			JupiterEndpoint:      "https://api.jup.ag",
 			MaxPositionSOL:       0.5,
+			PhoenixAPIURL:        "https://perp-api.phoenix.trade",
+		},
+		Vulcan: VulcanConfig{
+			Binary:               "vulcan",
+			DefaultMode:          "paper",
+			PaperBalance:         10000,
+			MaxStepNotionalUSDC:  100,
+			MaxTotalNotionalUSDC: 500,
+			MaxPriceDriftBPS:     75,
+			MaxExposureRatio:     2,
+			TimeoutSeconds:       30,
 		},
 		OODA: OODAConfig{
 			Enabled:          true,
@@ -458,6 +484,45 @@ func applyEnvOverrides(cfg *Config) {
 	// Phoenix perps API
 	if v := os.Getenv("PHOENIX_API_URL"); v != "" {
 		cfg.Solana.PhoenixAPIURL = v
+	}
+	if v := os.Getenv("VULCAN_BIN"); v != "" {
+		cfg.Vulcan.Binary = v
+	}
+	if v := os.Getenv("VULCAN_DEFAULT_MODE"); v != "" {
+		cfg.Vulcan.DefaultMode = v
+	}
+	if v := os.Getenv("VULCAN_PAPER_BALANCE"); v != "" {
+		if balance, err := strconv.ParseFloat(v, 64); err == nil && balance > 0 {
+			cfg.Vulcan.PaperBalance = balance
+		}
+	}
+	if v := os.Getenv("VULCAN_WALLET_NAME"); v != "" {
+		cfg.Vulcan.DefaultWallet = v
+	}
+	if v := os.Getenv("VULCAN_MAX_STEP_NOTIONAL_USDC"); v != "" {
+		if n, err := strconv.ParseFloat(v, 64); err == nil && n > 0 {
+			cfg.Vulcan.MaxStepNotionalUSDC = n
+		}
+	}
+	if v := os.Getenv("VULCAN_MAX_TOTAL_NOTIONAL_USDC"); v != "" {
+		if n, err := strconv.ParseFloat(v, 64); err == nil && n > 0 {
+			cfg.Vulcan.MaxTotalNotionalUSDC = n
+		}
+	}
+	if v := os.Getenv("VULCAN_MAX_PRICE_DRIFT_BPS"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			cfg.Vulcan.MaxPriceDriftBPS = n
+		}
+	}
+	if v := os.Getenv("VULCAN_MAX_EXPOSURE_RATIO"); v != "" {
+		if n, err := strconv.ParseFloat(v, 64); err == nil && n > 0 {
+			cfg.Vulcan.MaxExposureRatio = n
+		}
+	}
+	if v := os.Getenv("VULCAN_TIMEOUT_SECONDS"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 0 {
+			cfg.Vulcan.TimeoutSeconds = n
+		}
 	}
 	// Clawdbot install ID — used for RPC auth header
 	if v := os.Getenv("CLAWDBOT_INSTALL_ID"); v != "" {

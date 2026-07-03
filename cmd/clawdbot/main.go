@@ -35,6 +35,7 @@ import (
 	skillsPkg "github.com/8bitlabs/clawdbot/pkg/skills"
 	"github.com/8bitlabs/clawdbot/pkg/solana"
 	"github.com/8bitlabs/clawdbot/pkg/trading"
+	"github.com/8bitlabs/clawdbot/pkg/vulcan"
 )
 
 const (
@@ -1757,29 +1758,151 @@ func NewPerpsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "perps",
 		Aliases: []string{"phoenix"},
-		Short:   "Phoenix perpetual futures — prices, positions, orders, and live trading",
+		Short:   "Phoenix perpetual futures through Vulcan — paper, dry-run, live-ready",
 		Long: `Phoenix perpetual futures command group.
 
 Use this surface to inspect markets, fetch pricing/candle data, inspect
-trader state, and submit market or limit orders through the Phoenix perps
-API and Solana transaction path.`,
+trader state, and trade through the official Vulcan CLI. Execution defaults
+to paper mode, which uses live Phoenix prices without wallet signing.`,
 		Example: strings.Join([]string{
+			"  clawdbot perps quickstart",
 			"  clawdbot perps markets",
 			"  clawdbot perps price SOL",
 			"  clawdbot perps candles SOL --tf 1h --limit 20",
-			"  clawdbot perps state <authority>",
-			"  clawdbot perps order market --symbol SOL --side buy --size 1",
+			"  clawdbot perps paper init --balance 10000",
+			"  clawdbot perps order market --symbol SOL --side buy --notional-usdc 25",
+			"  clawdbot perps strategy twap --symbol SOL --side buy --notional-usdc 100 --slices 4 --detached",
+			"  clawdbot perps preflight --wallet my-wallet",
 		}, "\n"),
 	}
 	cmd.AddCommand(
+		newPerpsQuickstartCmd(),
+		newPerpsHealthCmd(),
 		newPerpsMarketsCmd(),
 		newPerpsPriceCmd(),
 		newPerpsCandlesCmd(),
 		newPerpsStateCmd(),
 		newPerpsOrdersCmd(),
 		newPerpsTradesCmd(),
+		newPerpsPaperCmd(),
+		newPerpsPreflightCmd(),
+		newPerpsStrategyCmd(),
 		newPerpsOrderCmd(),
 	)
+	return cmd
+}
+
+func newVulcanRunner(cfg *config.Config) *vulcan.Runner {
+	timeout := time.Duration(cfg.Vulcan.TimeoutSeconds) * time.Second
+	return vulcan.New(vulcan.Config{
+		Binary:               cfg.Vulcan.Binary,
+		DefaultMode:          cfg.Vulcan.DefaultMode,
+		PaperBalance:         cfg.Vulcan.PaperBalance,
+		Timeout:              timeout,
+		MaxStepNotionalUSDC:  cfg.Vulcan.MaxStepNotionalUSDC,
+		MaxTotalNotionalUSDC: cfg.Vulcan.MaxTotalNotionalUSDC,
+		MaxPriceDriftBPS:     cfg.Vulcan.MaxPriceDriftBPS,
+		MaxExposureRatio:     cfg.Vulcan.MaxExposureRatio,
+		Wallet:               cfg.Vulcan.DefaultWallet,
+	})
+}
+
+func writeVulcanResult(result *vulcan.Result) error {
+	if len(result.JSON) > 0 {
+		var v any
+		if err := json.Unmarshal(result.JSON, &v); err == nil {
+			return writeJSON(v)
+		}
+		fmt.Println(string(result.JSON))
+		return nil
+	}
+	if result.Stdout != "" {
+		fmt.Println(result.Stdout)
+	}
+	if result.Stderr != "" {
+		fmt.Fprintln(os.Stderr, result.Stderr)
+	}
+	return nil
+}
+
+func runVulcanAndWrite(ctx context.Context, r *vulcan.Runner, args []string) error {
+	result, err := r.Run(ctx, args)
+	if result != nil {
+		_ = writeVulcanResult(result)
+	}
+	return err
+}
+
+func requireVulcan(r *vulcan.Runner) error {
+	path, err := r.LookPath()
+	if err != nil {
+		return fmt.Errorf("vulcan binary not found; install it with `curl -fsSL https://github.com/Ellipsis-Labs/vulcan-cli/releases/latest/download/install.sh | sh` or set VULCAN_BIN")
+	}
+	fmt.Printf("%s[VULCAN]%s %s\n", colorGreen, colorReset, path)
+	return nil
+}
+
+// perps quickstart — out-of-box Vulcan paper setup and market smoke check
+func newPerpsQuickstartCmd() *cobra.Command {
+	var (
+		symbol  string
+		balance float64
+	)
+	cmd := &cobra.Command{
+		Use:   "quickstart",
+		Short: "Initialize Vulcan paper perps and run a safe market-data smoke check",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _ := config.Load()
+			r := newVulcanRunner(cfg)
+			if err := requireVulcan(r); err != nil {
+				return err
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 45*time.Second)
+			defer cancel()
+			steps := [][]string{
+				r.AgentHealthArgs(),
+				r.PaperInitArgs(balance),
+				r.MarketArgs("list", ""),
+				r.MarketArgs("ticker", symbol),
+			}
+			for _, step := range steps {
+				fmt.Printf("%s$ %s%s\n", colorDim, strings.Join(append([]string{r.Config().Binary}, step...), " "), colorReset)
+				if err := runVulcanAndWrite(ctx, r, step); err != nil {
+					return err
+				}
+			}
+			fmt.Printf("%s[VULCAN]%s Paper perps are ready. Try: clawdbot perps order market --symbol %s --side buy --notional-usdc 25\n",
+				colorGreen, colorReset, strings.ToUpper(symbol))
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&symbol, "symbol", "SOL", "Smoke-check market symbol")
+	cmd.Flags().Float64Var(&balance, "balance", 10000, "Paper account balance")
+	return cmd
+}
+
+// perps health — Vulcan binary, agent health, and status
+func newPerpsHealthCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "health",
+		Short: "Check Vulcan CLI, agent health, and Phoenix connectivity",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _ := config.Load()
+			r := newVulcanRunner(cfg)
+			if err := requireVulcan(r); err != nil {
+				return err
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			for _, step := range [][]string{r.AgentHealthArgs(), r.StatusArgs()} {
+				fmt.Printf("%s$ %s%s\n", colorDim, strings.Join(append([]string{r.Config().Binary}, step...), " "), colorReset)
+				if err := runVulcanAndWrite(ctx, r, step); err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+	}
 	return cmd
 }
 
@@ -2035,6 +2158,173 @@ func newPerpsTradesCmd() *cobra.Command {
 	}
 	cmd.Flags().StringVar(&symbol, "symbol", "", "Filter by market symbol")
 	cmd.Flags().IntVar(&limit, "limit", 20, "Number of trades to return")
+	return cmd
+}
+
+// perps paper — local paper trading against live Phoenix prices
+func newPerpsPaperCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "paper",
+		Short: "Manage Vulcan paper perps state",
+	}
+	cmd.AddCommand(newPerpsPaperInitCmd(), newPerpsPaperPassthroughCmd("status"), newPerpsPaperPassthroughCmd("positions"), newPerpsPaperPassthroughCmd("orders"), newPerpsPaperPassthroughCmd("fills"))
+	return cmd
+}
+
+func newPerpsPaperInitCmd() *cobra.Command {
+	var balance float64
+	cmd := &cobra.Command{
+		Use:   "init",
+		Short: "Initialize or reset the Vulcan paper account",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _ := config.Load()
+			r := newVulcanRunner(cfg)
+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+			defer cancel()
+			return runVulcanAndWrite(ctx, r, r.PaperInitArgs(balance))
+		},
+	}
+	cmd.Flags().Float64Var(&balance, "balance", 10000, "Paper account balance")
+	return cmd
+}
+
+func newPerpsPaperPassthroughCmd(name string) *cobra.Command {
+	var limit int
+	cmd := &cobra.Command{
+		Use:   name,
+		Short: "Run `vulcan paper " + name + " -o json`",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _ := config.Load()
+			r := newVulcanRunner(cfg)
+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+			defer cancel()
+			vargs := []string{"paper", name, "-o", "json"}
+			if name == "fills" && limit > 0 {
+				vargs = []string{"paper", name, "--limit", strconv.Itoa(limit), "-o", "json"}
+			}
+			return runVulcanAndWrite(ctx, r, vargs)
+		},
+	}
+	if name == "fills" {
+		cmd.Flags().IntVar(&limit, "limit", 50, "Number of fills")
+	}
+	return cmd
+}
+
+// perps preflight — Vulcan live readiness
+func newPerpsPreflightCmd() *cobra.Command {
+	var wallet string
+	cmd := &cobra.Command{
+		Use:   "preflight",
+		Short: "Run Vulcan live-readiness preflight for a wallet",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _ := config.Load()
+			r := newVulcanRunner(cfg)
+			if wallet == "" {
+				wallet = cfg.Vulcan.DefaultWallet
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			return runVulcanAndWrite(ctx, r, r.StrategyPreflightArgs(wallet))
+		},
+	}
+	cmd.Flags().StringVar(&wallet, "wallet", "", "Vulcan wallet name")
+	return cmd
+}
+
+// perps strategy — first-class Vulcan strategy runners
+func newPerpsStrategyCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "strategy",
+		Short: "Run Vulcan TWAP and grid strategies with guardrails",
+	}
+	cmd.AddCommand(newPerpsTWAPCmd(), newPerpsGridCmd())
+	return cmd
+}
+
+func newPerpsTWAPCmd() *cobra.Command {
+	var spec vulcan.TWAPSpec
+	cmd := &cobra.Command{
+		Use:   "twap",
+		Short: "Start a Vulcan TWAP strategy, defaulting to paper mode",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _ := config.Load()
+			r := newVulcanRunner(cfg)
+			if spec.Wallet == "" {
+				spec.Wallet = cfg.Vulcan.DefaultWallet
+			}
+			vargs, err := r.TWAPArgs(spec)
+			if err != nil {
+				return err
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			return runVulcanAndWrite(ctx, r, vargs)
+		},
+	}
+	cmd.Flags().StringVar(&spec.Mode, "mode", "paper", "Execution mode: paper, dry-run, confirm-each, auto-execute")
+	cmd.Flags().StringVar(&spec.Symbol, "symbol", "SOL", "Market symbol")
+	cmd.Flags().StringVar(&spec.Side, "side", "", "Side: buy or sell")
+	cmd.Flags().Float64Var(&spec.NotionalUSDC, "notional-usdc", 0, "Total notional in USDC")
+	cmd.Flags().Float64Var(&spec.Tokens, "tokens", 0, "Total base tokens")
+	cmd.Flags().IntVar(&spec.Slices, "slices", 0, "TWAP slices")
+	cmd.Flags().IntVar(&spec.IntervalSeconds, "interval-seconds", 60, "Seconds between slices")
+	cmd.Flags().StringVar(&spec.MarginMode, "margin-mode", "cross", "Margin mode: cross or isolated")
+	cmd.Flags().Float64Var(&spec.IsolatedCollateral, "isolated-collateral", 0, "USDC collateral for isolated margin")
+	cmd.Flags().StringVar(&spec.RunLabel, "run-label", "", "Human-readable run label")
+	cmd.Flags().BoolVar(&spec.Detached, "detached", false, "Start in background and return run id")
+	cmd.Flags().BoolVar(&spec.Yes, "yes", false, "Required acknowledgement for live modes")
+	cmd.Flags().StringVar(&spec.Wallet, "wallet", "", "Vulcan wallet name for live modes")
+	cmd.Flags().Float64Var(&spec.MaxStepNotionalUSDC, "max-step-notional-usdc", 0, "Per-step live notional cap")
+	cmd.Flags().Float64Var(&spec.MaxTotalNotionalUSDC, "max-total-notional-usdc", 0, "Total live notional cap")
+	cmd.Flags().IntVar(&spec.MaxPriceDriftBPS, "max-price-drift-bps", 0, "Pause if mark drifts this many bps")
+	cmd.Flags().Float64Var(&spec.MaxExposureRatio, "max-exposure-ratio", 0, "Position notional/equity exposure cap")
+	_ = cmd.MarkFlagRequired("side")
+	_ = cmd.MarkFlagRequired("slices")
+	return cmd
+}
+
+func newPerpsGridCmd() *cobra.Command {
+	var spec vulcan.GridSpec
+	cmd := &cobra.Command{
+		Use:   "grid",
+		Short: "Start a Vulcan grid strategy, defaulting to paper mode",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cfg, _ := config.Load()
+			r := newVulcanRunner(cfg)
+			if spec.Wallet == "" {
+				spec.Wallet = cfg.Vulcan.DefaultWallet
+			}
+			vargs, err := r.GridArgs(spec)
+			if err != nil {
+				return err
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			return runVulcanAndWrite(ctx, r, vargs)
+		},
+	}
+	cmd.Flags().StringVar(&spec.Mode, "mode", "paper", "Execution mode: paper, dry-run, confirm-each, auto-execute")
+	cmd.Flags().StringVar(&spec.Symbol, "symbol", "SOL", "Market symbol")
+	cmd.Flags().BoolVar(&spec.CenterOnMark, "center-on-mark", true, "Center the grid on current mark")
+	cmd.Flags().Float64Var(&spec.WidthPct, "width-pct", 2.5, "Half-width percentage around mark")
+	cmd.Flags().Float64Var(&spec.LowerPrice, "lower-price", 0, "Explicit lower boundary")
+	cmd.Flags().Float64Var(&spec.UpperPrice, "upper-price", 0, "Explicit upper boundary")
+	cmd.Flags().IntVar(&spec.LevelsPerSide, "levels-per-side", 0, "Grid levels per side")
+	cmd.Flags().Float64Var(&spec.TokensPerLevel, "tokens-per-level", 0, "Base tokens per level")
+	cmd.Flags().Float64Var(&spec.SizeLotsPerLevel, "size-lots-per-level", 0, "Base lots per level")
+	cmd.Flags().IntVar(&spec.IntervalSeconds, "interval-seconds", 60, "Seconds between ticks")
+	cmd.Flags().IntVar(&spec.Ticks, "ticks", 60, "Maximum ticks")
+	cmd.Flags().BoolVar(&spec.RunUntilStopped, "run-until-stopped", false, "Run until stopped")
+	cmd.Flags().StringVar(&spec.RunLabel, "run-label", "", "Human-readable run label")
+	cmd.Flags().BoolVar(&spec.Detached, "detached", false, "Start in background and return run id")
+	cmd.Flags().BoolVar(&spec.Yes, "yes", false, "Required acknowledgement for live modes")
+	cmd.Flags().StringVar(&spec.Wallet, "wallet", "", "Vulcan wallet name for live modes")
+	cmd.Flags().Float64Var(&spec.MaxStepNotionalUSDC, "max-step-notional-usdc", 0, "Per-step live notional cap")
+	cmd.Flags().Float64Var(&spec.MaxTotalNotionalUSDC, "max-total-notional-usdc", 0, "Total live notional cap")
+	cmd.Flags().IntVar(&spec.MaxPriceDriftBPS, "max-price-drift-bps", 0, "Pause if mark drifts this many bps")
+	cmd.Flags().Float64Var(&spec.MaxExposureRatio, "max-exposure-ratio", 0, "Position notional/equity exposure cap")
+	_ = cmd.MarkFlagRequired("levels-per-side")
 	return cmd
 }
 

@@ -15,7 +15,7 @@ ui/ClawdBrowser/tsconfig.tsbuildinfo linguist-generated=true
 .agents/** export-ignore
 agent/** export-ignore
 build/** export-ignore
-clawdbot export-ignore
+/clawdbot export-ignore
 *.DS_Store export-ignore
 dist/** export-ignore
 **/package-lock.json export-ignore

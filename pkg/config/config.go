@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
 	skillsPkg "github.com/8bitlabs/clawdbot/pkg/skills"
 )
 
@@ -376,13 +377,14 @@ func Save(cfg *Config) error {
 
 func EnsureDefaults() error {
 	path := DefaultConfigPath()
-	if _, err := os.Stat(path); err == nil {
-		return nil // already exists
-	}
-
-	cfg := DefaultConfig()
-	if err := Save(cfg); err != nil {
-		return err
+	if _, err := os.Stat(path); err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("stat config: %w", err)
+		}
+		cfg := DefaultConfig()
+		if err := Save(cfg); err != nil {
+			return err
+		}
 	}
 
 	// Create workspace directories
@@ -413,16 +415,38 @@ func EnsureDefaults() error {
 	}
 	for name, content := range identityFiles {
 		p := filepath.Join(ws, name)
-		if err := os.WriteFile(p, []byte(content), 0o644); err != nil {
+		if err := writeFileIfMissing(p, []byte(content), 0o644); err != nil {
 			return fmt.Errorf("write %s: %w", name, err)
 		}
 	}
 
-	if _, err := skillsPkg.WriteBirthManifest(ws, skillsPkg.BuildBirthManifest(time.Now(), nil)); err != nil {
-		return fmt.Errorf("write birth skills manifest: %w", err)
+	birthPath := filepath.Join(ws, "skills", skillsPkg.BirthManifestName)
+	if _, err := os.Stat(birthPath); err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("stat birth skills manifest: %w", err)
+		}
+		if _, err := skillsPkg.WriteBirthManifest(ws, skillsPkg.BuildBirthManifest(time.Now(), nil)); err != nil {
+			return fmt.Errorf("write birth skills manifest: %w", err)
+		}
+	}
+
+	if _, _, err := dnaPkg.EnsureFile(dnaPkg.DefaultPath(ws), dnaPkg.Options{
+		AgentName: "ClawdBot",
+		Role:      "sovereign Solana trading intelligence",
+	}); err != nil {
+		return fmt.Errorf("write agent dna: %w", err)
 	}
 
 	return nil
+}
+
+func writeFileIfMissing(path string, data []byte, perm os.FileMode) error {
+	if _, err := os.Stat(path); err == nil {
+		return nil
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	return os.WriteFile(path, data, perm)
 }
 
 // ── Env Overrides ────────────────────────────────────────────────────

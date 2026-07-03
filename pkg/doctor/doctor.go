@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/8bitlabs/clawdbot/pkg/config"
+	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
 	"github.com/8bitlabs/clawdbot/pkg/laws"
 	"github.com/8bitlabs/clawdbot/pkg/trading"
 )
@@ -60,6 +61,7 @@ func Run(options Options) Report {
 		lawsCheck(),
 		configCheck(options.ConfigPath),
 		workspaceCheck(options.WorkspacePath),
+		dnaCheck(options.WorkspacePath),
 		tradingCheck(cfg),
 		connectorsCheck(cfg),
 		vulcanCheck(cfg),
@@ -139,6 +141,32 @@ func workspaceCheck(path string) Check {
 		return Check{ID: "workspace", Label: "Workspace", Status: StatusFail, Message: err.Error(), Details: map[string]any{"path": path}}
 	}
 	return Check{ID: "workspace", Label: "Workspace", Status: StatusPass, Message: "workspace exists", Details: map[string]any{"path": path}}
+}
+
+func dnaCheck(workspacePath string) Check {
+	if strings.TrimSpace(workspacePath) == "" {
+		workspacePath = config.DefaultWorkspacePath()
+	}
+	path := dnaPkg.DefaultPath(workspacePath)
+	value, err := dnaPkg.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return Check{ID: "agent.dna", Label: "Agent DNA", Status: StatusWarn, Message: "agent DNA missing; run `clawdbot dna generate`", Details: map[string]any{"path": path}}
+		}
+		return Check{ID: "agent.dna", Label: "Agent DNA", Status: StatusFail, Message: err.Error(), Details: map[string]any{"path": path}}
+	}
+	return Check{
+		ID:      "agent.dna",
+		Label:   "Agent DNA",
+		Status:  StatusPass,
+		Message: fmt.Sprintf("%s utility=%d/100", value.Proof.DNAID, value.Metrics.UtilityScore),
+		Details: map[string]any{
+			"path":       path,
+			"sequence":   value.Sequence.Length,
+			"gcContent":  value.Metrics.GCContent,
+			"attestation": value.Attestation.Status,
+		},
+	}
 }
 
 func tradingCheck(cfg *config.Config) Check {

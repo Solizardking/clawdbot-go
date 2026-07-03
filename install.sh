@@ -279,6 +279,13 @@ mkdir -p "$BIN_DIR"
 cp "$INSTALL_DIR/bin/clawdbot" "$BIN_DIR/clawdbot"
 success "Installed to $BIN_DIR/clawdbot"
 
+info "Generating starter agent DNA..."
+"$INSTALL_DIR/bin/clawdbot" dna generate \
+  --if-missing \
+  --out "$INSTALL_DIR/workspace/agent-dna.json" \
+  --agent-name "ClawdBot" \
+  --role "sovereign Solana trading intelligence" || warn "Agent DNA generation failed; run: clawdbot dna generate"
+
 install_vulcan
 
 # Add to PATH if needed
@@ -403,6 +410,7 @@ echo
 echo -e "  ${BOLD}Get started:${RESET}"
 echo -e "  ${CYAN}source ${ENV_FILE}${RESET}          # load env vars"
 echo -e "  ${CYAN}clawdbot version${RESET}             # verify install"
+echo -e "  ${CYAN}clawdbot dna show${RESET}           # inspect starter agent DNA"
 echo -e "  ${CYAN}clawdbot agent${RESET}               # start AI REPL (free via zkrouter)"
 echo -e "  ${CYAN}clawdbot ooda --sim${RESET}          # paper trading mode"
 echo -e "  ${CYAN}clawdbot skills birth --install${RESET} # reseed birth skills"

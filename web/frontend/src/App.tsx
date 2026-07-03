@@ -11,6 +11,7 @@ interface StatusInfo {
   version: string
   agent: string
   config: string
+  dna_path?: string
   uptime: string
   mode: string
   go_version: string
@@ -71,6 +72,39 @@ interface CockpitInfo {
   }
 }
 
+interface AgentDNA {
+  agent: {
+    name: string
+    role: string
+  }
+  sequence: {
+    length: number
+    value: string
+  }
+  metrics: {
+    gcContent: number
+    pamSites: unknown[]
+    tataBoxes: unknown[]
+    utilityScore: number
+    stabilityBand: string
+  }
+  proof: {
+    dnaId: string
+    sequenceSha256: string
+  }
+  attestation: {
+    status: string
+    network: string
+    pdaSeed: string
+  }
+}
+
+interface DNAInfo {
+  path: string
+  created: boolean
+  dna: AgentDNA
+}
+
 export default function App() {
   const [status, setStatus] = useState<StatusInfo | null>(null)
   const [health, setHealth] = useState<HealthInfo | null>(null)
@@ -79,6 +113,7 @@ export default function App() {
   const [envInfo, setEnvInfo] = useState<EnvInfo | null>(null)
   const [ecosystem, setEcosystem] = useState<EcosystemInfo | null>(null)
   const [cockpit, setCockpit] = useState<CockpitInfo | null>(null)
+  const [dnaInfo, setDNAInfo] = useState<DNAInfo | null>(null)
   const [configText, setConfigText] = useState<string>('')
   const [showConfig, setShowConfig] = useState(false)
   const [logs, setLogs] = useState<string[]>(['🦞 ClawdBot Console ready.'])
@@ -93,6 +128,7 @@ export default function App() {
       fetch('/api/env').then(r => r.json()).then(setEnvInfo).catch(() => {})
       fetch('/api/ecosystem').then(r => r.json()).then(setEcosystem).catch(() => {})
       fetch('/api/trading/cockpit').then(r => r.json()).then(setCockpit).catch(() => {})
+      fetch('/api/dna').then(r => r.json()).then(setDNAInfo).catch(() => {})
     }
     fetchAll()
     const interval = setInterval(fetchAll, 10000)
@@ -192,6 +228,42 @@ export default function App() {
             </>
           ) : (
             <div style={{color:'var(--text-dim)'}}>Loading cockpit...</div>
+          )}
+        </div>
+
+        {/* Agent DNA Panel */}
+        <div className="panel">
+          <h2>Agent DNA</h2>
+          {dnaInfo ? (
+            <>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+                <div>
+                  <div className="value">{dnaInfo.dna.metrics.utilityScore}/100</div>
+                  <div className="label">Utility</div>
+                </div>
+                <div>
+                  <div className="value">{dnaInfo.dna.sequence.length}</div>
+                  <div className="label">Bases</div>
+                </div>
+                <div>
+                  <div className="value">{dnaInfo.dna.metrics.gcContent.toFixed(2)}%</div>
+                  <div className="label">GC Content</div>
+                </div>
+                <div>
+                  <div className="value">{dnaInfo.dna.metrics.pamSites.length}/{dnaInfo.dna.metrics.tataBoxes.length}</div>
+                  <div className="label">PAM / TATA</div>
+                </div>
+              </div>
+              <div style={{marginTop:'12px',paddingTop:'12px',borderTop:'1px solid var(--border)'}}>
+                <div className="label">DNA ID</div>
+                <div className="value" style={{fontSize:'0.75rem',wordBreak:'break-all'}}>{dnaInfo.dna.proof.dnaId}</div>
+                <div className="label" style={{marginTop:'8px'}}>Attestation</div>
+                <div className="value" style={{fontSize:'0.75rem'}}>{dnaInfo.dna.attestation.status} · {dnaInfo.dna.attestation.network}</div>
+                <div className="dna-sequence">{dnaInfo.dna.sequence.value.slice(0, 96)}...</div>
+              </div>
+            </>
+          ) : (
+            <div style={{color:'var(--text-dim)'}}>Loading agent DNA...</div>
           )}
         </div>
 

@@ -26,6 +26,7 @@ import (
 
 	"github.com/8bitlabs/clawdbot/pkg/config"
 	"github.com/8bitlabs/clawdbot/pkg/doctor"
+	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
 	"github.com/8bitlabs/clawdbot/pkg/laws"
 	"github.com/8bitlabs/clawdbot/pkg/trading"
 )
@@ -92,7 +93,26 @@ func main() {
 			"go_arch":      runtime.GOARCH,
 			"num_cpu":      runtime.NumCPU(),
 			"goroutines":   runtime.NumGoroutine(),
+			"dna_path":     dnaPkg.DefaultPath(config.DefaultWorkspacePath()),
 			"public_links": ecosystemLinks(),
+		})
+	})
+
+	mux.HandleFunc("/api/dna", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		path := dnaPkg.DefaultPath(config.DefaultWorkspacePath())
+		value, created, err := dnaPkg.EnsureFile(path, dnaPkg.Options{
+			AgentName: "ClawdBot",
+			Role:      "sovereign Solana trading intelligence",
+		})
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]any{
+			"path":    path,
+			"created": created,
+			"dna":     value,
 		})
 	})
 
@@ -416,7 +436,7 @@ a:hover{text-decoration:underline}
 <div class="container">
   <h1>🦞 ClawdBot OS</h1>
   <p class="status">Web Console Running</p>
-  <p>API: <a href="/api/status">/api/status</a> | <a href="/api/connectors">/api/connectors</a> | <a href="/api/trading/cockpit">/api/trading/cockpit</a> | <a href="/api/laws">/api/laws</a> | <a href="/api/doctor">/api/doctor</a></p>
+  <p>API: <a href="/api/status">/api/status</a> | <a href="/api/dna">/api/dna</a> | <a href="/api/connectors">/api/connectors</a> | <a href="/api/trading/cockpit">/api/trading/cockpit</a> | <a href="/api/laws">/api/laws</a> | <a href="/api/doctor">/api/doctor</a></p>
   <p class="info">Build the frontend with: cd web/frontend && npm run build</p>
 </div>
 </body>

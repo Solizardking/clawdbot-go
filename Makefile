@@ -40,7 +40,7 @@ BUILD_DIR := ./build
 BIN_CLI   := $(BUILD_DIR)/clawdbot
 BIN_TUI   := $(BUILD_DIR)/clawdbot-tui
 
-.PHONY: all build orin rpi riscv macos cross tui docker docker-orin clean install test lint deps scan-i2c help
+.PHONY: all build orin rpi riscv macos cross tui web docker docker-orin clean install test lint deps scan-i2c help
 
 # ── Default ───────────────────────────────────────────────────────────
 
@@ -61,6 +61,10 @@ tui:
 	$(GOBUILD) -o $(BIN_TUI) ./cmd/clawdbot-tui
 	@echo "✓ $(BIN_TUI) built"
 	@ls -lh $(BIN_TUI)
+
+web:
+	@echo "🦞 Building ClawdBot Web Console..."
+	$(MAKE) -C web all
 
 # ── NVIDIA Orin Nano (Linux ARM64) ────────────────────────────────────
 # The Orin Nano runs Ubuntu 22.04 aarch64 (Jetson Linux / JetPack 6.x)
@@ -183,6 +187,7 @@ help:
 	@echo ""
 	@echo "  build       Build for current platform"
 	@echo "  tui         Build TUI launcher"
+	@echo "  web         Build web frontend + backend"
 	@echo "  all         Build CLI + TUI"
 	@echo "  orin        Cross-compile for NVIDIA Orin Nano (linux/arm64)"
 	@echo "  rpi         Cross-compile for Raspberry Pi (linux/arm64)"

@@ -28,6 +28,7 @@ import (
 	"github.com/8bitlabs/clawdbot/pkg/channels"
 	"github.com/8bitlabs/clawdbot/pkg/config"
 	"github.com/8bitlabs/clawdbot/pkg/doctor"
+	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
 	"github.com/8bitlabs/clawdbot/pkg/hardware"
 	"github.com/8bitlabs/clawdbot/pkg/laws"
 	"github.com/8bitlabs/clawdbot/pkg/perfbench"
@@ -117,6 +118,7 @@ Public surfaces:
 		NewAgentCommand(),
 		NewGatewayCommand(),
 		NewOnboardCommand(),
+		NewDNACommand(),
 		NewStatusCommand(),
 		NewCatalogCommand(),
 		NewSkillsCommand(),
@@ -469,9 +471,11 @@ func NewOnboardCommand() *cobra.Command {
 
 			configPath := config.DefaultConfigPath()
 			workspacePath := config.DefaultWorkspacePath()
+			dnaPath := dnaPkg.DefaultPath(workspacePath)
 
 			fmt.Printf("Creating config at:    %s%s%s\n", colorTeal, configPath, colorReset)
 			fmt.Printf("Creating workspace at: %s%s%s\n", colorTeal, workspacePath, colorReset)
+			fmt.Printf("Creating agent DNA at: %s%s%s\n", colorTeal, dnaPath, colorReset)
 
 			if err := config.EnsureDefaults(); err != nil {
 				return fmt.Errorf("onboard failed: %w", err)
@@ -480,6 +484,7 @@ func NewOnboardCommand() *cobra.Command {
 			fmt.Printf("\n%s✓ ClawdBot initialized!%s\n", colorGreen, colorReset)
 			fmt.Printf("%sEdit %s to configure API keys.%s\n", colorDim, configPath, colorReset)
 			fmt.Printf("\nQuick start:\n")
+			fmt.Printf("  %sclawdbot dna show%s\n", colorGreen, colorReset)
 			fmt.Printf("  %sclawdbot agent -m \"Hello\"%s\n", colorGreen, colorReset)
 			fmt.Printf("  %sclawdbot ooda --interval 60%s\n", colorGreen, colorReset)
 			fmt.Printf("  %sclawdbot solana wallet%s\n", colorGreen, colorReset)
@@ -488,6 +493,122 @@ func NewOnboardCommand() *cobra.Command {
 			return nil
 		},
 	}
+}
+
+// ── DNA Command ─────────────────────────────────────────────────────
+
+func NewDNACommand() *cobra.Command {
+	var (
+		out     string
+		jsonOut bool
+	)
+
+	cmd := &cobra.Command{
+		Use:   "dna",
+		Short: "Generate and inspect synthetic starter DNA for this agent",
+		Long: `Generate a local synthetic DNA profile for a Clawd agent.
+
+The DNA profile is identity and attestation metadata: A/C/G/T sequence,
+motif metrics, trait scores, proof hashes, and a pending Solana attestation
+seed. It is not biological or clinical instruction.`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return showDNA(out, jsonOut)
+		},
+	}
+	cmd.PersistentFlags().StringVar(&out, "out", "", "DNA file path (default: workspace/agent-dna.json)")
+	cmd.PersistentFlags().BoolVar(&jsonOut, "json", false, "Print JSON")
+
+	var (
+		agentName string
+		role      string
+		seed      string
+		length    int
+		force     bool
+		ifMissing bool
+	)
+	generate := &cobra.Command{
+		Use:   "generate",
+		Short: "Generate an agent DNA profile",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			path := resolveDNAPath(out)
+			if existing, err := dnaPkg.ReadFile(path); err == nil && !force {
+				if ifMissing {
+					return printDNA(path, existing, false, jsonOut)
+				}
+				return fmt.Errorf("agent DNA already exists at %s; use --force to overwrite", path)
+			} else if err != nil && !os.IsNotExist(err) {
+				return err
+			}
+
+			value, err := dnaPkg.Generate(dnaPkg.Options{
+				AgentName: agentName,
+				Role:      role,
+				Seed:      seed,
+				Length:    length,
+			})
+			if err != nil {
+				return err
+			}
+			if err := dnaPkg.WriteFile(path, value); err != nil {
+				return err
+			}
+			return printDNA(path, value, true, jsonOut)
+		},
+	}
+	generate.Flags().StringVar(&agentName, "agent-name", "ClawdBot", "Agent name embedded in the DNA profile")
+	generate.Flags().StringVar(&role, "role", "sovereign Solana trading intelligence", "Agent role embedded in the DNA profile")
+	generate.Flags().StringVar(&seed, "seed", "", "Optional deterministic seed; random when empty")
+	generate.Flags().IntVar(&length, "length", dnaPkg.DefaultSequenceLength, "Synthetic DNA sequence length")
+	generate.Flags().BoolVar(&force, "force", false, "Overwrite an existing DNA file")
+	generate.Flags().BoolVar(&ifMissing, "if-missing", false, "Create DNA only when the file is missing")
+
+	show := &cobra.Command{
+		Use:   "show",
+		Short: "Show the current agent DNA profile",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return showDNA(out, jsonOut)
+		},
+	}
+
+	cmd.AddCommand(generate, show)
+	return cmd
+}
+
+func resolveDNAPath(path string) string {
+	if strings.TrimSpace(path) != "" {
+		return path
+	}
+	return dnaPkg.DefaultPath(config.DefaultWorkspacePath())
+}
+
+func showDNA(path string, jsonOut bool) error {
+	path = resolveDNAPath(path)
+	value, err := dnaPkg.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("agent DNA missing at %s; run `clawdbot dna generate` or `clawdbot onboard`", path)
+		}
+		return err
+	}
+	return printDNA(path, value, false, jsonOut)
+}
+
+func printDNA(path string, value dnaPkg.AgentDNA, created bool, jsonOut bool) error {
+	if jsonOut {
+		return writeJSON(map[string]any{
+			"path":    path,
+			"created": created,
+			"dna":     value,
+		})
+	}
+	if created {
+		fmt.Printf("%sAgent DNA generated%s\n", colorGreen, colorReset)
+	} else {
+		fmt.Printf("%sAgent DNA loaded%s\n", colorTeal, colorReset)
+	}
+	fmt.Println(dnaPkg.Format(value))
+	fmt.Printf("path: %s\n", path)
+	return nil
 }
 
 // ── Status Command ───────────────────────────────────────────────────
@@ -1794,7 +1915,15 @@ to paper mode, which uses live Phoenix prices without wallet signing.`,
 		newPerpsStrategyCmd(),
 		newPerpsOrderCmd(),
 	)
+	silenceUsageTree(cmd)
 	return cmd
+}
+
+func silenceUsageTree(cmd *cobra.Command) {
+	cmd.SilenceUsage = true
+	for _, child := range cmd.Commands() {
+		silenceUsageTree(child)
+	}
 }
 
 func newVulcanRunner(cfg *config.Config) *vulcan.Runner {

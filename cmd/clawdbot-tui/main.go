@@ -88,6 +88,7 @@ func main() {
 		{"⚡ RPC Ping", "Helius generic RPC getSlot", "solana spl rpc getSlot --params '[]'"},
 		{"📊 Status", "System status & health", "status"},
 		{"🛠  Onboard", "Initialize config & workspace", "onboard"},
+		{"🧬 Agent DNA", "Generate or inspect starter DNA", "dna show"},
 		{"🎛  Hardware", "Scan Modulino I2C sensors", "hardware scan"},
 		{"⚙  Gateway", "Start multi-channel gateway", "gateway"},
 		{"📜 Version", "Version & build info", "version"},

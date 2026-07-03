@@ -78,6 +78,20 @@ check_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
 
+json_get() {
+  local json="$1"
+  local key="$2"
+  printf '%s' "$json" | tr '\n' ' ' | sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" | head -1
+}
+
+append_env_if_missing() {
+  local key="$1"
+  local value="$2"
+  if [[ -n "$value" && -f "$ENV_FILE" ]] && ! grep -q "^${key}=" "$ENV_FILE"; then
+    printf '%s=%s\n' "$key" "$value" >> "$ENV_FILE"
+  fi
+}
+
 github_archive_url() {
   local repo_url="$1"
   local ref="$2"
@@ -305,6 +319,31 @@ if "$INSTALL_DIR/bin/clawdbot" dna --help >/dev/null 2>&1; then
     --role "sovereign Solana trading intelligence" || warn "Agent DNA generation failed; run: clawdbot dna generate"
 else
   warn "Installed clawdbot binary does not expose dna; skipping starter DNA"
+fi
+
+# ── Agent wallet for startup funding ──────────────────────────────────────────
+AGENT_DNA_ID=""
+if "$INSTALL_DIR/bin/clawdbot" dna --help >/dev/null 2>&1; then
+  DNA_JSON="$(CLAWDBOT_HOME="$INSTALL_DIR" "$INSTALL_DIR/bin/clawdbot" dna show \
+    --out "$INSTALL_DIR/workspace/agent-dna.json" \
+    --json 2>/dev/null || echo '{}')"
+  AGENT_DNA_ID="$(json_get "$DNA_JSON" "dnaId")"
+fi
+
+AGENT_WALLET_PUBKEY=""
+if "$INSTALL_DIR/bin/clawdbot" solana wallet init --help >/dev/null 2>&1; then
+  info "Initializing local agent wallet..."
+  WALLET_JSON="$(CLAWDBOT_HOME="$INSTALL_DIR" "$INSTALL_DIR/bin/clawdbot" solana wallet init \
+    --out "$AGENT_WALLET_PATH" \
+    --json 2>/dev/null || echo '{}')"
+  AGENT_WALLET_PUBKEY="$(json_get "$WALLET_JSON" "pubkey")"
+  if [[ -n "$AGENT_WALLET_PUBKEY" ]]; then
+    success "Agent wallet: ${AGENT_WALLET_PUBKEY}"
+  else
+    warn "Agent wallet initialization did not return a public key"
+  fi
+else
+  warn "Installed clawdbot binary does not expose solana wallet init; startup funding will be skipped"
 fi
 
 install_vulcan

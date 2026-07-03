@@ -2,7 +2,8 @@
 // Ported from the overnight research system.
 //
 // Flow: Read program.md → Query vault lessons → Generate hypothesis →
-//       Mutate strategy → Backtest → Accept/Reject → Store results
+//
+//	Mutate strategy → Backtest → Accept/Reject → Store results
 package research
 
 import (
@@ -57,32 +58,32 @@ func DefaultParams() StrategyParams {
 // ── Experiment ───────────────────────────────────────────────────────
 
 type ExperimentResult struct {
-	ID             string         `json:"id"`
-	Hypothesis     string         `json:"hypothesis"`
-	MutatedParam   string         `json:"mutated_param"`
-	OldValue       interface{}    `json:"old_value"`
-	NewValue       interface{}    `json:"new_value"`
-	Metric         float64        `json:"metric"` // Sharpe × WinRate
-	Sharpe         float64        `json:"sharpe"`
-	WinRate        float64        `json:"win_rate"`
-	TradeCount     int            `json:"trade_count"`
-	MaxDrawdown    float64        `json:"max_drawdown"`
-	Accepted       bool           `json:"accepted"`
-	Reason         string         `json:"reason"`
-	Params         StrategyParams `json:"params"`
-	Duration       time.Duration  `json:"duration"`
-	Timestamp      string         `json:"timestamp"`
+	ID           string         `json:"id"`
+	Hypothesis   string         `json:"hypothesis"`
+	MutatedParam string         `json:"mutated_param"`
+	OldValue     interface{}    `json:"old_value"`
+	NewValue     interface{}    `json:"new_value"`
+	Metric       float64        `json:"metric"` // Sharpe × WinRate
+	Sharpe       float64        `json:"sharpe"`
+	WinRate      float64        `json:"win_rate"`
+	TradeCount   int            `json:"trade_count"`
+	MaxDrawdown  float64        `json:"max_drawdown"`
+	Accepted     bool           `json:"accepted"`
+	Reason       string         `json:"reason"`
+	Params       StrategyParams `json:"params"`
+	Duration     time.Duration  `json:"duration"`
+	Timestamp    string         `json:"timestamp"`
 }
 
 // ── ResearchLoop ─────────────────────────────────────────────────────
 
 type ResearchLoop struct {
-	vault         *memory.ClawVault
-	memEngine     *memory.MemoryEngine
-	bestMetric    float64
-	currentParams StrategyParams
-	programPath   string
-	strategyPath  string
+	vault          *memory.ClawVault
+	memEngine      *memory.MemoryEngine
+	bestMetric     float64
+	currentParams  StrategyParams
+	programPath    string
+	strategyPath   string
 	maxExperiments int
 }
 
@@ -168,7 +169,7 @@ func (rl *ResearchLoop) Run(ctx context.Context) ([]ExperimentResult, error) {
 	}
 
 	logger.InfoCF("research", "Research loop complete", map[string]any{
-		"experiments":  len(results),
+		"experiments": len(results),
 		"best_metric": rl.bestMetric,
 	})
 

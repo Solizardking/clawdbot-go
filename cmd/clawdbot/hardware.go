@@ -357,9 +357,15 @@ func NewHardwareMonitorCommand() *cobra.Command {
 					}
 					if btns, ok := env["buttons"].(*hardware.ButtonState); ok {
 						b1, b2, b3 := "○", "○", "○"
-						if btns.Button1 { b1 = colorGreen + "●" + colorReset }
-						if btns.Button2 { b2 = colorGreen + "●" + colorReset }
-						if btns.Button3 { b3 = colorGreen + "●" + colorReset }
+						if btns.Button1 {
+							b1 = colorGreen + "●" + colorReset
+						}
+						if btns.Button2 {
+							b2 = colorGreen + "●" + colorReset
+						}
+						if btns.Button3 {
+							b3 = colorGreen + "●" + colorReset
+						}
 						fmt.Printf("  btns=[%s%s%s]", b1, b2, b3)
 					}
 

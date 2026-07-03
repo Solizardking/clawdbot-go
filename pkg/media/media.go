@@ -12,9 +12,9 @@ import (
 )
 
 type FileMeta struct {
-	Filename    string `json:"filename"`
-	ContentType string `json:"content_type"`
-	Size        int64  `json:"size"`
+	Filename    string    `json:"filename"`
+	ContentType string    `json:"content_type"`
+	Size        int64     `json:"size"`
 	StoredAt    time.Time `json:"stored_at"`
 }
 

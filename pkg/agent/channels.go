@@ -3,9 +3,10 @@
 // Ported from Channels.ts.
 //
 // Surfaces:
-//   terminal — default CLI, compact, terse, dark-terminal aesthetic
-//   whatsapp — mobile-first, short, no tables
-//   json     — machine-readable structured output for integrations
+//
+//	terminal — default CLI, compact, terse, dark-terminal aesthetic
+//	whatsapp — mobile-first, short, no tables
+//	json     — machine-readable structured output for integrations
 package agent
 
 // ── Channel Profile ──────────────────────────────────────────────────
@@ -131,12 +132,12 @@ var telegramProfile = ChannelProfile{
 // ── Registry ─────────────────────────────────────────────────────────
 
 var channelProfiles = map[string]*ChannelProfile{
-	"terminal":  &terminalProfile,
-	"cli":       &terminalProfile,
-	"whatsapp":  &whatsappProfile,
-	"json":      &jsonProfile,
-	"discord":   &discordProfile,
-	"telegram":  &telegramProfile,
+	"terminal": &terminalProfile,
+	"cli":      &terminalProfile,
+	"whatsapp": &whatsappProfile,
+	"json":     &jsonProfile,
+	"discord":  &discordProfile,
+	"telegram": &telegramProfile,
 }
 
 // GetChannelProfile returns the formatting profile for a channel.

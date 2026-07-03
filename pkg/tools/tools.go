@@ -23,18 +23,18 @@ type Tool interface {
 // Use this to register tools with a simple struct literal.
 
 type ToolDef struct {
-	ToolName         string                                                 `json:"name"`
-	Desc             string                                                 `json:"description"`
-	Schema           json.RawMessage                                        `json:"input_schema,omitempty"`
-	RequiresApproval bool                                                   `json:"requires_approval"`
+	ToolName         string                                                         `json:"name"`
+	Desc             string                                                         `json:"description"`
+	Schema           json.RawMessage                                                `json:"input_schema,omitempty"`
+	RequiresApproval bool                                                           `json:"requires_approval"`
 	ExecuteFn        func(ctx context.Context, args map[string]any) (string, error) `json:"-"`
 }
 
 // Ensure ToolDef satisfies the Tool interface compile-time.
 var _ Tool = (*ToolDef)(nil)
 
-func (t *ToolDef) Name() string             { return t.ToolName }
-func (t *ToolDef) Description() string      { return t.Desc }
+func (t *ToolDef) Name() string        { return t.ToolName }
+func (t *ToolDef) Description() string { return t.Desc }
 func (t *ToolDef) InputSchema() json.RawMessage {
 	if t.Schema != nil {
 		return t.Schema
@@ -52,10 +52,10 @@ func (t *ToolDef) NeedsApproval() bool { return t.RequiresApproval }
 // ── Registry ─────────────────────────────────────────────────────────
 
 type Registry struct {
-	mu      sync.RWMutex
-	tools   map[string]Tool
-	hidden  map[string]Tool
-	order   []string
+	mu     sync.RWMutex
+	tools  map[string]Tool
+	hidden map[string]Tool
+	order  []string
 }
 
 func NewRegistry() *Registry {

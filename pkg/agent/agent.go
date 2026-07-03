@@ -34,17 +34,17 @@ const (
 // ── AgentConfig ──────────────────────────────────────────────────────
 
 type AgentConfig struct {
-	Model          string
-	MaxIterations  int
-	Channel        string
-	MemoryEngine   *memory.MemoryEngine
-	ToolRegistry   *tools.Registry
-	Provider       providers.LLMProvider
-	ApprovalFn     ApprovalFunc
-	SoulPath       string
-	StrategyPath   string
-	MaxTokens      int
-	Temperature    float64
+	Model         string
+	MaxIterations int
+	Channel       string
+	MemoryEngine  *memory.MemoryEngine
+	ToolRegistry  *tools.Registry
+	Provider      providers.LLMProvider
+	ApprovalFn    ApprovalFunc
+	SoulPath      string
+	StrategyPath  string
+	MaxTokens     int
+	Temperature   float64
 }
 
 // ── ClawdAgent ────────────────────────────────────────────────────────
@@ -244,7 +244,7 @@ func (a *ClawdAgent) Run(ctx context.Context, query string) <-chan AgentEvent {
 
 func (a *ClawdAgent) Chat(ctx context.Context, prompt string) (string, *TokenUsage, error) {
 	resp, err := a.provider.Chat(ctx, providers.ChatOptions{
-		Model:       a.config.Model,
+		Model: a.config.Model,
 		Messages: []providers.Message{
 			{Role: "system", Content: a.systemPrompt},
 			{Role: "user", Content: prompt},

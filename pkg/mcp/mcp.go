@@ -23,9 +23,9 @@ type ServerConnection struct {
 }
 
 type MCPConfig struct {
-	Enabled   bool                     `json:"enabled"`
-	Servers   map[string]ServerConfig  `json:"servers"`
-	Discovery DiscoveryConfig          `json:"discovery"`
+	Enabled   bool                    `json:"enabled"`
+	Servers   map[string]ServerConfig `json:"servers"`
+	Discovery DiscoveryConfig         `json:"discovery"`
 }
 
 type ServerConfig struct {

@@ -31,12 +31,12 @@ type ToolResult struct {
 }
 
 type Response struct {
-	Content    string     `json:"content"`
-	ToolCalls  []ToolCall `json:"tool_calls"`
-	StopReason string     `json:"stop_reason"` // "end_turn", "tool_use", "max_tokens"
-	InputTokens  int      `json:"input_tokens"`
-	OutputTokens int      `json:"output_tokens"`
-	Thinking     string   `json:"thinking,omitempty"`
+	Content      string     `json:"content"`
+	ToolCalls    []ToolCall `json:"tool_calls"`
+	StopReason   string     `json:"stop_reason"` // "end_turn", "tool_use", "max_tokens"
+	InputTokens  int        `json:"input_tokens"`
+	OutputTokens int        `json:"output_tokens"`
+	Thinking     string     `json:"thinking,omitempty"`
 }
 
 // ── Provider Interface ───────────────────────────────────────────────

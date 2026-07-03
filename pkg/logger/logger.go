@@ -36,11 +36,11 @@ var levelNames = map[Level]string{
 }
 
 var levelColors = map[Level]string{
-	DEBUG: "\033[36m",  // cyan
-	INFO:  "\033[32m",  // green
-	WARN:  "\033[33m",  // yellow
-	ERROR: "\033[31m",  // red
-	FATAL: "\033[35m",  // magenta
+	DEBUG: "\033[36m", // cyan
+	INFO:  "\033[32m", // green
+	WARN:  "\033[33m", // yellow
+	ERROR: "\033[31m", // red
+	FATAL: "\033[35m", // magenta
 }
 
 const resetColor = "\033[0m"
@@ -99,9 +99,9 @@ func logf(l Level, category, msg string, fields map[string]any) {
 // Category-filtered logging (CF = CategoryFields)
 func DebugCF(cat, msg string, fields map[string]any) { logf(DEBUG, cat, msg, fields) }
 func InfoCF(cat, msg string, fields map[string]any)  { logf(INFO, cat, msg, fields) }
-func WarnCF(cat, msg string, fields map[string]any)   { logf(WARN, cat, msg, fields) }
-func ErrorCF(cat, msg string, fields map[string]any)  { logf(ERROR, cat, msg, fields) }
-func FatalCF(cat, msg string, fields map[string]any)  { logf(FATAL, cat, msg, fields) }
+func WarnCF(cat, msg string, fields map[string]any)  { logf(WARN, cat, msg, fields) }
+func ErrorCF(cat, msg string, fields map[string]any) { logf(ERROR, cat, msg, fields) }
+func FatalCF(cat, msg string, fields map[string]any) { logf(FATAL, cat, msg, fields) }
 
 // Convenience shortcuts
 func Debug(msg string) { logf(DEBUG, "clawdbot", msg, nil) }

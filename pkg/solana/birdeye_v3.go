@@ -211,14 +211,14 @@ func (b *BirdeyeClient) GetPriceStats(address string, timeframes string) ([]Pric
 
 // TokenListOpts configures a token list query.
 type TokenListOpts struct {
-	SortBy         string  // liquidity, volume_24h_usd, price_change_24h_percent, etc.
-	SortType       string  // desc, asc
-	Offset         int
-	Limit          int     // 1-100
-	MinLiquidity   float64
-	MinMarketCap   float64
-	MinVolume24h   float64
-	MinHolder      int
+	SortBy       string // liquidity, volume_24h_usd, price_change_24h_percent, etc.
+	SortType     string // desc, asc
+	Offset       int
+	Limit        int // 1-100
+	MinLiquidity float64
+	MinMarketCap float64
+	MinVolume24h float64
+	MinHolder    int
 }
 
 // GetTokenList returns a paginated list of tokens sorted by the given criteria.

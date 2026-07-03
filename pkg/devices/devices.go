@@ -97,7 +97,9 @@ func FormatDeviceTable(devices []*Device) string {
 	result += "─────────────────────────────────────────────────────────\n"
 	for _, d := range devices {
 		status := "✗"
-		if d.Connected { status = "✓" }
+		if d.Connected {
+			status = "✓"
+		}
 		result += fmt.Sprintf("%-12s %-20s %-10s 0x%02X   %s\n", d.ID, d.Name, d.Type, d.I2CAddress, status)
 	}
 	return result

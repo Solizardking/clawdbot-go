@@ -2,11 +2,11 @@
 // Minimal Solana transaction builder, signer, and RPC submitter.
 //
 // Flow:
-//   1. Load ed25519 keypair from Solana CLI JSON file
-//   2. Fetch recent blockhash via Solana RPC
-//   3. Build legacy transaction message from Phoenix instructions
-//   4. Sign with ed25519 private key
-//   5. Submit base64-encoded transaction via sendTransaction RPC
+//  1. Load ed25519 keypair from Solana CLI JSON file
+//  2. Fetch recent blockhash via Solana RPC
+//  3. Build legacy transaction message from Phoenix instructions
+//  4. Sign with ed25519 private key
+//  5. Submit base64-encoded transaction via sendTransaction RPC
 package phoenix
 
 import (
@@ -201,7 +201,7 @@ func BuildAndSign(kp *Keypair, instructions []Instruction, blockhash string) ([]
 
 	// Collect all accounts from instructions
 	type builtIx struct {
-		programIdx int
+		programIdx  int
 		accountIdxs []byte
 		data        []byte
 	}

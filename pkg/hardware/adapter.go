@@ -4,13 +4,13 @@
 // ClawdBot OODA agent lifecycle.  It implements agent.AgentHooks so the agent
 // core never needs to know about I2C — the adapter handles everything:
 //
-//   Pixels LEDs  → visual status (idle/signal/trade/win/loss/error)
-//   Buzzer       → audio alerts (signal beep, trade open, win/loss, error)
-//   Buttons      → human control (trigger cycle / toggle mode / emergency stop)
-//   Knob         → real-time RSI param tuning (turn left/right)
-//   Thermo       → environment logging (temp+humidity to vault every N cycles)
-//   Distance     → proximity alert (< 5cm = shake the agent awake)
-//   Motion       → tilt detection (severe tilt = pause trading)
+//	Pixels LEDs  → visual status (idle/signal/trade/win/loss/error)
+//	Buzzer       → audio alerts (signal beep, trade open, win/loss, error)
+//	Buttons      → human control (trigger cycle / toggle mode / emergency stop)
+//	Knob         → real-time RSI param tuning (turn left/right)
+//	Thermo       → environment logging (temp+humidity to vault every N cycles)
+//	Distance     → proximity alert (< 5cm = shake the agent awake)
+//	Motion       → tilt detection (severe tilt = pause trading)
 //
 // Everything degrades gracefully when sensors are not physically connected.
 package hardware
@@ -92,15 +92,15 @@ type AgentControls struct {
 type HardwareAdapter struct {
 	mu       sync.Mutex
 	cfg      AdapterConfig
-	hub      *HardwareHub   // nil if no hardware connected
+	hub      *HardwareHub // nil if no hardware connected
 	controls AgentControls
 
 	// state
-	currentStatus  string
-	currentMode    string
-	knobLastPos    int32
-	lastThermo     time.Time
-	tiltPaused     bool
+	currentStatus string
+	currentMode   string
+	knobLastPos   int32
+	lastThermo    time.Time
+	tiltPaused    bool
 
 	stopCh chan struct{}
 	wg     sync.WaitGroup

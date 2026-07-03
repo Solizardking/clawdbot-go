@@ -5,18 +5,20 @@
 // Architecture: Session → Observe → Score → Route → Store → Reflect → Promote
 //
 // Vault structure:
-//   vault/decisions/   — trade decisions with rationale
-//   vault/lessons/     — learned patterns and insights
-//   vault/trades/      — trade outcomes and P&L
-//   vault/research/    — auto-research experiment logs
-//   vault/tasks/       — pending agent tasks
-//   vault/backlog/     — deferred items
-//   vault/inbox/       — raw incoming observations
+//
+//	vault/decisions/   — trade decisions with rationale
+//	vault/lessons/     — learned patterns and insights
+//	vault/trades/      — trade outcomes and P&L
+//	vault/research/    — auto-research experiment logs
+//	vault/tasks/       — pending agent tasks
+//	vault/backlog/     — deferred items
+//	vault/inbox/       — raw incoming observations
 //
 // Internal state (.clawvault/):
-//   graph-index.json   — cross-document link graph
-//   last-checkpoint.json — wake/sleep state
-//   config.json        — vault configuration
+//
+//	graph-index.json   — cross-document link graph
+//	last-checkpoint.json — wake/sleep state
+//	config.json        — vault configuration
 package memory
 
 import (
@@ -63,15 +65,15 @@ var categoryKeywords = map[VaultCategory][]string{
 // ── VaultEntry ───────────────────────────────────────────────────────
 
 type VaultEntry struct {
-	ID        string        `json:"id"`
-	Category  VaultCategory `json:"category"`
-	Title     string        `json:"title"`
-	Content   string        `json:"content"`
-	Tags      []string      `json:"tags"`
-	Links     []string      `json:"links"`
-	Score     float64       `json:"score"`
-	CreatedAt string        `json:"created_at"`
-	UpdatedAt string        `json:"updated_at"`
+	ID        string         `json:"id"`
+	Category  VaultCategory  `json:"category"`
+	Title     string         `json:"title"`
+	Content   string         `json:"content"`
+	Tags      []string       `json:"tags"`
+	Links     []string       `json:"links"`
+	Score     float64        `json:"score"`
+	CreatedAt string         `json:"created_at"`
+	UpdatedAt string         `json:"updated_at"`
 	Metadata  map[string]any `json:"metadata,omitempty"`
 }
 

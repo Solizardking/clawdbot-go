@@ -347,9 +347,9 @@ func (c *Client) FutSetPositionMode(hedgeMode bool) error {
 // kindType: "SPOT_FUTURE" or "FUTURE_SPOT"
 func (c *Client) Transfer(asset string, amount string, kindType string, clientTranID string) (*TransferResponse, error) {
 	params := url.Values{
-		"asset":       {asset},
-		"amount":      {amount},
-		"kindType":    {kindType},
+		"asset":        {asset},
+		"amount":       {amount},
+		"kindType":     {kindType},
 		"clientTranId": {clientTranID},
 	}
 	// Uses the futures endpoint for transfers

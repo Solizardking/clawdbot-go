@@ -20,21 +20,21 @@ const (
 // ── Memory ───────────────────────────────────────────────────────────
 
 type Memory struct {
-	ID         string            `json:"id"`
-	CreatedAt  time.Time         `json:"created_at"`
-	Type       MemoryType        `json:"memory_type"`
-	Source     string            `json:"source"`
-	Topic      string            `json:"topic"`
-	Asset      string            `json:"asset,omitempty"`
-	AssetClass string            `json:"asset_class,omitempty"`
-	Timeframe  string            `json:"timeframe,omitempty"`
-	Content    string            `json:"content"`
-	RawData    json.RawMessage   `json:"raw_data,omitempty"`
-	Metadata   map[string]any    `json:"metadata,omitempty"`
-	Confidence float64           `json:"confidence"`
-	Reinforced int               `json:"reinforcement"`
-	ExpiresAt  *time.Time        `json:"expires_at,omitempty"`
-	Tags       []string          `json:"tags,omitempty"`
+	ID         string          `json:"id"`
+	CreatedAt  time.Time       `json:"created_at"`
+	Type       MemoryType      `json:"memory_type"`
+	Source     string          `json:"source"`
+	Topic      string          `json:"topic"`
+	Asset      string          `json:"asset,omitempty"`
+	AssetClass string          `json:"asset_class,omitempty"`
+	Timeframe  string          `json:"timeframe,omitempty"`
+	Content    string          `json:"content"`
+	RawData    json.RawMessage `json:"raw_data,omitempty"`
+	Metadata   map[string]any  `json:"metadata,omitempty"`
+	Confidence float64         `json:"confidence"`
+	Reinforced int             `json:"reinforcement"`
+	ExpiresAt  *time.Time      `json:"expires_at,omitempty"`
+	Tags       []string        `json:"tags,omitempty"`
 }
 
 // ── Epistemological State ────────────────────────────────────────────

@@ -215,10 +215,10 @@ func (m *Movement) Read() (*MotionData, error) {
 	}
 
 	// Parse raw 16-bit signed values
-	gx := float64(int16(binary.LittleEndian.Uint16(buf[0:2]))) * 8.75 / 1000.0   // dps
+	gx := float64(int16(binary.LittleEndian.Uint16(buf[0:2]))) * 8.75 / 1000.0 // dps
 	gy := float64(int16(binary.LittleEndian.Uint16(buf[2:4]))) * 8.75 / 1000.0
 	gz := float64(int16(binary.LittleEndian.Uint16(buf[4:6]))) * 8.75 / 1000.0
-	ax := float64(int16(binary.LittleEndian.Uint16(buf[6:8]))) * 0.061 / 1000.0   // g
+	ax := float64(int16(binary.LittleEndian.Uint16(buf[6:8]))) * 0.061 / 1000.0 // g
 	ay := float64(int16(binary.LittleEndian.Uint16(buf[8:10]))) * 0.061 / 1000.0
 	az := float64(int16(binary.LittleEndian.Uint16(buf[10:12]))) * 0.061 / 1000.0
 
@@ -244,7 +244,7 @@ type Thermo struct {
 
 type ThermoData struct {
 	Temperature float64 `json:"temperature"` // °C
-	Humidity    float64 `json:"humidity"`     // %RH
+	Humidity    float64 `json:"humidity"`    // %RH
 }
 
 func NewThermo(bus *I2CBus) *Thermo {
@@ -265,8 +265,8 @@ func (t *Thermo) Read() (*ThermoData, error) {
 	}
 
 	// Parse humidity (14-bit) and temperature (14-bit)
-	humRaw := (uint16(buf[0]) << 8 | uint16(buf[1])) >> 2
-	tempRaw := (uint16(buf[2]) << 8 | uint16(buf[3])) >> 2
+	humRaw := (uint16(buf[0])<<8 | uint16(buf[1])) >> 2
+	tempRaw := (uint16(buf[2])<<8 | uint16(buf[3])) >> 2
 
 	humidity := float64(humRaw) / 16383.0 * 100.0
 	temperature := float64(tempRaw)/16383.0*165.0 - 40.0
@@ -333,13 +333,13 @@ func (p *Pixels) Show() error {
 
 // ClawdBot status colors
 var (
-	ColorIdle    = RGB{0, 30, 0}      // dim green
-	ColorRunning = RGB{20, 241, 149}  // neon green (#14F195)
-	ColorSignal  = RGB{153, 69, 255}  // purple (#9945FF)
-	ColorTrade   = RGB{0, 212, 255}   // teal (#00D4FF)
-	ColorError   = RGB{255, 64, 96}   // red (#FF4060)
-	ColorWin     = RGB{20, 241, 149}  // green
-	ColorLoss    = RGB{255, 64, 96}   // red
+	ColorIdle    = RGB{0, 30, 0}     // dim green
+	ColorRunning = RGB{20, 241, 149} // neon green (#14F195)
+	ColorSignal  = RGB{153, 69, 255} // purple (#9945FF)
+	ColorTrade   = RGB{0, 212, 255}  // teal (#00D4FF)
+	ColorError   = RGB{255, 64, 96}  // red (#FF4060)
+	ColorWin     = RGB{20, 241, 149} // green
+	ColorLoss    = RGB{255, 64, 96}  // red
 )
 
 // ShowStatus displays a status pattern on the 8 LEDs.
@@ -401,12 +401,12 @@ func (b *Buzzer) Stop() error {
 }
 
 // ClawdBot alert sounds
-func (b *Buzzer) BeepSignal() error   { return b.Tone(1200, 100) }
-func (b *Buzzer) BeepTrade() error    { return b.Tone(1800, 200) }
-func (b *Buzzer) BeepWin() error      { return b.Tone(2400, 300) }
-func (b *Buzzer) BeepLoss() error     { return b.Tone(400, 500) }
-func (b *Buzzer) BeepError() error    { return b.Tone(200, 1000) }
-func (b *Buzzer) BeepStartup() error  { return b.Tone(1000, 150) }
+func (b *Buzzer) BeepSignal() error  { return b.Tone(1200, 100) }
+func (b *Buzzer) BeepTrade() error   { return b.Tone(1800, 200) }
+func (b *Buzzer) BeepWin() error     { return b.Tone(2400, 300) }
+func (b *Buzzer) BeepLoss() error    { return b.Tone(400, 500) }
+func (b *Buzzer) BeepError() error   { return b.Tone(200, 1000) }
+func (b *Buzzer) BeepStartup() error { return b.Tone(1000, 150) }
 
 // ── Modulino® Buttons (3x push + 3x LED via STM32) ──────────────────
 // Default addr: 0x7C
@@ -450,9 +450,15 @@ func (b *Buttons) Read() (*ButtonState, error) {
 // SetLEDs controls the 3 button LEDs.
 func (b *Buttons) SetLEDs(led1, led2, led3 bool) error {
 	var val uint8
-	if led1 { val |= 0x01 }
-	if led2 { val |= 0x02 }
-	if led3 { val |= 0x04 }
+	if led1 {
+		val |= 0x01
+	}
+	if led2 {
+		val |= 0x02
+	}
+	if led3 {
+		val |= 0x04
+	}
 	return b.bus.Write(b.addr, []byte{0x01, val})
 }
 

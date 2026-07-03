@@ -6,7 +6,8 @@
 // and signal-based execution.
 //
 // Flow:
-//   Signal → Validate → Size → Execute → Monitor → Record
+//
+//	Signal → Validate → Size → Execute → Monitor → Record
 package aster
 
 import (
@@ -696,9 +697,9 @@ func (t *PerpTrader) recordToVault(signal TradeSignal, result TradeResult) {
 		t.memEngine.Remember(memory.RememberInput{
 			MemoryType: memory.TypeLearned,
 			Source:     "aster_perp_trade",
-			Topic:     fmt.Sprintf("%s %s trade", signal.Side, signal.Symbol),
-			Asset:     signal.Symbol,
-			Content:   fmt.Sprintf("Executed %s %s at %s (conf=%.2f, lev=%dx). Thesis: %s",
+			Topic:      fmt.Sprintf("%s %s trade", signal.Side, signal.Symbol),
+			Asset:      signal.Symbol,
+			Content: fmt.Sprintf("Executed %s %s at %s (conf=%.2f, lev=%dx). Thesis: %s",
 				signal.Side, signal.Symbol, result.EntryPrice, signal.Confidence, result.Leverage, signal.Thesis),
 			Confidence: signal.Confidence,
 		})

@@ -72,8 +72,8 @@ type ToolCallRecord struct {
 }
 
 type ToolUsageEntry struct {
-	tool    string
-	query   string
+	tool     string
+	query    string
 	calledAt time.Time
 }
 
@@ -82,28 +82,28 @@ type ToolUsageEntry struct {
 
 // Soft limits per tool (warn only, never block)
 var defaultToolLimits = map[string]int{
-	"birdeye_price":            3,
-	"birdeye_ohlcv":            2,
+	"birdeye_price":             3,
+	"birdeye_ohlcv":             2,
 	"birdeye_technical_signals": 3,
-	"birdeye_trending":         2,
-	"birdeye_token_overview":   3,
-	"aster_signal":             3,
-	"aster_digest":             2,
-	"helius_get_balance":       2,
-	"helius_get_transactions":  2,
-	"memory_recall":            5,
-	"memory_whatdoiknow":       3,
-	"memory_learn":             5,
-	"vault_remember":           10,
+	"birdeye_trending":          2,
+	"birdeye_token_overview":    3,
+	"aster_signal":              3,
+	"aster_digest":              2,
+	"helius_get_balance":        2,
+	"helius_get_transactions":   2,
+	"memory_recall":             5,
+	"memory_whatdoiknow":        3,
+	"memory_learn":              5,
+	"vault_remember":            10,
 }
 
 type Scratchpad struct {
-	mu          sync.Mutex
-	query       string
-	toolCalls   []ToolCallRecord
-	thinkings   []string
-	toolUsage   []ToolUsageEntry
-	toolLimits  map[string]int
+	mu         sync.Mutex
+	query      string
+	toolCalls  []ToolCallRecord
+	thinkings  []string
+	toolUsage  []ToolUsageEntry
+	toolLimits map[string]int
 }
 
 func NewScratchpad(query string) *Scratchpad {

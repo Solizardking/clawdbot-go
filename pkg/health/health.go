@@ -18,11 +18,11 @@ const (
 )
 
 type CheckResult struct {
-	Name     string        `json:"name"`
-	Status   Status        `json:"status"`
-	Latency  time.Duration `json:"latency"`
-	Message  string        `json:"message,omitempty"`
-	LastCheck time.Time    `json:"last_check"`
+	Name      string        `json:"name"`
+	Status    Status        `json:"status"`
+	Latency   time.Duration `json:"latency"`
+	Message   string        `json:"message,omitempty"`
+	LastCheck time.Time     `json:"last_check"`
 }
 
 type CheckFunc func(ctx context.Context) CheckResult

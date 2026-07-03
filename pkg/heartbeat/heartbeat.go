@@ -12,11 +12,11 @@ import (
 type HeartbeatFunc func(ctx context.Context, content, channel, chatID string) (string, error)
 
 type Config struct {
-	Enabled   bool          `json:"enabled"`
-	Interval  time.Duration `json:"interval"`
-	Prompt    string        `json:"prompt"`
-	Channel   string        `json:"channel"`
-	ChatID    string        `json:"chat_id"`
+	Enabled  bool          `json:"enabled"`
+	Interval time.Duration `json:"interval"`
+	Prompt   string        `json:"prompt"`
+	Channel  string        `json:"channel"`
+	ChatID   string        `json:"chat_id"`
 }
 
 type Heartbeat struct {

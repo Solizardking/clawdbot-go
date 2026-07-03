@@ -249,6 +249,31 @@ curl -fsSL https://install.onchainai.fund/install.sh | bash -n
 
 See `cloudflare/README.md` for the DNS and route checklist.
 
+### Upstash Box Install Surface
+
+You can run ClawdBot as a "Solana computer" inside an Upstash Box and use the
+Box preview URL as the install endpoint:
+
+```bash
+cd scripts
+export UPSTASH_BOX_API_KEY=...              # or UPSTASH_BOX_KEY
+export SOLANA_RPC_URL=https://...
+export CLAWDBOT_TREASURY_PRIVATE_KEY=...   # hot wallet secret; do not commit
+export CLAWDBOT_INSTALL_FUNDING_ENABLED=1
+export CLAWDBOT_INSTALL_FUNDING_SEND=1      # real transfers
+npm run box:bootstrap
+```
+
+The Box server listens on port `3000` and serves:
+
+```bash
+curl -fsSL https://<box-preview-url>/install.sh | bash
+```
+
+Every install posts to `/api/install`, is appended to the Box JSONL ledger, and
+is idempotently funded once per agent wallet with `0.069420` SOL and `1,000`
+`$CLAWD`. `/api/installs` requires `CLAWDBOT_INSTALL_ADMIN_TOKEN`.
+
 ### Module Path Compatibility
 
 The public repository is:

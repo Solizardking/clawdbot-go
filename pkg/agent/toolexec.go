@@ -38,11 +38,11 @@ type AgentEvent struct {
 	Error    string                 `json:"error,omitempty"`
 
 	// Done event fields
-	Answer     string       `json:"answer,omitempty"`
+	Answer     string           `json:"answer,omitempty"`
 	ToolCalls  []ToolCallRecord `json:"tool_calls,omitempty"`
-	Iterations int          `json:"iterations,omitempty"`
-	TotalTime  time.Duration `json:"total_time,omitempty"`
-	Tokens     *TokenUsage  `json:"token_usage,omitempty"`
+	Iterations int              `json:"iterations,omitempty"`
+	TotalTime  time.Duration    `json:"total_time,omitempty"`
+	Tokens     *TokenUsage      `json:"token_usage,omitempty"`
 }
 
 // ── Approval ─────────────────────────────────────────────────────────
@@ -67,9 +67,9 @@ var approvalRequired = map[string]bool{
 // ── ToolExecutor ─────────────────────────────────────────────────────
 
 type ToolExecutor struct {
-	registry          *tools.Registry
-	requestApproval   ApprovalFunc
-	sessionApproved   map[string]bool
+	registry        *tools.Registry
+	requestApproval ApprovalFunc
+	sessionApproved map[string]bool
 }
 
 func NewToolExecutor(registry *tools.Registry, approvalFn ApprovalFunc) *ToolExecutor {
@@ -83,7 +83,10 @@ func NewToolExecutor(registry *tools.Registry, approvalFn ApprovalFunc) *ToolExe
 // ExecuteAll runs a batch of tool calls, emitting events via channel.
 func (te *ToolExecutor) ExecuteAll(
 	ctx context.Context,
-	calls []struct{ Name string; Input map[string]interface{} },
+	calls []struct {
+		Name  string
+		Input map[string]interface{}
+	},
 	scratchpad *Scratchpad,
 ) []AgentEvent {
 	var events []AgentEvent

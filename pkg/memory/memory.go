@@ -3,9 +3,10 @@
 // Ported from MemoryEngine.ts.
 //
 // Three tiers:
-//   KNOWN    — facts fetched from APIs. Expires. Ground truth while fresh.
-//   LEARNED  — insights from trading and analysis. Persistent.
-//   INFERRED — cross-domain synthesis. Agent-reasoned connections.
+//
+//	KNOWN    — facts fetched from APIs. Expires. Ground truth while fresh.
+//	LEARNED  — insights from trading and analysis. Persistent.
+//	INFERRED — cross-domain synthesis. Agent-reasoned connections.
 //
 // Dual storage: Supabase (source of truth when available) + ClawVault (local markdown).
 package memory
@@ -39,13 +40,13 @@ var knownFactTTLSeconds = map[string]int{
 // ── MemoryEngine ─────────────────────────────────────────────────────
 
 type MemoryEngine struct {
-	supabaseURL  string
-	supabaseKey  string
-	openaiKey    string
-	vault        *ClawVault
-	sessionID    string
-	useSupabase  bool
-	httpClient   *http.Client
+	supabaseURL string
+	supabaseKey string
+	openaiKey   string
+	vault       *ClawVault
+	sessionID   string
+	useSupabase bool
+	httpClient  *http.Client
 }
 
 type EngineOpts struct {
@@ -68,13 +69,13 @@ func NewMemoryEngine(opts EngineOpts) *MemoryEngine {
 	}
 
 	return &MemoryEngine{
-		supabaseURL:  opts.SupabaseURL,
-		supabaseKey:  opts.SupabaseServiceKey,
-		openaiKey:    opts.OpenAIAPIKey,
-		vault:        vault,
-		sessionID:    sessionID,
-		useSupabase:  opts.SupabaseURL != "" && opts.SupabaseServiceKey != "",
-		httpClient:   &http.Client{Timeout: 15 * time.Second},
+		supabaseURL: opts.SupabaseURL,
+		supabaseKey: opts.SupabaseServiceKey,
+		openaiKey:   opts.OpenAIAPIKey,
+		vault:       vault,
+		sessionID:   sessionID,
+		useSupabase: opts.SupabaseURL != "" && opts.SupabaseServiceKey != "",
+		httpClient:  &http.Client{Timeout: 15 * time.Second},
 	}
 }
 
@@ -95,7 +96,7 @@ func (me *MemoryEngine) Init() error {
 type RememberInput struct {
 	MemoryType MemoryType     `json:"memory_type"`
 	Source     string         `json:"source"`
-	Topic      string        `json:"topic"`
+	Topic      string         `json:"topic"`
 	Asset      string         `json:"asset,omitempty"`
 	AssetClass string         `json:"asset_class,omitempty"`
 	Timeframe  string         `json:"timeframe,omitempty"`
@@ -213,11 +214,11 @@ type MemorySearchResult struct {
 	ID         string     `json:"id"`
 	MemoryType MemoryType `json:"memory_type"`
 	Source     string     `json:"source"`
-	Topic      string    `json:"topic"`
+	Topic      string     `json:"topic"`
 	Content    string     `json:"content"`
-	Asset      string    `json:"asset"`
-	Confidence float64   `json:"confidence"`
-	Similarity float64   `json:"similarity"`
+	Asset      string     `json:"asset"`
+	Confidence float64    `json:"confidence"`
+	Similarity float64    `json:"similarity"`
 }
 
 func (me *MemoryEngine) RecallMemories(opts RecallInput) []MemorySearchResult {

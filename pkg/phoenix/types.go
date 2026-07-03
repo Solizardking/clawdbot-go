@@ -6,26 +6,26 @@ package phoenix
 // ── Market types ─────────────────────────────────────────────────────
 
 type Market struct {
-	Symbol                  string        `json:"symbol"`
-	AssetID                 int           `json:"assetId"`
-	MarketStatus            string        `json:"marketStatus"`
-	MarketPubkey            string        `json:"marketPubkey"`
-	TickSize                int64         `json:"tickSize"`
-	BaseLotsDecimals        int           `json:"baseLotsDecimals"`
-	TakerFee                float64       `json:"takerFee"`
-	MakerFee                float64       `json:"makerFee"`
-	FundingIntervalSeconds  int           `json:"fundingIntervalSeconds"`
-	MaxFundingRatePerInterval int64       `json:"maxFundingRatePerInterval"`
-	OpenInterestCapBaseLots int64         `json:"openInterestCapBaseLots"`
-	IsolatedOnly            bool          `json:"isolatedOnly"`
+	Symbol                    string  `json:"symbol"`
+	AssetID                   int     `json:"assetId"`
+	MarketStatus              string  `json:"marketStatus"`
+	MarketPubkey              string  `json:"marketPubkey"`
+	TickSize                  int64   `json:"tickSize"`
+	BaseLotsDecimals          int     `json:"baseLotsDecimals"`
+	TakerFee                  float64 `json:"takerFee"`
+	MakerFee                  float64 `json:"makerFee"`
+	FundingIntervalSeconds    int     `json:"fundingIntervalSeconds"`
+	MaxFundingRatePerInterval int64   `json:"maxFundingRatePerInterval"`
+	OpenInterestCapBaseLots   int64   `json:"openInterestCapBaseLots"`
+	IsolatedOnly              bool    `json:"isolatedOnly"`
 }
 
 // ── Exchange snapshot ─────────────────────────────────────────────────
 
 type ExchangeSnapshot struct {
-	Version        int                  `json:"version"`
-	Slot           int64                `json:"slot"`
-	Markets        []MarketSnapshot     `json:"markets"`
+	Version int              `json:"version"`
+	Slot    int64            `json:"slot"`
+	Markets []MarketSnapshot `json:"markets"`
 }
 
 type MarketSnapshot struct {
@@ -64,16 +64,16 @@ type TraderStateResponse struct {
 }
 
 type TraderView struct {
-	Collateral       float64         `json:"collateral"`
-	PortfolioValue   float64         `json:"portfolioValue"`
-	EffectiveCollateral float64      `json:"effectiveCollateral"`
-	UnrealizedPnl    float64         `json:"unrealizedPnl"`
-	MaintenanceMargin float64        `json:"maintenanceMargin"`
-	InitialMargin    float64         `json:"initialMargin"`
-	RiskState        string          `json:"riskState"`
-	ActivityState    string          `json:"activityState"`
-	Positions        []TraderPosition `json:"positions"`
-	LimitOrders      []LimitOrder     `json:"limitOrders"`
+	Collateral          float64          `json:"collateral"`
+	PortfolioValue      float64          `json:"portfolioValue"`
+	EffectiveCollateral float64          `json:"effectiveCollateral"`
+	UnrealizedPnl       float64          `json:"unrealizedPnl"`
+	MaintenanceMargin   float64          `json:"maintenanceMargin"`
+	InitialMargin       float64          `json:"initialMargin"`
+	RiskState           string           `json:"riskState"`
+	ActivityState       string           `json:"activityState"`
+	Positions           []TraderPosition `json:"positions"`
+	LimitOrders         []LimitOrder     `json:"limitOrders"`
 }
 
 type TraderPosition struct {
@@ -88,11 +88,11 @@ type TraderPosition struct {
 }
 
 type LimitOrder struct {
-	Symbol    string  `json:"symbol"`
-	Side      string  `json:"side"`
-	Price     float64 `json:"price"`
-	BaseLots  string  `json:"baseLots"`
-	Margin    float64 `json:"margin"`
+	Symbol   string  `json:"symbol"`
+	Side     string  `json:"side"`
+	Price    float64 `json:"price"`
+	BaseLots string  `json:"baseLots"`
+	Margin   float64 `json:"margin"`
 }
 
 // ── Order history ─────────────────────────────────────────────────────
@@ -127,15 +127,15 @@ type PaginatedTrades struct {
 }
 
 type TradeHistoryItem struct {
-	MarketSymbol         string  `json:"marketSymbol"`
-	Timestamp            string  `json:"timestamp"`
-	Price                string  `json:"price"`
-	BaseLotsDelta        string  `json:"baseLotsDelta"`
-	RealizedPnl          string  `json:"realizedPnl"`
-	Fees                 string  `json:"fees"`
-	Liquidity            string  `json:"liquidity"`
-	TradeType            string  `json:"tradeType"`
-	Signature            *string `json:"signature"`
+	MarketSymbol  string  `json:"marketSymbol"`
+	Timestamp     string  `json:"timestamp"`
+	Price         string  `json:"price"`
+	BaseLotsDelta string  `json:"baseLotsDelta"`
+	RealizedPnl   string  `json:"realizedPnl"`
+	Fees          string  `json:"fees"`
+	Liquidity     string  `json:"liquidity"`
+	TradeType     string  `json:"tradeType"`
+	Signature     *string `json:"signature"`
 }
 
 // ── Order request params ──────────────────────────────────────────────

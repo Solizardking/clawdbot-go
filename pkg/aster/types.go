@@ -1,9 +1,10 @@
 // Package aster provides a Go client for the Aster DEX perpetual futures API.
 // Base URLs:
-//   Spot:    https://sapi.asterdex.com
-//   Futures: https://fapi.asterdex.com
-//   WS Spot: wss://sstream.asterdex.com
-//   WS Perp: wss://fstream.asterdex.com
+//
+//	Spot:    https://sapi.asterdex.com
+//	Futures: https://fapi.asterdex.com
+//	WS Spot: wss://sstream.asterdex.com
+//	WS Perp: wss://fstream.asterdex.com
 package aster
 
 // ── Enums ────────────────────────────────────────────────────────────
@@ -100,12 +101,12 @@ type FundingRate struct {
 }
 
 type FundingInfo struct {
-	Symbol              string  `json:"symbol"`
-	InterestRate        string  `json:"interestRate"`
-	Time                int64   `json:"time"`
-	FundingIntervalHours int    `json:"fundingIntervalHours"`
-	FundingFeeCap       float64 `json:"fundingFeeCap"`
-	FundingFeeFloor     float64 `json:"fundingFeeFloor"`
+	Symbol               string  `json:"symbol"`
+	InterestRate         string  `json:"interestRate"`
+	Time                 int64   `json:"time"`
+	FundingIntervalHours int     `json:"fundingIntervalHours"`
+	FundingFeeCap        float64 `json:"fundingFeeCap"`
+	FundingFeeFloor      float64 `json:"fundingFeeFloor"`
 }
 
 type Ticker24hr struct {
@@ -141,14 +142,14 @@ type BookTicker struct {
 }
 
 type Kline struct {
-	OpenTime                 int64
-	Open, High, Low, Close   string
-	Volume                   string
-	CloseTime                int64
-	QuoteVolume              string
-	Trades                   int
-	TakerBuyBaseVolume       string
-	TakerBuyQuoteVolume      string
+	OpenTime               int64
+	Open, High, Low, Close string
+	Volume                 string
+	CloseTime              int64
+	QuoteVolume            string
+	Trades                 int
+	TakerBuyBaseVolume     string
+	TakerBuyQuoteVolume    string
 }
 
 type Depth struct {
@@ -160,37 +161,37 @@ type Depth struct {
 // ── Account Types ────────────────────────────────────────────────────
 
 type FuturesBalance struct {
-	Asset               string `json:"asset"`
-	Balance             string `json:"balance"`
-	CrossWalletBalance  string `json:"crossWalletBalance"`
-	CrossUnPnl          string `json:"crossUnPnl"`
-	AvailableBalance    string `json:"availableBalance"`
-	MaxWithdrawAmount   string `json:"maxWithdrawAmount"`
-	MarginAvailable     bool   `json:"marginAvailable"`
-	UpdateTime          int64  `json:"updateTime"`
+	Asset              string `json:"asset"`
+	Balance            string `json:"balance"`
+	CrossWalletBalance string `json:"crossWalletBalance"`
+	CrossUnPnl         string `json:"crossUnPnl"`
+	AvailableBalance   string `json:"availableBalance"`
+	MaxWithdrawAmount  string `json:"maxWithdrawAmount"`
+	MarginAvailable    bool   `json:"marginAvailable"`
+	UpdateTime         int64  `json:"updateTime"`
 }
 
 type FuturesAccount struct {
-	FeeTier                  int               `json:"feeTier"`
-	CanTrade                 bool              `json:"canTrade"`
-	TotalWalletBalance       string            `json:"totalWalletBalance"`
-	TotalUnrealizedProfit    string            `json:"totalUnrealizedProfit"`
-	TotalMarginBalance       string            `json:"totalMarginBalance"`
-	AvailableBalance         string            `json:"availableBalance"`
-	MaxWithdrawAmount        string            `json:"maxWithdrawAmount"`
-	Assets                   []AccountAsset    `json:"assets"`
-	Positions                []AccountPosition `json:"positions"`
+	FeeTier               int               `json:"feeTier"`
+	CanTrade              bool              `json:"canTrade"`
+	TotalWalletBalance    string            `json:"totalWalletBalance"`
+	TotalUnrealizedProfit string            `json:"totalUnrealizedProfit"`
+	TotalMarginBalance    string            `json:"totalMarginBalance"`
+	AvailableBalance      string            `json:"availableBalance"`
+	MaxWithdrawAmount     string            `json:"maxWithdrawAmount"`
+	Assets                []AccountAsset    `json:"assets"`
+	Positions             []AccountPosition `json:"positions"`
 }
 
 type AccountAsset struct {
-	Asset                string `json:"asset"`
-	WalletBalance        string `json:"walletBalance"`
-	UnrealizedProfit     string `json:"unrealizedProfit"`
-	MarginBalance        string `json:"marginBalance"`
-	AvailableBalance     string `json:"availableBalance"`
-	MaxWithdrawAmount    string `json:"maxWithdrawAmount"`
-	MarginAvailable      bool   `json:"marginAvailable"`
-	UpdateTime           int64  `json:"updateTime"`
+	Asset             string `json:"asset"`
+	WalletBalance     string `json:"walletBalance"`
+	UnrealizedProfit  string `json:"unrealizedProfit"`
+	MarginBalance     string `json:"marginBalance"`
+	AvailableBalance  string `json:"availableBalance"`
+	MaxWithdrawAmount string `json:"maxWithdrawAmount"`
+	MarginAvailable   bool   `json:"marginAvailable"`
+	UpdateTime        int64  `json:"updateTime"`
 }
 
 type AccountPosition struct {
@@ -274,12 +275,12 @@ type LeverageResponse struct {
 type LeverageBracket struct {
 	Symbol   string `json:"symbol"`
 	Brackets []struct {
-		Bracket            int     `json:"bracket"`
-		InitialLeverage    int     `json:"initialLeverage"`
-		NotionalCap        float64 `json:"notionalCap"`
-		NotionalFloor      float64 `json:"notionalFloor"`
-		MaintMarginRatio   float64 `json:"maintMarginRatio"`
-		Cum                float64 `json:"cum"`
+		Bracket          int     `json:"bracket"`
+		InitialLeverage  int     `json:"initialLeverage"`
+		NotionalCap      float64 `json:"notionalCap"`
+		NotionalFloor    float64 `json:"notionalFloor"`
+		MaintMarginRatio float64 `json:"maintMarginRatio"`
+		Cum              float64 `json:"cum"`
 	} `json:"brackets"`
 }
 

@@ -2,10 +2,10 @@
 // Base HTTP client with HMAC SHA256 signing for Aster DEX API.
 //
 // Auth flow:
-//   1. Collect all params as query string (key=value&key=value)
-//   2. HMAC SHA256 sign with secretKey
-//   3. Append &signature=<hex> to params
-//   4. Send with X-MBX-APIKEY header
+//  1. Collect all params as query string (key=value&key=value)
+//  2. HMAC SHA256 sign with secretKey
+//  3. Append &signature=<hex> to params
+//  4. Send with X-MBX-APIKEY header
 package aster
 
 import (

@@ -68,6 +68,12 @@ The system compiles to three standalone binaries that run on everything from NVI
 curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | bash
 ```
 
+For the complete Solizardking/core-ai sidecar install:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_CORE_AI=1 bash
+```
+
 > **Free AI included** — no API keys required to get started.  
 > The installer pre-configures [zkrouter](https://zk.x402.wtf) (free AI routing) and a  
 > SolanaTracker-backed RPC endpoint. Bring your own keys to lift rate limits.
@@ -123,6 +129,41 @@ The default install path is already pointed at the public Clawd surfaces:
 - gateway: `https://zk.x402.wtf`
 - terminal: `https://cheshireterminal.ai`
 
+### core-ai Integration
+
+`Solizardking/core-ai` is a TypeScript/Node tooling repository: Helius MCP,
+Pump MCP, Clawd Code plugin material, skills, and Solana documentation tooling.
+It is intentionally not a `go.mod` dependency and should not be embedded into
+the Go binary. The Go build stays a standalone runtime; `core-ai` is installed
+beside it as an optional sidecar.
+
+The installer supports that model with:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_CORE_AI=1 bash
+```
+
+That fetches the slim integration branch into `~/.clawdbot/core-ai`, builds the
+local MCP packages when `npm` is available, and writes:
+
+```text
+~/.clawdbot/core-ai.mcp.json
+```
+
+Relevant knobs:
+
+```bash
+CLAWDBOT_INSTALL_CORE_AI=1
+CLAWDBOT_CORE_AI_REPO=https://github.com/Solizardking/core-ai
+CLAWDBOT_CORE_AI_REF=clawd-stack-integration
+CLAWDBOT_CORE_AI_DIR=~/.clawdbot/core-ai
+CLAWDBOT_CORE_AI_MCP_CONFIG=~/.clawdbot/core-ai.mcp.json
+```
+
+Use `CLAWDBOT_SOURCE_MODE=archive` for small installs. Use
+`CLAWDBOT_SOURCE_MODE=git` only when the installed source must be a mutable git
+checkout.
+
 ### Module Path Compatibility
 
 The public repository is:
@@ -136,6 +177,19 @@ That mismatch is intentional for now. The codebase keeps the legacy module path 
 - clone and browse the code from `https://github.com/Solizardking/clawdbot-go`
 - expect Go imports inside the repo to remain `github.com/8bitlabs/clawdbot/...`
 - treat a future module-path migration as a deliberate breaking change, not as unfinished accidental drift
+
+### Slim Package Target
+
+The source archive is kept small by excluding local/generated payload from
+release archives: `.cache/`, `.agents/`, `agent/`, `build/`, checked-in
+binaries, generated UI screenshots, Node build outputs, `node_modules`, and
+lockfiles for optional TypeScript surfaces. The install path rebuilds or
+reseeds those pieces instead of shipping them inside the Go source package.
+
+For a default Go install, the required payload is the Go source, docs,
+`README.md`, `install.sh`, `go.mod`, `go.sum`, and runtime config examples. For
+a complete Solana tooling install, use `CLAWDBOT_INSTALL_CORE_AI=1` so the Node
+tooling is fetched and built as a sidecar after the Go binary is installed.
 
 ---
 

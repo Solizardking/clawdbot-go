@@ -9,13 +9,29 @@
 import type { PublicKey } from "@solana/web3.js";
 import type { Bytes32 } from "./types.js";
 
+export interface CompressedValidityProof {
+  a: number[];
+  b: number[];
+  c: number[];
+}
+
 export interface ValidityProof {
-  /** Compressed proof, 128 bytes (Groth16 over the Merkle proof). */
-  compressedProof: Uint8Array;
+  /** Compressed proof over the Merkle proof. */
+  compressedProof: CompressedValidityProof;
   /** Root indices for each leaf. */
   rootIndices: number[];
-  /** Addresses (optional, for create-with-address flows). */
-  addresses?: Uint8Array[];
+}
+
+export interface HashWithTreeInput {
+  hash: Bytes32;
+  tree: PublicKey;
+  queue?: PublicKey;
+}
+
+export interface AddressWithTreeInput {
+  address: PublicKey | Bytes32;
+  tree: PublicKey;
+  queue?: PublicKey;
 }
 
 export interface PackedAddressTreeInfo {
@@ -33,25 +49,37 @@ export interface PackedStateTreeInfo {
 /** Fetch a non-inclusion proof for a list of nullifier addresses. */
 export async function fetchValidityProofV2(args: {
   rpc: any;
-  hashes?: Uint8Array[];
-  addressesWithTrees?: { address: Bytes32; tree: PublicKey }[];
+  hashes?: HashWithTreeInput[];
+  addressesWithTrees?: AddressWithTreeInput[];
 }): Promise<ValidityProof> {
   const sdk = await import("@lightprotocol/stateless.js");
-  const result = await sdk.getValidityProofV0(
-    args.hashes ?? [],
-    args.addressesWithTrees ?? [],
-    [],
-  );
+  const hashes = (args.hashes ?? []).map((item) => ({
+    hash: sdk.createBN254(item.hash),
+    tree: item.tree,
+    queue: item.queue ?? item.tree,
+  }));
+  const addresses = (args.addressesWithTrees ?? []).map((item) => ({
+    address: sdk.createBN254(
+      item.address instanceof Uint8Array ? item.address : item.address.toBytes(),
+    ),
+    tree: item.tree,
+    queue: item.queue ?? item.tree,
+  }));
+  if (typeof args.rpc?.getValidityProofV0 !== "function") {
+    throw new Error("RPC client does not implement getValidityProofV0");
+  }
+  const result = await args.rpc.getValidityProofV0(hashes, addresses);
+  if (!result.compressedProof) {
+    throw new Error("validity proof response missing compressed proof");
+  }
   return {
     compressedProof: result.compressedProof,
     rootIndices: result.rootIndices,
-    addresses: result.addresses,
   };
 }
 
 /** Fetch the current v2 address tree info. */
 export async function fetchAddressTreeV2(rpc: any): Promise<PublicKey> {
-  const sdk = await import("@lightprotocol/stateless.js");
   return rpc.getAddressTreeV2();
 }
 
@@ -60,7 +88,6 @@ export async function fetchRandomStateTreeV2(rpc: any): Promise<{
   tree: PublicKey;
   queue: PublicKey;
 }> {
-  const sdk = await import("@lightprotocol/stateless.js");
   const info = await rpc.getRandomStateTreeInfo();
   return { tree: info.tree, queue: info.queue };
 }
@@ -74,8 +101,9 @@ export async function packAccounts(args: {
 }) {
   const sdk = await import("@lightprotocol/stateless.js");
   const { PackedAccounts, SystemAccountMetaConfig } = sdk;
-  const packed = new PackedAccounts();
-  packed.addSystemAccountsV2(SystemAccountMetaConfig.new(args.programId));
+  const packed = PackedAccounts.newWithSystemAccounts(
+    SystemAccountMetaConfig.new(args.programId),
+  );
 
   const addressMerkleTreeIndex = packed.insertOrGet(args.treeInfo.addressTree);
   const outputStateTreeIndex = packed.insertOrGet(args.treeInfo.stateTree);

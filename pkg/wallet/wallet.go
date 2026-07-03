@@ -2,61 +2,72 @@
 package wallet
 
 import (
-	"bytes"
-	"crypto/ed25519"
-	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	solanago "github.com/gagliardetto/solana-go"
+	"github.com/gagliardetto/solana-go/base58"
 )
 
-const base58Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-
-// Keypair holds an ed25519 private key and its Solana public key.
+// Keypair holds a solana-go private key and its corresponding public key.
 type Keypair struct {
-	PrivateKey ed25519.PrivateKey
-	PublicKey  [32]byte
+	PrivateKey solanago.PrivateKey
+	PublicKey  solanago.PublicKey
 }
 
 // Generate creates a fresh ed25519 keypair suitable for Solana.
 func Generate() (*Keypair, error) {
-	pub, priv, err := ed25519.GenerateKey(rand.Reader)
+	privateKey, err := solanago.NewRandomPrivateKey()
 	if err != nil {
 		return nil, fmt.Errorf("generate keypair: %w", err)
 	}
-	var publicKey [32]byte
-	copy(publicKey[:], pub)
-	return &Keypair{PrivateKey: priv, PublicKey: publicKey}, nil
+	return keypairFromPrivateKey(privateKey)
 }
 
 // Load reads a Solana CLI keypair JSON file.
 func Load(path string) (*Keypair, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("read keypair %s: %w", path, err)
+	privateKey, err := solanago.PrivateKeyFromSolanaKeygenFile(path)
+	if err == nil {
+		return keypairFromPrivateKey(privateKey)
 	}
-	secret, err := parseSecret(data)
-	if err != nil {
-		return nil, err
+
+	data, readErr := os.ReadFile(path)
+	if readErr != nil {
+		return nil, fmt.Errorf("read keypair %s: %w", path, readErr)
 	}
-	return FromSecret(secret)
+	secret, parseErr := parseSecret(data)
+	if parseErr != nil {
+		return nil, parseErr
+	}
+	kp, fromSecretErr := FromSecret(secret)
+	if fromSecretErr != nil {
+		return nil, fromSecretErr
+	}
+	return kp, nil
+}
+
+func keypairFromPrivateKey(privateKey solanago.PrivateKey) (*Keypair, error) {
+	if err := privateKey.Validate(); err != nil {
+		return nil, fmt.Errorf("invalid keypair: %w", err)
+	}
+	return &Keypair{
+		PrivateKey: privateKey,
+		PublicKey:  privateKey.PublicKey(),
+	}, nil
 }
 
 // FromSecret builds a keypair from a 64-byte Solana secret key.
 func FromSecret(secret []byte) (*Keypair, error) {
-	if len(secret) != ed25519.PrivateKeySize {
-		return nil, fmt.Errorf("keypair must be %d bytes, got %d", ed25519.PrivateKeySize, len(secret))
+	privateKey := solanago.PrivateKey(append([]byte(nil), secret...))
+	kp, err := keypairFromPrivateKey(privateKey)
+	if err != nil {
+		return nil, fmt.Errorf("keypair must be %d bytes and match its seed: %w", solanago.PrivateKeyLength, err)
 	}
-	derived := ed25519.NewKeyFromSeed(secret[:ed25519.SeedSize])
-	if !bytes.Equal(derived[ed25519.SeedSize:], secret[ed25519.SeedSize:]) {
-		return nil, fmt.Errorf("keypair public key does not match private seed")
-	}
-	var publicKey [32]byte
-	copy(publicKey[:], derived[ed25519.SeedSize:])
-	return &Keypair{PrivateKey: derived, PublicKey: publicKey}, nil
+	return kp, nil
 }
 
 // Ensure returns the existing keypair at path or creates one when missing.
@@ -84,7 +95,7 @@ func Save(path string, kp *Keypair, overwrite bool) error {
 	if strings.TrimSpace(path) == "" {
 		return fmt.Errorf("keypair path is required")
 	}
-	if kp == nil || len(kp.PrivateKey) != ed25519.PrivateKeySize {
+	if kp == nil || kp.PrivateKey.Validate() != nil {
 		return fmt.Errorf("valid keypair is required")
 	}
 	if !overwrite {
@@ -113,78 +124,23 @@ func (kp *Keypair) Pubkey() string {
 	if kp == nil {
 		return ""
 	}
-	return Base58Encode(kp.PublicKey[:])
+	return kp.PublicKey.String()
 }
 
 // IsValidPubkey reports whether value is a base58-encoded 32-byte public key.
 func IsValidPubkey(value string) bool {
-	decoded, err := Base58Decode(strings.TrimSpace(value))
-	return err == nil && len(decoded) == 32
+	_, err := solanago.PublicKeyFromBase58(strings.TrimSpace(value))
+	return err == nil
 }
 
 // Base58Decode decodes a Bitcoin/Solana base58 string.
 func Base58Decode(s string) ([]byte, error) {
-	alphabet := []byte(base58Alphabet)
-	lookup := [256]int{}
-	for i := range lookup {
-		lookup[i] = -1
-	}
-	for i, c := range alphabet {
-		lookup[c] = i
-	}
-
-	result := make([]byte, 0, len(s))
-	for _, c := range []byte(s) {
-		carry := lookup[c]
-		if carry < 0 {
-			return nil, fmt.Errorf("invalid base58 char %q", c)
-		}
-		for j := len(result) - 1; j >= 0; j-- {
-			carry += 58 * int(result[j])
-			result[j] = byte(carry & 0xff)
-			carry >>= 8
-		}
-		for carry > 0 {
-			result = append([]byte{byte(carry & 0xff)}, result...)
-			carry >>= 8
-		}
-	}
-	for _, c := range []byte(s) {
-		if c != alphabet[0] {
-			break
-		}
-		result = append([]byte{0}, result...)
-	}
-	return result, nil
+	return base58.Decode(s)
 }
 
 // Base58Encode encodes bytes with the Bitcoin/Solana base58 alphabet.
 func Base58Encode(b []byte) string {
-	alphabet := []byte(base58Alphabet)
-	result := []byte{}
-	for _, byt := range b {
-		carry := int(byt)
-		for j := len(result) - 1; j >= 0; j-- {
-			carry += 256 * int(result[j])
-			result[j] = byte(carry % 58)
-			carry /= 58
-		}
-		for carry > 0 {
-			result = append([]byte{byte(carry % 58)}, result...)
-			carry /= 58
-		}
-	}
-	for _, byt := range b {
-		if byt != 0 {
-			break
-		}
-		result = append([]byte{0}, result...)
-	}
-	encoded := make([]byte, len(result))
-	for i, idx := range result {
-		encoded[i] = alphabet[idx]
-	}
-	return string(encoded)
+	return base58.Encode(b)
 }
 
 func parseSecret(data []byte) ([]byte, error) {

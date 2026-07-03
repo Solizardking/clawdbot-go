@@ -17,6 +17,7 @@
  */
 
 import { createHash } from "node:crypto";
+import type { PublicKey } from "@solana/web3.js";
 import type { Bytes32 } from "./types.js";
 
 /** Inputs to `computeNullifier`. */
@@ -93,10 +94,10 @@ export const NULLIFIER_PREFIX = new TextEncoder().encode("clawd-zk-nullifier");
  * uses for uniqueness proofs.
  */
 export async function deriveNullifierAddress(
-  programId: any,
-  addressTree: any,
+  programId: PublicKey,
+  addressTree: PublicKey,
   nullifier: Bytes32,
-): Promise<{ address: Uint8Array; seed: Uint8Array }> {
+): Promise<{ address: PublicKey; seed: Uint8Array }> {
   // The actual derivation uses the Light SDK. We import dynamically
   // because the SDK ships both v1 and v2 entry points; production code
   // should pin to v2.

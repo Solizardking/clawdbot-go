@@ -1,6 +1,6 @@
 module github.com/8bitlabs/clawdbot
 
-go 1.25.7
+go 1.26.4
 
 require (
 	github.com/gdamore/tcell/v2 v2.13.8

@@ -28,6 +28,9 @@ Run the hardened verification path before publishing changes:
 make release-check
 ```
 
+Build and release with Go 1.26.4 or newer. Older 1.26 toolchains contain
+reachable standard-library vulnerabilities reported by `govulncheck`.
+
 When available, also run:
 
 ```bash

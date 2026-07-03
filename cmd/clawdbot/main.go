@@ -1227,8 +1227,8 @@ func NewSolanaWalletCommand() *cobra.Command {
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
 
 	var (
-		out     string
-		force   bool
+		out      string
+		force    bool
 		initJSON bool
 	)
 	initCmd := &cobra.Command{

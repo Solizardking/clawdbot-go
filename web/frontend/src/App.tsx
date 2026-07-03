@@ -52,6 +52,25 @@ interface EcosystemInfo {
   terminal: string
 }
 
+interface CockpitInfo {
+  mode: string
+  watchlist: string[]
+  readiness: {
+    score: number
+    grade: string
+    status: string
+    reasons: string[]
+  }
+  risk: {
+    maxPositionSol: number
+    positionSizePct: number
+    stopLossPct: number
+    takeProfitPct: number
+    minSignalStrength: number
+    minConfidence: number
+  }
+}
+
 export default function App() {
   const [status, setStatus] = useState<StatusInfo | null>(null)
   const [health, setHealth] = useState<HealthInfo | null>(null)
@@ -59,6 +78,7 @@ export default function App() {
   const [packages, setPackages] = useState<PackageInfo[]>([])
   const [envInfo, setEnvInfo] = useState<EnvInfo | null>(null)
   const [ecosystem, setEcosystem] = useState<EcosystemInfo | null>(null)
+  const [cockpit, setCockpit] = useState<CockpitInfo | null>(null)
   const [configText, setConfigText] = useState<string>('')
   const [showConfig, setShowConfig] = useState(false)
   const [logs, setLogs] = useState<string[]>(['🦞 ClawdBot Console ready.'])
@@ -72,6 +92,7 @@ export default function App() {
       fetch('/api/packages').then(r => r.json()).then(setPackages).catch(() => {})
       fetch('/api/env').then(r => r.json()).then(setEnvInfo).catch(() => {})
       fetch('/api/ecosystem').then(r => r.json()).then(setEcosystem).catch(() => {})
+      fetch('/api/trading/cockpit').then(r => r.json()).then(setCockpit).catch(() => {})
     }
     fetchAll()
     const interval = setInterval(fetchAll, 10000)
@@ -137,6 +158,41 @@ export default function App() {
             <div className="label">Config path</div>
             <div className="value" style={{fontSize:'0.7rem',wordBreak:'break-all'}}>{status?.config ?? '—'}</div>
           </div>
+        </div>
+
+        {/* Trading Cockpit Panel */}
+        <div className="panel">
+          <h2>Trading Cockpit</h2>
+          {cockpit ? (
+            <>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+                <div>
+                  <div className="value">{cockpit.readiness.grade} / {cockpit.readiness.score}</div>
+                  <div className="label">Readiness</div>
+                </div>
+                <div>
+                  <div className="value">{cockpit.mode || 'simulated'}</div>
+                  <div className="label">Mode</div>
+                </div>
+                <div>
+                  <div className="value">{cockpit.watchlist.length}</div>
+                  <div className="label">Watchlist</div>
+                </div>
+                <div>
+                  <div className="value">{cockpit.risk.maxPositionSol}</div>
+                  <div className="label">Max SOL</div>
+                </div>
+              </div>
+              <div style={{marginTop:'12px',paddingTop:'12px',borderTop:'1px solid var(--border)'}}>
+                <div className="label">Risk limits</div>
+                <div className="value" style={{fontSize:'0.75rem'}}>
+                  size {(cockpit.risk.positionSizePct * 100).toFixed(1)}% · SL {(cockpit.risk.stopLossPct * 100).toFixed(1)}% · TP {(cockpit.risk.takeProfitPct * 100).toFixed(1)}%
+                </div>
+              </div>
+            </>
+          ) : (
+            <div style={{color:'var(--text-dim)'}}>Loading cockpit...</div>
+          )}
         </div>
 
         {/* Connectors Panel */}

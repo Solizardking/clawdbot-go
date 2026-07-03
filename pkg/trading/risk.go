@@ -20,16 +20,16 @@ const (
 )
 
 type TokenSnapshot struct {
-	Address       string  `json:"address"`
-	Symbol        string  `json:"symbol"`
-	Price         float64 `json:"price"`
-	Change24hPct  float64 `json:"change24hPct"`
-	Volume24hUSD  float64 `json:"volume24hUsd"`
-	LiquidityUSD  float64 `json:"liquidityUsd"`
+	Address        string  `json:"address"`
+	Symbol         string  `json:"symbol"`
+	Price          float64 `json:"price"`
+	Change24hPct   float64 `json:"change24hPct"`
+	Volume24hUSD   float64 `json:"volume24hUsd"`
+	LiquidityUSD   float64 `json:"liquidityUsd"`
 	Top10HolderPct float64 `json:"top10HolderPct,omitempty"`
-	Mutable       bool    `json:"mutable,omitempty"`
-	HasMintAuth   bool    `json:"hasMintAuth,omitempty"`
-	HasFreezeAuth bool    `json:"hasFreezeAuth,omitempty"`
+	Mutable        bool    `json:"mutable,omitempty"`
+	HasMintAuth    bool    `json:"hasMintAuth,omitempty"`
+	HasFreezeAuth  bool    `json:"hasFreezeAuth,omitempty"`
 }
 
 type RiskAssessment struct {
@@ -42,13 +42,13 @@ type RiskAssessment struct {
 }
 
 type CockpitReport struct {
-	GeneratedAt string          `json:"generatedAt"`
-	Mode        string          `json:"mode"`
-	Watchlist   []string        `json:"watchlist"`
-	Connectors  []Connector     `json:"connectors"`
-	Risk        RiskEnvelope    `json:"risk"`
-	Laws        []laws.Law      `json:"laws"`
-	Readiness   Readiness       `json:"readiness"`
+	GeneratedAt string       `json:"generatedAt"`
+	Mode        string       `json:"mode"`
+	Watchlist   []string     `json:"watchlist"`
+	Connectors  []Connector  `json:"connectors"`
+	Risk        RiskEnvelope `json:"risk"`
+	Laws        []laws.Law   `json:"laws"`
+	Readiness   Readiness    `json:"readiness"`
 }
 
 type Connector struct {
@@ -58,12 +58,12 @@ type Connector struct {
 }
 
 type RiskEnvelope struct {
-	MaxPositionSOL float64 `json:"maxPositionSol"`
-	PositionSizePct float64 `json:"positionSizePct"`
-	StopLossPct    float64 `json:"stopLossPct"`
-	TakeProfitPct  float64 `json:"takeProfitPct"`
+	MaxPositionSOL    float64 `json:"maxPositionSol"`
+	PositionSizePct   float64 `json:"positionSizePct"`
+	StopLossPct       float64 `json:"stopLossPct"`
+	TakeProfitPct     float64 `json:"takeProfitPct"`
 	MinSignalStrength float64 `json:"minSignalStrength"`
-	MinConfidence float64 `json:"minConfidence"`
+	MinConfidence     float64 `json:"minConfidence"`
 }
 
 type Readiness struct {
@@ -181,12 +181,12 @@ func BuildCockpitReport(cfg *config.Config, now time.Time) CockpitReport {
 		Watchlist:   append([]string(nil), cfg.OODA.Watchlist...),
 		Connectors:  connectors,
 		Risk: RiskEnvelope{
-			MaxPositionSOL:     cfg.Solana.MaxPositionSOL,
-			PositionSizePct:    cfg.OODA.PositionSizePct,
-			StopLossPct:        cfg.OODA.StopLossPct,
-			TakeProfitPct:      cfg.OODA.TakeProfitPct,
+			MaxPositionSOL:    cfg.Solana.MaxPositionSOL,
+			PositionSizePct:   cfg.OODA.PositionSizePct,
+			StopLossPct:       cfg.OODA.StopLossPct,
+			TakeProfitPct:     cfg.OODA.TakeProfitPct,
 			MinSignalStrength: cfg.OODA.MinSignalStr,
-			MinConfidence:      cfg.OODA.MinConfidence,
+			MinConfidence:     cfg.OODA.MinConfidence,
 		},
 		Laws:      append([]laws.Law(nil), laws.Six...),
 		Readiness: readiness,

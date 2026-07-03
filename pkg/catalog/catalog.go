@@ -312,10 +312,10 @@ func loadSkillsCatalog(root, catalogPath string) ([]SkillEntry, error) {
 		return nil, err
 	}
 	var raw []struct {
-		Slug        string `json:"slug"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		Category    string `json:"category"`
+		Slug        string   `json:"slug"`
+		Name        string   `json:"name"`
+		Description string   `json:"description"`
+		Category    string   `json:"category"`
 		Tags        []string `json:"tags"`
 	}
 	if err := json.Unmarshal(data, &raw); err != nil {

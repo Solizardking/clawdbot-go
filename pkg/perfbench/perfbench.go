@@ -38,15 +38,15 @@ type Warning struct {
 }
 
 type Result struct {
-	Timestamp          string       `json:"timestamp"`
-	Command            []string     `json:"command"`
-	Iterations         int          `json:"iterations"`
-	WarmupIterations   int          `json:"warmupIterations"`
-	GoVersion          string       `json:"goVersion"`
-	GOOS               string       `json:"goos"`
-	GOARCH             string       `json:"goarch"`
-	ColdStartMs        NumericStats `json:"coldStartMs"`
-	FirstOutputMs      NumericStats `json:"firstOutputMs"`
+	Timestamp           string       `json:"timestamp"`
+	Command             []string     `json:"command"`
+	Iterations          int          `json:"iterations"`
+	WarmupIterations    int          `json:"warmupIterations"`
+	GoVersion           string       `json:"goVersion"`
+	GOOS                string       `json:"goos"`
+	GOARCH              string       `json:"goarch"`
+	ColdStartMs         NumericStats `json:"coldStartMs"`
+	FirstOutputMs       NumericStats `json:"firstOutputMs"`
 	BenchmarkDurationMs float64      `json:"benchmarkDurationMs"`
 	Thresholds          Thresholds   `json:"thresholds"`
 	Warnings            []Warning    `json:"warnings"`
@@ -109,15 +109,15 @@ func Run(ctx context.Context, options Options) (Result, error) {
 	}
 
 	result := Result{
-		Timestamp:          time.Now().UTC().Format(time.RFC3339Nano),
-		Command:            append([]string(nil), command...),
-		Iterations:         options.Iterations,
-		WarmupIterations:   options.WarmupIterations,
-		GoVersion:          runtime.Version(),
-		GOOS:               runtime.GOOS,
-		GOARCH:             runtime.GOARCH,
-		ColdStartMs:        summarize(cold),
-		FirstOutputMs:      summarize(first),
+		Timestamp:           time.Now().UTC().Format(time.RFC3339Nano),
+		Command:             append([]string(nil), command...),
+		Iterations:          options.Iterations,
+		WarmupIterations:    options.WarmupIterations,
+		GoVersion:           runtime.Version(),
+		GOOS:                runtime.GOOS,
+		GOARCH:              runtime.GOARCH,
+		ColdStartMs:         summarize(cold),
+		FirstOutputMs:       summarize(first),
 		BenchmarkDurationMs: roundMs(time.Since(start)),
 		Thresholds:          options.Thresholds,
 	}

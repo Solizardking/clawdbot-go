@@ -13,18 +13,18 @@ import (
 )
 
 type Skill struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Version     string `json:"version"`
-	Author      string `json:"author"`
-	URL         string `json:"url"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Version     string   `json:"version"`
+	Author      string   `json:"author"`
+	URL         string   `json:"url"`
 	Tags        []string `json:"tags"`
 }
 
 // SearchResult from a skill registry search.
 type SearchResult struct {
-	Skills    []Skill `json:"skills"`
-	Source    string  `json:"source"`
+	Skills   []Skill   `json:"skills"`
+	Source   string    `json:"source"`
 	CachedAt time.Time `json:"cached_at"`
 }
 
@@ -37,8 +37,12 @@ type SearchCache struct {
 }
 
 func NewSearchCache(maxSize int, ttl time.Duration) *SearchCache {
-	if maxSize <= 0 { maxSize = 100 }
-	if ttl <= 0 { ttl = 5 * time.Minute }
+	if maxSize <= 0 {
+		maxSize = 100
+	}
+	if ttl <= 0 {
+		ttl = 5 * time.Minute
+	}
 	return &SearchCache{
 		entries: make(map[string]SearchResult),
 		maxSize: maxSize,
@@ -86,7 +90,9 @@ type RegistryManager struct {
 }
 
 func NewRegistryManager(cfg RegistryConfig) *RegistryManager {
-	if cfg.MaxConcurrentSearches <= 0 { cfg.MaxConcurrentSearches = 3 }
+	if cfg.MaxConcurrentSearches <= 0 {
+		cfg.MaxConcurrentSearches = 3
+	}
 	return &RegistryManager{cfg: cfg}
 }
 
@@ -116,9 +122,13 @@ func ListInstalled(workspace string) ([]Skill, error) {
 
 	var skills []Skill
 	for _, e := range entries {
-		if !e.IsDir() { continue }
+		if !e.IsDir() {
+			continue
+		}
 		data, err := os.ReadFile(filepath.Join(skillsDir, e.Name(), "skill.json"))
-		if err != nil { continue }
+		if err != nil {
+			continue
+		}
 		var s Skill
 		if json.Unmarshal(data, &s) == nil {
 			skills = append(skills, s)
@@ -129,7 +139,9 @@ func ListInstalled(workspace string) ([]Skill, error) {
 
 // FormatSkillList formats a slice of skills for display.
 func FormatSkillList(skills []Skill) string {
-	if len(skills) == 0 { return "No skills found." }
+	if len(skills) == 0 {
+		return "No skills found."
+	}
 	result := ""
 	for _, s := range skills {
 		result += fmt.Sprintf("  %s v%s — %s\n", s.Name, s.Version, s.Description)

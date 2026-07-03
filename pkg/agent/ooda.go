@@ -22,9 +22,9 @@ import (
 // ── OODA Agent ───────────────────────────────────────────────────────
 
 type OODAAgent struct {
-	mu      sync.RWMutex
-	cfg     *config.Config
-	hooks   AgentHooks
+	mu    sync.RWMutex
+	cfg   *config.Config
+	hooks AgentHooks
 
 	// Solana clients
 	birdeye *solana.BirdeyeClient
@@ -52,23 +52,23 @@ type OODAAgent struct {
 // ── Types ────────────────────────────────────────────────────────────
 
 type Signal struct {
-	Timestamp  time.Time `json:"timestamp"`
-	Asset      string    `json:"asset"`
-	Symbol     string    `json:"symbol"`
-	Direction  string    `json:"direction"` // "long", "short", "hold"
-	Strength   float64   `json:"strength"`
-	Confidence float64   `json:"confidence"`
-	RSI        float64   `json:"rsi"`
-	EMACross   string    `json:"emaCross"`
-	ATR        float64   `json:"atr"`
-	StopLoss   float64   `json:"stopLoss"`
-	TakeProfit float64   `json:"takeProfit"`
-	RiskScore  int       `json:"riskScore"`
-	RiskGrade  string    `json:"riskGrade"`
-	RiskDecision string  `json:"riskDecision"`
-	RiskReasons []string `json:"riskReasons,omitempty"`
-	Reasoning  string    `json:"reasoning"`
-	Sources    []string  `json:"sources"`
+	Timestamp    time.Time `json:"timestamp"`
+	Asset        string    `json:"asset"`
+	Symbol       string    `json:"symbol"`
+	Direction    string    `json:"direction"` // "long", "short", "hold"
+	Strength     float64   `json:"strength"`
+	Confidence   float64   `json:"confidence"`
+	RSI          float64   `json:"rsi"`
+	EMACross     string    `json:"emaCross"`
+	ATR          float64   `json:"atr"`
+	StopLoss     float64   `json:"stopLoss"`
+	TakeProfit   float64   `json:"takeProfit"`
+	RiskScore    int       `json:"riskScore"`
+	RiskGrade    string    `json:"riskGrade"`
+	RiskDecision string    `json:"riskDecision"`
+	RiskReasons  []string  `json:"riskReasons,omitempty"`
+	Reasoning    string    `json:"reasoning"`
+	Sources      []string  `json:"sources"`
 }
 
 type Position struct {
@@ -138,10 +138,10 @@ func NewOODAAgent(cfg *config.Config, hooks AgentHooks) *OODAAgent {
 	}
 
 	agent := &OODAAgent{
-		cfg:            cfg,
-		hooks:          hooks,
-		openPositions:  make(map[string]*Position),
-		stopCh:         make(chan struct{}),
+		cfg:           cfg,
+		hooks:         hooks,
+		openPositions: make(map[string]*Position),
+		stopCh:        make(chan struct{}),
 		strategyParams: strategy.StrategyParams{
 			RSIOverbought:   cfg.Strategy.RSIOverbought,
 			RSIOversold:     cfg.Strategy.RSIOversold,
@@ -487,23 +487,23 @@ func (a *OODAAgent) evaluateToken(entry WatchlistEntry) *Signal {
 			if sig.Direction != "neutral" {
 				confidence := trading.AdjustConfidence(0.7, risk)
 				return &Signal{
-					Timestamp:  time.Now(),
-					Asset:      entry.Address,
-					Symbol:     entry.Symbol,
-					Direction:  sig.Direction,
-					Strength:   sig.Strength,
-					Confidence: confidence,
-					RSI:        sig.RSI,
-					EMACross:   sig.EMACross,
-					ATR:        sig.ATR,
-					StopLoss:   sig.StopLoss,
-					TakeProfit: sig.TakeProfit,
-					RiskScore:  risk.Score,
-					RiskGrade:  risk.Grade,
+					Timestamp:    time.Now(),
+					Asset:        entry.Address,
+					Symbol:       entry.Symbol,
+					Direction:    sig.Direction,
+					Strength:     sig.Strength,
+					Confidence:   confidence,
+					RSI:          sig.RSI,
+					EMACross:     sig.EMACross,
+					ATR:          sig.ATR,
+					StopLoss:     sig.StopLoss,
+					TakeProfit:   sig.TakeProfit,
+					RiskScore:    risk.Score,
+					RiskGrade:    risk.Grade,
 					RiskDecision: string(risk.Decision),
-					RiskReasons: risk.Reasons,
-					Reasoning:  fmt.Sprintf("%s | risk=%s/%d decision=%s", sig.Reasoning, risk.Grade, risk.Score, risk.Decision),
-					Sources:    []string{"birdeye_ohlcv", "clawdbot_strategy"},
+					RiskReasons:  risk.Reasons,
+					Reasoning:    fmt.Sprintf("%s | risk=%s/%d decision=%s", sig.Reasoning, risk.Grade, risk.Score, risk.Decision),
+					Sources:      []string{"birdeye_ohlcv", "clawdbot_strategy"},
 				}
 			}
 

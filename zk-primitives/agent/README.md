@@ -1,18 +1,18 @@
 # ZK Shark - Shark of All Streets Agent
 
 > ZK Shark is the Shark of All Streets agent, named in honor of zk Shark,
-> the legend of ordinals. It wraps [`@clawd/zk-client`](../client/) so
+> the legend of ordinals. It wraps [`@gobot/zk-client`](../client/) so
 > nullifiers, Groth16 proofs, Light Protocol compressed state, and
 > attestation flows can be driven through a typed API, CLI, or deterministic
 > natural-language intent router.
 
 The lower-level ZK primitive SDK is useful but repetitive: every caller has
 to derive nullifiers, pack public inputs, assemble proofs, and build the
-same Solana instructions. `@clawd/zk-shark-agent` keeps that wiring in one
+same Solana instructions. `@gobot/zk-shark-agent` keeps that wiring in one
 place so an agent can operate across the ZK stack with a small surface:
 
 ```ts
-import { ZkSharkAgent } from "@clawd/zk-shark-agent";
+import { ZkSharkAgent } from "@gobot/zk-shark-agent";
 
 const agent = await ZkSharkAgent.fromEnv();
 const { nullifierHex, signature } = await agent.attestModel({
@@ -23,7 +23,7 @@ const { nullifierHex, signature } = await agent.attestModel({
 });
 ```
 
-`ClawdZkAgent` and `clawd-zk-agent` remain compatibility aliases for older
+`GoBotZkAgent` and `gobot-zk-agent` remain compatibility aliases for older
 callers.
 
 ## Repo Layout
@@ -73,7 +73,7 @@ The proof JSON shape is:
 ## Programmatic API
 
 ```ts
-import { ZkSharkAgent } from "@clawd/zk-shark-agent";
+import { ZkSharkAgent } from "@gobot/zk-shark-agent";
 
 const agent = await ZkSharkAgent.fromEnv();
 
@@ -110,7 +110,7 @@ Preferred environment variables:
 | `ZK_SHARK_KEYPAIR` | none | Path to a Solana CLI keypair JSON. |
 | `ZK_SHARK_NETWORK` | `mainnet` | `mainnet`, `devnet`, or `localnet`. |
 
-Legacy `CLAWD_ZK_*` variables and `CLAWDZK_*` program aliases are still
+Legacy `GOBOT_ZK_*` variables and `GOBOTZK_*` program aliases are still
 accepted as fallbacks.
 
 ## Intent Router
@@ -136,8 +136,8 @@ needs the `trySend` hook in [src/agent.ts](src/agent.ts) wired to the chosen
 
 ## See Also
 
-- [`../client/`](../client/) - lower-level SDK (`@clawd/zk-client`)
-- [`../programs/clawd-zk/`](../programs/clawd-zk/) - Anchor program
+- [`../client/`](../client/) - lower-level SDK (`@gobot/zk-client`)
+- [`../programs/gobot-zk/`](../programs/gobot-zk/) - Anchor program
 - [`../docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md) - architecture notes
 - [`../../AGENTS.md`](../../AGENTS.md) - agent catalog
 

@@ -7,17 +7,17 @@ import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
 
 const RAW_INSTALL =
-  process.env.CLAWDBOT_RAW_INSTALL_URL ||
+  process.env.GOBOT_RAW_INSTALL_URL ||
   "https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh";
-const PORT = Number(process.env.PORT || process.env.CLAWDBOT_BOX_PORT || "3000");
-const DATA_DIR = process.env.CLAWDBOT_BOX_DATA_DIR || "/tmp/clawdbot-box";
+const PORT = Number(process.env.PORT || process.env.GOBOT_BOX_PORT || "3000");
+const DATA_DIR = process.env.GOBOT_BOX_DATA_DIR || "/tmp/gobot-box";
 const INSTALL_LEDGER =
-  process.env.CLAWDBOT_INSTALL_LEDGER || join(DATA_DIR, "installs.jsonl");
+  process.env.GOBOT_INSTALL_LEDGER || join(DATA_DIR, "installs.jsonl");
 const FUNDING_LEDGER =
-  process.env.CLAWDBOT_BIRTH_FUNDING_LEDGER || join(DATA_DIR, "funding.jsonl");
-const CLAWD_MINT =
-  process.env.CLAWD_TOKEN_MINT ||
-  process.env.CLAWDBOT_CLAWD_MINT ||
+  process.env.GOBOT_BIRTH_FUNDING_LEDGER || join(DATA_DIR, "funding.jsonl");
+const GOBOT_MINT =
+  process.env.GOBOT_TOKEN_MINT ||
+  process.env.GOBOT_MINT ||
   "8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump";
 
 await mkdir(DATA_DIR, { recursive: true });
@@ -30,14 +30,14 @@ const server = createServer(async (req, res) => {
       return;
     }
     if (url.pathname === "/health" || url.pathname === "/api/health") {
-      json(res, { ok: true, service: "clawdbot-box", port: PORT });
+      json(res, { ok: true, service: "gobot-box", port: PORT });
       return;
     }
     if (url.pathname === "/" && req.method === "GET") {
       const origin = publicOrigin(req);
       text(
         res,
-        `ClawdBot Box install surface\n\ncurl -fsSL ${origin}/install.sh | bash\n\nPOST ${origin}/api/install\n`,
+        `GoBot Box install surface\n\ncurl -fsSL ${origin}/install.sh | bash\n\nPOST ${origin}/api/install\n`,
       );
       return;
     }
@@ -48,7 +48,7 @@ const server = createServer(async (req, res) => {
         200,
         `#!/usr/bin/env bash
 set -euo pipefail
-export CLAWDBOT_INSTALL_API="${origin}/api/install"
+export GOBOT_INSTALL_API="${origin}/api/install"
 curl -fsSL "${RAW_INSTALL}" | bash
 `,
         "text/x-shellscript; charset=utf-8",
@@ -70,7 +70,7 @@ curl -fsSL "${RAW_INSTALL}" | bash
 });
 
 server.listen(PORT, "0.0.0.0", () => {
-  console.log(`clawdbot box install API listening on :${PORT}`);
+  console.log(`gobot box install API listening on :${PORT}`);
 });
 
 async function handleInstall(req, res) {
@@ -96,7 +96,7 @@ async function handleInstall(req, res) {
   const response = {
     ok: true,
     installId,
-    zkrouterKey: process.env.ZKROUTER_API_KEY || "clawdbot-free",
+    zkrouterKey: process.env.ZKROUTER_API_KEY || "clawd-free",
     zkrouterBase: process.env.ZKROUTER_BASE_URL || "https://clawdrouter-zk.fly.dev/v1",
     rpcUrl:
       process.env.SOLANA_RPC_URL ||
@@ -126,13 +126,13 @@ async function handleInstall(req, res) {
     record.funding = prior.funding;
     response.fundingStatus = prior.fundingStatus || prior.funding.status;
     response.solSignature = prior.funding.solSignature || "";
-    response.clawdSignature = prior.funding.clawdSignature || "";
+    response.gobotSignature = prior.funding.gobotSignature || "";
     await appendJSONL(INSTALL_LEDGER, record);
     json(res, response);
     return;
   }
 
-  if (!envBool("CLAWDBOT_INSTALL_FUNDING_ENABLED")) {
+  if (!envBool("GOBOT_INSTALL_FUNDING_ENABLED")) {
     record.fundingStatus = "queued";
     response.fundingStatus = record.fundingStatus;
     await appendJSONL(INSTALL_LEDGER, record);
@@ -157,14 +157,14 @@ async function handleInstall(req, res) {
   if (funding.error) record.fundingError = funding.error;
   response.fundingStatus = record.fundingStatus;
   response.solSignature = funding.solSignature || "";
-  response.clawdSignature = funding.clawdSignature || "";
+  response.gobotSignature = funding.gobotSignature || "";
   if (funding.error) response.fundingError = funding.error;
   await appendJSONL(INSTALL_LEDGER, record);
   json(res, response);
 }
 
 async function handleInstalls(req, res, url) {
-  const token = process.env.CLAWDBOT_INSTALL_ADMIN_TOKEN || "";
+  const token = process.env.GOBOT_INSTALL_ADMIN_TOKEN || "";
   if (!token || bearerToken(req) !== token) {
     json(res, { ok: false, error: "unauthorized" }, 401);
     return;
@@ -175,23 +175,23 @@ async function handleInstalls(req, res, url) {
 }
 
 async function runFunding(recipient, payload, installId) {
-  const clawdbot = process.env.CLAWDBOT_BIN || "clawdbot";
-  if (!(await commandExists(clawdbot))) {
+  const gobot = process.env.GOBOT_BIN || "gobot";
+  if (!(await commandExists(gobot))) {
     return {
       status: "queued",
       send: false,
       recipient,
-      error: "`clawdbot` binary is not installed in the box yet",
+      error: "`gobot` binary is not installed in the box yet",
     };
   }
 
   const solLamports = Number(
-    payload?.funding?.solLamports || process.env.CLAWDBOT_STARTUP_SOL_LAMPORTS || "69420000",
+    payload?.funding?.solLamports || process.env.GOBOT_STARTUP_SOL_LAMPORTS || "69420000",
   );
-  const clawdTokens = String(
-    payload?.funding?.clawdTokens || process.env.CLAWDBOT_STARTUP_CLAWD_TOKENS || "1000",
+  const gobotTokens = String(
+    payload?.funding?.gobotTokens || process.env.GOBOT_STARTUP_TOKENS || "1000",
   );
-  const clawdMint = String(payload?.funding?.clawdMint || CLAWD_MINT);
+  const gobotMint = String(payload?.funding?.gobotMint || GOBOT_MINT);
   const args = [
     "solana",
     "fund-agent",
@@ -199,20 +199,20 @@ async function runFunding(recipient, payload, installId) {
     "--json",
     "--sol-lamports",
     String(solLamports),
-    "--clawd",
-    clawdTokens,
-    "--clawd-mint",
-    clawdMint,
+    "--gobot",
+    gobotTokens,
+    "--gobot-mint",
+    gobotMint,
     "--ledger",
     FUNDING_LEDGER,
   ];
-  if (envBool("CLAWDBOT_INSTALL_FUNDING_SEND") || envBool("CLAWDBOT_BIRTH_FUNDING_SEND")) {
+  if (envBool("GOBOT_INSTALL_FUNDING_SEND") || envBool("GOBOT_BIRTH_FUNDING_SEND")) {
     args.push("--send");
   }
-  const result = await runCommand(clawdbot, args, {
+  const result = await runCommand(gobot, args, {
     ...process.env,
-    CLAWDBOT_INSTALL_ID: installId,
-    CLAWDBOT_BIRTH_FUNDING_LEDGER: FUNDING_LEDGER,
+    GOBOT_INSTALL_ID: installId,
+    GOBOT_BIRTH_FUNDING_LEDGER: FUNDING_LEDGER,
   });
   const parsed = parseJSONFromOutput(result.stdout) || {};
   if (result.code !== 0) {
@@ -232,7 +232,7 @@ async function fundingWithinCaps(remoteIp) {
     if (
       record.funding.status !== "sent" &&
       !record.funding.solSignature &&
-      !record.funding.clawdSignature
+      !record.funding.gobotSignature
     ) {
       continue;
     }
@@ -241,8 +241,8 @@ async function fundingWithinCaps(remoteIp) {
     total += 1;
     if (record.remoteIp === remoteIp) perIp += 1;
   }
-  const maxPerIp = Number(process.env.CLAWDBOT_INSTALL_FUNDING_MAX_PER_IP_DAY || "3");
-  const maxPerDay = Number(process.env.CLAWDBOT_INSTALL_FUNDING_MAX_PER_DAY || "100");
+  const maxPerIp = Number(process.env.GOBOT_INSTALL_FUNDING_MAX_PER_IP_DAY || "3");
+  const maxPerDay = Number(process.env.GOBOT_INSTALL_FUNDING_MAX_PER_DAY || "100");
   if (maxPerIp > 0 && perIp >= maxPerIp) {
     return { ok: false, reason: `daily per-IP funding cap reached (${maxPerIp})` };
   }
@@ -261,7 +261,7 @@ async function findPriorFunding(installId, recipient) {
     if (
       record.funding.status === "sent" ||
       record.funding.solSignature ||
-      record.funding.clawdSignature
+      record.funding.gobotSignature
     ) {
       return record;
     }
@@ -424,7 +424,7 @@ function parseJSONFromOutput(output) {
 
 function sanitizeError(err) {
   return String(err?.message || err || "")
-    .replaceAll(process.env.CLAWDBOT_TREASURY_PRIVATE_KEY || "__never__", "<secret>")
+    .replaceAll(process.env.GOBOT_TREASURY_PRIVATE_KEY || "__never__", "<secret>")
     .replaceAll(process.env.PRIVATE_KEY || "__never__", "<secret>")
     .slice(0, 1000);
 }

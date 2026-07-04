@@ -16,10 +16,10 @@ if (!apiKey) {
 }
 
 const model = process.env.UPSTASH_BOX_AGENT_MODEL || "anthropic/claude-opus-4-7";
-const port = process.env.CLAWDBOT_BOX_PORT || "3000";
-const installClawdbot = envBool("CLAWDBOT_BOX_INSTALL_CLAWDBOT", true);
-const fundingEnabled = envBool("CLAWDBOT_INSTALL_FUNDING_ENABLED", false);
-const fundingSend = envBool("CLAWDBOT_INSTALL_FUNDING_SEND", false);
+const port = process.env.GOBOT_BOX_PORT || "3000";
+const installGoBot = envBool("GOBOT_BOX_INSTALL", true);
+const fundingEnabled = envBool("GOBOT_INSTALL_FUNDING_ENABLED", false);
+const fundingSend = envBool("GOBOT_INSTALL_FUNDING_SEND", false);
 
 console.log("Creating Upstash Box...");
 const box = await Box.create({
@@ -35,72 +35,72 @@ await box.exec.code({
   lang: "js",
   code: `
     import { mkdirSync, writeFileSync } from "node:fs";
-    mkdirSync("/tmp/clawdbot-box", { recursive: true });
-    writeFileSync("/tmp/clawdbot-box/server.mjs", ${JSON.stringify(serverSource)});
+    mkdirSync("/tmp/gobot-box", { recursive: true });
+    writeFileSync("/tmp/gobot-box/server.mjs", ${JSON.stringify(serverSource)});
   `,
 });
 
-if (installClawdbot) {
-  console.log("Installing ClawdBot inside the box...");
+if (installGoBot) {
+  console.log("Installing GoBot inside the box...");
   const install = await box.exec.command(
     [
       "curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh",
       "|",
-      "CLAWDBOT_INSTALL_API=http://127.0.0.1:3000/api/install",
-      "CLAWDBOT_SKIP_SKILL_SEED=1",
-      "CLAWDBOT_INSTALL_VULCAN=0",
+      "GOBOT_INSTALL_API=http://127.0.0.1:3000/api/install",
+      "GOBOT_SKIP_SKILL_SEED=1",
+      "GOBOT_INSTALL_VULCAN=0",
       "bash",
     ].join(" "),
   );
   writeRunOutput(install);
-  requireSuccessfulRun(install, "ClawdBot install failed inside the box");
+  requireSuccessfulRun(install, "GoBot install failed inside the box");
 }
 
 const env = {
   PORT: port,
-  CLAWDBOT_BOX_PORT: port,
-  CLAWDBOT_BOX_DATA_DIR: process.env.CLAWDBOT_BOX_DATA_DIR || "/tmp/clawdbot-box",
-  CLAWDBOT_INSTALL_FUNDING_ENABLED: fundingEnabled ? "1" : "0",
-  CLAWDBOT_INSTALL_FUNDING_SEND: fundingSend ? "1" : "0",
-  CLAWDBOT_INSTALL_FUNDING_MAX_PER_IP_DAY:
-    process.env.CLAWDBOT_INSTALL_FUNDING_MAX_PER_IP_DAY || "3",
-  CLAWDBOT_INSTALL_FUNDING_MAX_PER_DAY:
-    process.env.CLAWDBOT_INSTALL_FUNDING_MAX_PER_DAY || "100",
-  CLAWDBOT_STARTUP_SOL_LAMPORTS:
-    process.env.CLAWDBOT_STARTUP_SOL_LAMPORTS || "69420000",
-  CLAWDBOT_STARTUP_CLAWD_TOKENS:
-    process.env.CLAWDBOT_STARTUP_CLAWD_TOKENS || "1000",
-  CLAWD_TOKEN_MINT:
-    process.env.CLAWD_TOKEN_MINT ||
-    process.env.CLAWDBOT_CLAWD_MINT ||
+  GOBOT_BOX_PORT: port,
+  GOBOT_BOX_DATA_DIR: process.env.GOBOT_BOX_DATA_DIR || "/tmp/gobot-box",
+  GOBOT_INSTALL_FUNDING_ENABLED: fundingEnabled ? "1" : "0",
+  GOBOT_INSTALL_FUNDING_SEND: fundingSend ? "1" : "0",
+  GOBOT_INSTALL_FUNDING_MAX_PER_IP_DAY:
+    process.env.GOBOT_INSTALL_FUNDING_MAX_PER_IP_DAY || "3",
+  GOBOT_INSTALL_FUNDING_MAX_PER_DAY:
+    process.env.GOBOT_INSTALL_FUNDING_MAX_PER_DAY || "100",
+  GOBOT_STARTUP_SOL_LAMPORTS:
+    process.env.GOBOT_STARTUP_SOL_LAMPORTS || "69420000",
+  GOBOT_STARTUP_TOKENS:
+    process.env.GOBOT_STARTUP_TOKENS || "1000",
+  GOBOT_TOKEN_MINT:
+    process.env.GOBOT_TOKEN_MINT ||
+    process.env.GOBOT_MINT ||
     "8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump",
   SOLANA_RPC_URL: process.env.SOLANA_RPC_URL || process.env.HELIUS_RPC_URL || "",
   HELIUS_RPC_URL: process.env.HELIUS_RPC_URL || process.env.SOLANA_RPC_URL || "",
-  ZKROUTER_API_KEY: process.env.ZKROUTER_API_KEY || "clawdbot-free",
+  ZKROUTER_API_KEY: process.env.ZKROUTER_API_KEY || "clawd-free",
   ZKROUTER_BASE_URL: process.env.ZKROUTER_BASE_URL || "https://clawdrouter-zk.fly.dev/v1",
-  CLAWDBOT_INSTALL_ADMIN_TOKEN:
-    process.env.CLAWDBOT_INSTALL_ADMIN_TOKEN || randomAdminToken(),
+  GOBOT_INSTALL_ADMIN_TOKEN:
+    process.env.GOBOT_INSTALL_ADMIN_TOKEN || randomAdminToken(),
 };
 
 const treasurySecret =
-  process.env.CLAWDBOT_TREASURY_PRIVATE_KEY || process.env.PRIVATE_KEY || "";
+  process.env.GOBOT_TREASURY_PRIVATE_KEY || process.env.PRIVATE_KEY || "";
 if (treasurySecret) {
-  env.CLAWDBOT_TREASURY_PRIVATE_KEY = treasurySecret;
+  env.GOBOT_TREASURY_PRIVATE_KEY = treasurySecret;
 }
 
 const startCommand = `
 set -e
-mkdir -p /tmp/clawdbot-box
-pkill -f /tmp/clawdbot-box/server.mjs >/dev/null 2>&1 || true
-${envPrefix(env)} nohup node /tmp/clawdbot-box/server.mjs > /tmp/clawdbot-box/server.log 2>&1 &
+mkdir -p /tmp/gobot-box
+pkill -f /tmp/gobot-box/server.mjs >/dev/null 2>&1 || true
+${envPrefix(env)} nohup node /tmp/gobot-box/server.mjs > /tmp/gobot-box/server.log 2>&1 &
 sleep 1
-cat /tmp/clawdbot-box/server.log || true
+cat /tmp/gobot-box/server.log || true
 `;
 
-console.log("Starting ClawdBot Box install API...");
+console.log("Starting GoBot Box install API...");
 const started = await box.exec.command(startCommand);
 writeRunOutput(started);
-requireSuccessfulRun(started, "ClawdBot Box install API failed to start");
+requireSuccessfulRun(started, "GoBot Box install API failed to start");
 
 console.log("\nBox bootstrap complete.");
 console.log("Use the preview URL on port 3000 as the install surface.");
@@ -108,10 +108,10 @@ console.log("Install command:");
 console.log("  curl -fsSL <BOX_PREVIEW_URL>/install.sh | bash");
 console.log("\nAdmin token for /api/installs is set in the box process environment.");
 if (!treasurySecret) {
-  console.log("\nFunding is tracking-only until CLAWDBOT_TREASURY_PRIVATE_KEY is set locally before bootstrap.");
+  console.log("\nFunding is tracking-only until GOBOT_TREASURY_PRIVATE_KEY is set locally before bootstrap.");
 }
 if (!fundingSend) {
-  console.log("Funding send is disabled; set CLAWDBOT_INSTALL_FUNDING_SEND=1 to send real SOL/$CLAWD.");
+  console.log("Funding send is disabled; set GOBOT_INSTALL_FUNDING_SEND=1 to send real SOL/$GOBOT.");
 }
 
 function envPrefix(env) {

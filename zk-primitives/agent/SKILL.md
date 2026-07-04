@@ -38,7 +38,7 @@ env:
 # ZK Shark Agent
 
 ZK Shark is the Shark of All Streets agent, named in honor of zk Shark,
-the legend of ordinals. It wraps the lower-level `@clawd/zk-client` SDK
+the legend of ordinals. It wraps the lower-level `@gobot/zk-client` SDK
 and exposes the four operations an agent needs most:
 
 | Method | Purpose |
@@ -48,13 +48,13 @@ and exposes the four operations an agent needs most:
 | `agent.verifyProof({ proof, publicInputs?, ... })` | Off-chain Groth16 sanity check. |
 | `agent.computeNullifierFor(secret, context)` | Deterministic 32-byte nullifier. |
 
-The class name is `ZkSharkAgent`. `ClawdZkAgent` remains exported as a
+The class name is `ZkSharkAgent`. `GoBotZkAgent` remains exported as a
 compatibility alias.
 
 ## Quick Start
 
 ```ts
-import { ZkSharkAgent, routeIntent, dispatchRoute } from "@clawd/zk-shark-agent";
+import { ZkSharkAgent, routeIntent, dispatchRoute } from "@gobot/zk-shark-agent";
 
 const agent = await ZkSharkAgent.fromEnv();
 
@@ -93,7 +93,7 @@ zk-shark-agent ask     "natural language"
 ```
 
 `shark-of-all-streets` is also available as a binary alias. The legacy
-`clawd-zk-agent` binary remains available for older scripts.
+`gobot-zk-agent` binary remains available for older scripts.
 
 The proof JSON shape is:
 
@@ -109,7 +109,7 @@ The proof JSON shape is:
 ## Configuration
 
 Use `ZK_SHARK_RPC_URL` plus the optional `ZK_SHARK_*` variables declared
-in the frontmatter. Legacy `CLAWD_ZK_*` variables are still accepted as
+in the frontmatter. Legacy `GOBOT_ZK_*` variables are still accepted as
 fallbacks.
 
 Named program aliases:
@@ -120,14 +120,14 @@ Named program aliases:
 | `ZK_SHARK_DEVNET` | Devnet placeholder. |
 | `ZK_SHARK_LOCALNET` | Localnet placeholder. |
 
-Legacy `CLAWDZK_MAINNET`, `CLAWDZK_DEVNET`, and `CLAWDZK_LOCALNET` are
+Legacy `GOBOTZK_MAINNET`, `GOBOTZK_DEVNET`, and `GOBOTZK_LOCALNET` are
 also accepted.
 
 ## Failure Modes
 
 - `ZK_SHARK_RPC_URL is not set` - add it to the environment, or keep
-  using legacy `CLAWD_ZK_RPC_URL`.
-- `Invalid ZK_SHARK_PROGRAM_ID/CLAWD_ZK_PROGRAM_ID` - the value is not
+  using legacy `GOBOT_ZK_RPC_URL`.
+- `Invalid ZK_SHARK_PROGRAM_ID/GOBOT_ZK_PROGRAM_ID` - the value is not
   a base58 pubkey and not a known alias.
 - `proof.a must be 64 bytes` - the proof JSON is malformed; re-export
   from the prover.
@@ -136,6 +136,6 @@ also accepted.
 ## Cross-References
 
 - Lower-level SDK: `zk-primitives/client/`
-- Anchor program: `zk-primitives/programs/clawd-zk/`
+- Anchor program: `zk-primitives/programs/gobot-zk/`
 - Architecture notes: `zk-primitives/docs/ARCHITECTURE.md`
 - Agent catalog: `AGENTS.md`

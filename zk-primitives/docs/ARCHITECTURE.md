@@ -1,16 +1,16 @@
-# Clawd ZK Primitive — Architecture
+# Go Bot ZK Primitive — Architecture
 
 > **A ZK primitive layer for Solana-native AI models.**
-> Built on Light Protocol, designed for the Clawd agent fleet.
+> Built on Light Protocol, designed for the Go Bot agent fleet.
 
 ## 1. Goals
 
-The Clawd ZK primitive provides three on-chain capabilities that are
-useful for the full Clawd model stack:
+The Go Bot ZK primitive provides three on-chain capabilities that are
+useful for the full Go Bot model stack:
 
 | Capability | What it does | Why it matters |
 |------------|-------------|----------------|
-| **Nullifier registry** | Prevents double-publish of model attestations, double-claim of inference rewards, double-issuance of agent tokens | A Clawd agent must be able to prove "I attested to this model exactly once" without trusting any central registry |
+| **Nullifier registry** | Prevents double-publish of model attestations, double-claim of inference rewards, double-issuance of agent tokens | A Go Bot agent must be able to prove "I attested to this model exactly once" without trusting any central registry |
 | **Groth16 proof verification** | Verifies a Groth16 zk-SNARK on-chain (~200k CU) | The agent can prove off-chain computation (inference, gradient step, encryption key derivation) without re-executing on-chain |
 | **Compressed state** | Stores attestation records, encrypted model parameters, and zk-nullifiers in Light Protocol state trees (rent-free) | Makes the system scalable to millions of model attestations without exhausting rent budget |
 | **Encrypted state** | Commits ciphertext hashes; plaintext stays off-chain | Agents can publish state without leaking model weights or training data |
@@ -45,7 +45,7 @@ via PDA, plus the ~50,000 CU for a CPI), compressed nullifiers are
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                            Clawd Agent (off-chain)                      │
+│                            Go Bot Agent (off-chain)                      │
 │                                                                        │
 │   ┌────────────────┐  ┌─────────────────┐  ┌────────────────────┐      │
 │   │ Nullifier      │  │ Groth16         │  │ Photon RPC client  │      │
@@ -59,7 +59,7 @@ via PDA, plus the ~50,000 CU for a CPI), compressed nullifiers are
 │                          Solana (on-chain)                              │
 │                                                                        │
 │   ┌────────────────┐  ┌──────────────────┐  ┌────────────────────┐      │
-│   │ clawd-zk       │  │ Light System     │  │ State Trees        │      │
+│   │ gobot-zk       │  │ Light System     │  │ State Trees        │      │
 │   │ program        │─▶│ Program          │─▶│ (Merkle, ~67M     │      │
 │   │                │  │ (CPI: verify     │  │  leaves per tree)  │      │
 │   │ ① verify       │  │  proof, append   │  │                    │      │
@@ -81,7 +81,7 @@ via PDA, plus the ~50,000 CU for a CPI), compressed nullifiers are
                   └─────────────────────┘
 ```
 
-### 3.1 The on-chain program (`clawd-zk`)
+### 3.1 The on-chain program (`gobot-zk`)
 
 Three instructions, all Groth16-gated:
 
@@ -111,7 +111,7 @@ The Groth16 proof attests that the committer knows the plaintext
 - `ciphertext_commitment` (32 bytes)
 - `state_version` (u64 LE, padded to 32 bytes)
 
-### 3.2 The TypeScript client (`@clawd/zk-client`)
+### 3.2 The TypeScript client (`@gobot/zk-client`)
 
 Four modules:
 
@@ -121,8 +121,8 @@ Four modules:
   `buildCommitPublicInputs`, `serializeProof`, `verifyGroth16Offchain`
 - `state.ts` — `fetchValidityProofV2`, `fetchAddressTreeV2`,
   `fetchRandomStateTreeV2`, `packAccounts`
-- `client.ts` — high-level `ClawdZkClient.publishAttestation(...)` and
-  `ClawdZkClient.commitEncryptedState(...)` returning ready-to-sign
+- `client.ts` — high-level `GoBotZkClient.publishAttestation(...)` and
+  `GoBotZkClient.commitEncryptedState(...)` returning ready-to-sign
   `TransactionInstruction`s.
 
 ## 4. Cryptographic Details
@@ -138,9 +138,9 @@ The on-chain nullifier is stored as a compressed PDA at an address
 derived by:
 ```
 address = derive_address(
-    seeds = [b"clawd-zk-nullifier", nullifier_32_bytes],
+    seeds = [b"gobot-zk-nullifier", nullifier_32_bytes],
     address_tree = <V2 address tree>,
-    program_id = clawd-zk,
+    program_id = gobot-zk,
 )
 ```
 
@@ -201,7 +201,7 @@ A typical "publish + consume" cycle for one model attestation:
 ## 6. Security Considerations
 
 ### 6.1 Trust model
-- The user trusts the on-chain program (`clawd-zk`).
+- The user trusts the on-chain program (`gobot-zk`).
 - The user trusts the Light System Program (audited; see
   `light-protocol/audits`).
 - The user trusts the Groth16 trusted setup (per-circuit).
@@ -231,7 +231,7 @@ A typical "publish + consume" cycle for one model attestation:
 
 ## 7. Comparison to Alternatives
 
-| | Clawd ZK + Light | ZK on EVM (e.g. Aztec) | Off-chain ZK only |
+| | Go Bot ZK + Light | ZK on EVM (e.g. Aztec) | Off-chain ZK only |
 |---|---|---|---|
 | Proof cost | ~200k CU on Solana | ~300k gas on L1 | 0 (off-chain) |
 | State cost | ~5k lamports per tree per tx | ~20k gas per storage slot | Free |
@@ -240,7 +240,7 @@ A typical "publish + consume" cycle for one model attestation:
 | Trust model | Trust Light System Program | Trust Aztec rollup | Trust the relayer |
 | Best for | High-frequency on-chain ZK | EVM liquidity + ZK | Off-chain analytics |
 
-For Solana-native agents, Clawd ZK + Light is the right choice: it
+For Solana-native agents, Go Bot ZK + Light is the right choice: it
 inherits Solana's composability and finality while still giving you
 the privacy and verifiability of ZK.
 
@@ -252,9 +252,9 @@ the privacy and verifiability of ZK.
 - **Shielded pool**: a ZK mixer over compressed token accounts for
   private agent-to-agent payments (the "shielded pool" reference
   from Light).
-- **ZK federation**: let multiple Clawd nodes collaboratively
+- **ZK federation**: let multiple Go Bot nodes collaboratively
   train a model, with each step's gradient provably correct via
   Groth16.
 - **Cross-program nullifier sharing**: expose a CPI so other
-  Clawd programs can read / write the nullifier tree without
+  Go Bot programs can read / write the nullifier tree without
   re-implementing the derivation.

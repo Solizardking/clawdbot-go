@@ -1,13 +1,13 @@
 # ZK Configs
 
-Configuration files for Clawd ZK network and tree metadata.
+Configuration files for Go Bot ZK network and tree metadata.
 
 ## Files
 
 | File | Purpose |
 |---|---|
 | `light-trees.yaml` | Canonical Light Protocol tree, queue, CPI context, and lookup-table addresses |
-| `clawdbot-zk.example.json` | Runtime-facing example config for catalog and agent wiring |
+| `gobot-zk.example.json` | Runtime-facing example config for catalog and agent wiring |
 
 ## Operational Rules
 
@@ -19,11 +19,11 @@ Configuration files for Clawd ZK network and tree metadata.
 Relevant environment variables:
 
 ```bash
-CLAWD_ZK_RPC_URL=
-CLAWD_ZK_PROGRAM_ID=
-CLAWD_ZK_PHOTON_URL=
-CLAWD_ZK_API_KEY=
-CLAWD_ZK_COMMITMENT=confirmed
-CLAWD_ZK_KEYPAIR=
-CLAWD_ZK_NETWORK=mainnet
+GOBOT_ZK_RPC_URL=
+GOBOT_ZK_PROGRAM_ID=
+GOBOT_ZK_PHOTON_URL=
+GOBOT_ZK_API_KEY=
+GOBOT_ZK_COMMITMENT=confirmed
+GOBOT_ZK_KEYPAIR=
+GOBOT_ZK_NETWORK=mainnet
 ```

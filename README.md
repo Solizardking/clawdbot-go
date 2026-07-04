@@ -199,7 +199,7 @@ GOBOT_INSTALL_CORE_AI=1
 GOBOT_INSTALL_VULCAN=1
 # GOBOT_INSTALL_VULCAN=0 # explicit opt-out for CI/constrained installs
 GOBOT_CORE_AI_REPO=https://github.com/Solizardking/core-ai
-GOBOT_CORE_AI_REF=gobot-stack-integration
+GOBOT_CORE_AI_REF=clawdbot-stack-integration
 GOBOT_CORE_AI_DIR=~/.gobot/core-ai
 GOBOT_CORE_AI_MCP_CONFIG=~/.gobot/core-ai.mcp.json
 ```

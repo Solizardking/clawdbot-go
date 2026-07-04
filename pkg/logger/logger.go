@@ -1,4 +1,4 @@
-// Package logger provides structured logging for ClawdBot.
+// Package logger provides structured logging for GoBot.
 // Adapted from PicoClaw's logger — category-filtered, field-tagged log output.
 package logger
 
@@ -104,7 +104,7 @@ func ErrorCF(cat, msg string, fields map[string]any) { logf(ERROR, cat, msg, fie
 func FatalCF(cat, msg string, fields map[string]any) { logf(FATAL, cat, msg, fields) }
 
 // Convenience shortcuts
-func Debug(msg string) { logf(DEBUG, "clawdbot", msg, nil) }
-func Info(msg string)  { logf(INFO, "clawdbot", msg, nil) }
-func Warn(msg string)  { logf(WARN, "clawdbot", msg, nil) }
-func Error(msg string) { logf(ERROR, "clawdbot", msg, nil) }
+func Debug(msg string) { logf(DEBUG, "gobot", msg, nil) }
+func Info(msg string)  { logf(INFO, "gobot", msg, nil) }
+func Warn(msg string)  { logf(WARN, "gobot", msg, nil) }
+func Error(msg string) { logf(ERROR, "gobot", msg, nil) }

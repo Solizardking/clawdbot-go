@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/8bitlabs/clawdbot/pkg/wallet"
+	"github.com/8bitlabs/gobot/pkg/wallet"
 )
 
 type fakeRunner struct {
@@ -29,8 +29,8 @@ func TestFundPlansWithoutSending(t *testing.T) {
 		Recipient:   kp.Pubkey(),
 		RPCURL:      "http://localhost:8899",
 		SOLAmount:   "0.069420",
-		CLAWDAmount: "1000",
-		CLAWDMint:   DefaultCLAWDMint,
+		GOBOTAmount: "1000",
+		GOBOTMint:   DefaultGOBOTMint,
 		LedgerPath:  ledger,
 	}, nil)
 	if err != nil {
@@ -68,8 +68,8 @@ func TestFundSendsWithKeypairFile(t *testing.T) {
 		Recipient:       recipient.Pubkey(),
 		RPCURL:          "http://localhost:8899",
 		SOLAmount:       "0.069420",
-		CLAWDAmount:     "1000",
-		CLAWDMint:       DefaultCLAWDMint,
+		GOBOTAmount:     "1000",
+		GOBOTMint:       DefaultGOBOTMint,
 		TreasuryKeypair: keypairPath,
 	}, runner)
 	if err != nil {

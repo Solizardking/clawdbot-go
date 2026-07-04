@@ -1,5 +1,5 @@
-// Package strategy implements the ClawdBot quantitative trading strategy.
-// Ported from ClawdBot OS StrategyRegistry.ts + ClawdBotStrategy.ts.
+// Package strategy implements the GoBot quantitative trading strategy.
+// Ported from GoBot OS StrategyRegistry.ts + GoBotStrategy.ts.
 // Pure Go math — no external indicator libraries.
 package strategy
 
@@ -160,7 +160,7 @@ func DetectEMACross(fastEMA, slowEMA []float64) string {
 	return "none"
 }
 
-// ── ClawdBot Strategy ─────────────────────────────────────────────────
+// ── GoBot Strategy ─────────────────────────────────────────────────
 // Signal engine using RSI + EMA cross + price position confirmation.
 
 type StrategyParams struct {
@@ -188,7 +188,7 @@ type StrategySignal struct {
 	Reasoning    string  `json:"reasoning"`
 }
 
-// DefaultParams returns the ClawdBot strategy defaults.
+// DefaultParams returns the GoBot strategy defaults.
 func DefaultParams() StrategyParams {
 	return StrategyParams{
 		RSIOverbought:   70,
@@ -203,7 +203,7 @@ func DefaultParams() StrategyParams {
 }
 
 // Evaluate generates a trading signal from OHLCV bars.
-// Requires all three conditions to fire (same as ClawdBotStrategy.ts):
+// Requires all three conditions to fire (same as GoBotStrategy.ts):
 //
 //	LONG:  RSI crosses above oversold + fresh bullish EMA cross + price > fast EMA
 //	SHORT: RSI crosses below overbought + fresh bearish EMA cross + price < fast EMA

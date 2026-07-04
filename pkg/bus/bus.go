@@ -1,4 +1,4 @@
-// Package bus provides the message bus for ClawdBot inter-component communication.
+// Package bus provides the message bus for GoBot inter-component communication.
 // Adapted from PicoClaw's bus package — channels publish inbound, agent consumes.
 package bus
 

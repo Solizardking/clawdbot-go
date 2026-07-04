@@ -1,5 +1,5 @@
 // Package aster :: trader.go
-// Autonomous perpetual futures trader for ClawdBot.
+// Autonomous perpetual futures trader for GoBot.
 //
 // This module provides high-level trading operations that combine
 // the low-level Aster client with risk management, position sizing,
@@ -19,15 +19,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/logger"
-	"github.com/8bitlabs/clawdbot/pkg/memory"
+	"github.com/8bitlabs/gobot/pkg/logger"
+	"github.com/8bitlabs/gobot/pkg/memory"
 )
 
 // ── TraderConfig ─────────────────────────────────────────────────────
 
 type TraderConfig struct {
 	Client          *Client
-	Vault           *memory.ClawVault
+	Vault           *memory.GoVault
 	MemEngine       *memory.MemoryEngine
 	DefaultLeverage int
 	MaxPositions    int
@@ -42,7 +42,7 @@ type TraderConfig struct {
 
 type PerpTrader struct {
 	client          *Client
-	vault           *memory.ClawVault
+	vault           *memory.GoVault
 	memEngine       *memory.MemoryEngine
 	defaultLeverage int
 	maxPositions    int

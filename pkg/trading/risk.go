@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/config"
-	"github.com/8bitlabs/clawdbot/pkg/laws"
+	"github.com/8bitlabs/gobot/pkg/config"
+	"github.com/8bitlabs/gobot/pkg/laws"
 )
 
 type RiskDecision string
@@ -196,7 +196,7 @@ func BuildCockpitReport(cfg *config.Config, now time.Time) CockpitReport {
 
 func FormatCockpit(report CockpitReport) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "ClawdBot Trading Cockpit (%s)\n", report.GeneratedAt)
+	fmt.Fprintf(&b, "GoBot Trading Cockpit (%s)\n", report.GeneratedAt)
 	fmt.Fprintf(&b, "mode: %s\n", report.Mode)
 	fmt.Fprintf(&b, "readiness: %s (%d/100) - %s\n", report.Readiness.Grade, report.Readiness.Score, report.Readiness.Status)
 	if len(report.Readiness.Reasons) > 0 {

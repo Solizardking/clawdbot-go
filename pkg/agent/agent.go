@@ -1,5 +1,5 @@
 // Package agent :: agent.go
-// Agent — Dexter-style iterative tool-calling loop for ClawdBot.
+// Agent — Dexter-style iterative tool-calling loop for GoBot.
 // Ported from Agent.ts.
 //
 // Features:
@@ -16,10 +16,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/logger"
-	"github.com/8bitlabs/clawdbot/pkg/memory"
-	"github.com/8bitlabs/clawdbot/pkg/providers"
-	"github.com/8bitlabs/clawdbot/pkg/tools"
+	"github.com/8bitlabs/gobot/pkg/logger"
+	"github.com/8bitlabs/gobot/pkg/memory"
+	"github.com/8bitlabs/gobot/pkg/providers"
+	"github.com/8bitlabs/gobot/pkg/tools"
 )
 
 // Context clearing thresholds (char-based estimate, ~4 chars/token)
@@ -47,9 +47,9 @@ type AgentConfig struct {
 	Temperature   float64
 }
 
-// ── ClawdAgent ────────────────────────────────────────────────────────
+// ── GoBotAgent ────────────────────────────────────────────────────────
 
-type ClawdAgent struct {
+type GoBotAgent struct {
 	config       AgentConfig
 	provider     providers.LLMProvider
 	toolExecutor *ToolExecutor
@@ -57,7 +57,7 @@ type ClawdAgent struct {
 	memEngine    *memory.MemoryEngine
 }
 
-func NewClawdAgent(cfg AgentConfig) (*ClawdAgent, error) {
+func NewGoBotAgent(cfg AgentConfig) (*GoBotAgent, error) {
 	if cfg.Provider == nil {
 		return nil, fmt.Errorf("provider is required")
 	}
@@ -94,7 +94,7 @@ func NewClawdAgent(cfg AgentConfig) (*ClawdAgent, error) {
 		StrategyPath:  cfg.StrategyPath,
 	})
 
-	return &ClawdAgent{
+	return &GoBotAgent{
 		config:       cfg,
 		provider:     cfg.Provider,
 		toolExecutor: executor,
@@ -105,7 +105,7 @@ func NewClawdAgent(cfg AgentConfig) (*ClawdAgent, error) {
 
 // ── Run — main iterative loop ────────────────────────────────────────
 
-func (a *ClawdAgent) Run(ctx context.Context, query string) <-chan AgentEvent {
+func (a *GoBotAgent) Run(ctx context.Context, query string) <-chan AgentEvent {
 	events := make(chan AgentEvent, 64)
 
 	go func() {
@@ -242,7 +242,7 @@ func (a *ClawdAgent) Run(ctx context.Context, query string) <-chan AgentEvent {
 
 // ── Chat — single-shot without tool loop ─────────────────────────────
 
-func (a *ClawdAgent) Chat(ctx context.Context, prompt string) (string, *TokenUsage, error) {
+func (a *GoBotAgent) Chat(ctx context.Context, prompt string) (string, *TokenUsage, error) {
 	resp, err := a.provider.Chat(ctx, providers.ChatOptions{
 		Model: a.config.Model,
 		Messages: []providers.Message{
@@ -267,7 +267,7 @@ func (a *ClawdAgent) Chat(ctx context.Context, prompt string) (string, *TokenUsa
 
 // ── ProcessDirect — convenience for CLI/cron processing ──────────────
 
-func (a *ClawdAgent) ProcessDirect(ctx context.Context, query string) (string, error) {
+func (a *GoBotAgent) ProcessDirect(ctx context.Context, query string) (string, error) {
 	events := a.Run(ctx, query)
 	var answer string
 	for ev := range events {
@@ -287,7 +287,7 @@ func (a *ClawdAgent) ProcessDirect(ctx context.Context, query string) (string, e
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
-func (a *ClawdAgent) doneEvent(rc *RunContext, answer string) AgentEvent {
+func (a *GoBotAgent) doneEvent(rc *RunContext, answer string) AgentEvent {
 	totalTime := time.Since(rc.StartTime)
 	return AgentEvent{
 		Type:       EventDone,

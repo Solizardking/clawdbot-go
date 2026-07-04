@@ -1,4 +1,4 @@
-// Package catalog reads local Clawd agent, skill, and zk surface catalogs.
+// Package catalog reads local GoBot agent, skill, and zk surface catalogs.
 package catalog
 
 import (
@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	EnvSkillsDir       = "CLAWDBOT_SKILLS_DIR"
-	EnvAgentsDir       = "CLAWDBOT_AGENTS_DIR"
-	EnvZKPrimitivesDir = "CLAWDBOT_ZK_PRIMITIVES_DIR"
+	EnvSkillsDir       = "GOBOT_SKILLS_DIR"
+	EnvAgentsDir       = "GOBOT_AGENTS_DIR"
+	EnvZKPrimitivesDir = "GOBOT_ZK_PRIMITIVES_DIR"
 )
 
 type Roots struct {
@@ -242,7 +242,7 @@ func LoadZKSurface(root string) (ZKSurface, error) {
 		surface.ClientPackage = pkg.Name
 	}
 
-	programDir := filepath.Join(root, "programs", "clawd-zk")
+	programDir := filepath.Join(root, "programs", "gobot-zk")
 	if fileExists(filepath.Join(programDir, "Cargo.toml")) {
 		surface.ProgramDir = programDir
 		surface.ProgramName = readCargoName(filepath.Join(programDir, "Cargo.toml"))

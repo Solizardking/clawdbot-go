@@ -1,11 +1,11 @@
-// Package session manages chat session history for ClawdBot.
+// Package session manages chat session history for GoBot.
 // Adapted from PicoClaw — per-session message history with summarization trigger.
 package session
 
 import (
 	"sync"
 
-	"github.com/8bitlabs/clawdbot/pkg/providers"
+	"github.com/8bitlabs/gobot/pkg/providers"
 )
 
 // Store holds message history for multiple sessions.

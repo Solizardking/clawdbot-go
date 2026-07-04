@@ -1,4 +1,4 @@
-// Package dna generates a synthetic DNA profile for a Clawd agent.
+// Package dna generates a synthetic DNA profile for a GoBot agent.
 package dna
 
 import (
@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	SchemaVersion         = "clawd.agent.dna/v1"
+	SchemaVersion         = "gobot.agent.dna/v1"
 	DefaultFileName       = "agent-dna.json"
 	DefaultSequenceLength = 256
 	MinSequenceLength     = 64
@@ -105,7 +105,7 @@ func DefaultPath(workspace string) string {
 func Generate(opts Options) (AgentDNA, error) {
 	name := strings.TrimSpace(opts.AgentName)
 	if name == "" {
-		name = "ClawdBot"
+		name = "GoBot"
 	}
 	role := strings.TrimSpace(opts.Role)
 	if role == "" {
@@ -139,7 +139,7 @@ func Generate(opts Options) (AgentDNA, error) {
 	metrics := Analyze(sequence, traits)
 	sequenceHash := hashHex(sequence)
 	nullifier := hashHex("nullifier:" + seedHash + ":" + sequenceHash)
-	dnaID := "clawd-dna-" + sequenceHash[:16]
+	dnaID := "gobot-dna-" + sequenceHash[:16]
 
 	return AgentDNA{
 		SchemaVersion: SchemaVersion,
@@ -149,7 +149,7 @@ func Generate(opts Options) (AgentDNA, error) {
 			Slug: slugify(name),
 			Role: role,
 			Lineage: []string{
-				"clawdbot-go",
+				"gobot-go",
 				"six-law-harness",
 				"zk-primitives",
 			},
@@ -399,7 +399,7 @@ var nonSlugChar = regexp.MustCompile(`[^a-z0-9]+`)
 func slugify(value string) string {
 	slug := strings.Trim(nonSlugChar.ReplaceAllString(strings.ToLower(value), "-"), "-")
 	if slug == "" {
-		return "clawdbot"
+		return "gobot"
 	}
 	return slug
 }

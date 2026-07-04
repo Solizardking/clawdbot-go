@@ -1,5 +1,5 @@
 // Package solana :: birdeye_tools.go
-// Agent tool definitions for Birdeye API — registered with the ClawdBot tool registry.
+// Agent tool definitions for Birdeye API — registered with the GoBot tool registry.
 // These tools give the LLM direct access to Solana token data, search, security, and wallet analytics.
 package solana
 
@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/8bitlabs/clawdbot/pkg/tools"
+	"github.com/8bitlabs/gobot/pkg/tools"
 )
 
 // RegisterBirdeyeTools adds all Birdeye data tools to the agent's tool registry.

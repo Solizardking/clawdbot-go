@@ -1,6 +1,6 @@
 // Package memory :: vault.go
-// ClawVault — Persistent Markdown Memory System for ClawdBot.
-// Ported from ClawVault TypeScript.
+// GoVault — Persistent Markdown Memory System for GoBot.
+// Ported from GoVault TypeScript.
 //
 // Architecture: Session → Observe → Score → Route → Store → Reflect → Promote
 //
@@ -116,9 +116,9 @@ type Checkpoint struct {
 	CreatedAt string `json:"created_at"`
 }
 
-// ── ClawVault ────────────────────────────────────────────────────────
+// ── GoVault ────────────────────────────────────────────────────────
 
-type ClawVault struct {
+type GoVault struct {
 	mu              sync.RWMutex
 	vaultPath       string
 	clawvaultPath   string
@@ -127,9 +127,9 @@ type ClawVault struct {
 	shortTermMax    int
 }
 
-func NewClawVault(vaultPath string) *ClawVault {
+func NewGoVault(vaultPath string) *GoVault {
 	abs, _ := filepath.Abs(vaultPath)
-	return &ClawVault{
+	return &GoVault{
 		vaultPath:     abs,
 		clawvaultPath: filepath.Join(filepath.Dir(abs), ".clawvault"),
 		graphIndex: GraphIndex{
@@ -140,7 +140,7 @@ func NewClawVault(vaultPath string) *ClawVault {
 	}
 }
 
-func (v *ClawVault) Init() error {
+func (v *GoVault) Init() error {
 	for _, cat := range allCategories {
 		dir := filepath.Join(v.vaultPath, string(cat))
 		if err := os.MkdirAll(dir, 0755); err != nil {
@@ -174,7 +174,7 @@ type RememberOpts struct {
 	Score    float64
 }
 
-func (v *ClawVault) Remember(content string, opts RememberOpts) (*VaultEntry, error) {
+func (v *GoVault) Remember(content string, opts RememberOpts) (*VaultEntry, error) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 
@@ -248,7 +248,7 @@ type RecallOpts struct {
 	MinScore float64
 }
 
-func (v *ClawVault) Recall(query string, opts RecallOpts) []VaultEntry {
+func (v *GoVault) Recall(query string, opts RecallOpts) []VaultEntry {
 	v.mu.RLock()
 	defer v.mu.RUnlock()
 
@@ -292,7 +292,7 @@ func (v *ClawVault) Recall(query string, opts RecallOpts) []VaultEntry {
 }
 
 // GetShortTermContext returns recent entries from the in-memory buffer.
-func (v *ClawVault) GetShortTermContext(limit int) []VaultEntry {
+func (v *GoVault) GetShortTermContext(limit int) []VaultEntry {
 	v.mu.RLock()
 	defer v.mu.RUnlock()
 	if limit <= 0 {
@@ -309,7 +309,7 @@ func (v *ClawVault) GetShortTermContext(limit int) []VaultEntry {
 
 // ── Graph Traversal ──────────────────────────────────────────────────
 
-func (v *ClawVault) LinkEntries(fromID, toID string, weight float64) error {
+func (v *GoVault) LinkEntries(fromID, toID string, weight float64) error {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 
@@ -330,7 +330,7 @@ func (v *ClawVault) LinkEntries(fromID, toID string, weight float64) error {
 	return v.saveGraphIndex()
 }
 
-func (v *ClawVault) TraverseGraph(startID string, depth int) []VaultEntry {
+func (v *GoVault) TraverseGraph(startID string, depth int) []VaultEntry {
 	v.mu.RLock()
 	defer v.mu.RUnlock()
 
@@ -365,7 +365,7 @@ func (v *ClawVault) TraverseGraph(startID string, depth int) []VaultEntry {
 
 // ── Checkpoint (Wake/Sleep) ──────────────────────────────────────────
 
-func (v *ClawVault) SaveCheckpoint(sessionID string, agentState map[string]any, activePositions []any, pendingResearch []string) error {
+func (v *GoVault) SaveCheckpoint(sessionID string, agentState map[string]any, activePositions []any, pendingResearch []string) error {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 
@@ -391,7 +391,7 @@ func (v *ClawVault) SaveCheckpoint(sessionID string, agentState map[string]any, 
 	return os.WriteFile(cpPath, data, 0644)
 }
 
-func (v *ClawVault) LoadCheckpoint() (*Checkpoint, error) {
+func (v *GoVault) LoadCheckpoint() (*Checkpoint, error) {
 	cpPath := filepath.Join(v.clawvaultPath, "last-checkpoint.json")
 	data, err := os.ReadFile(cpPath)
 	if err != nil {
@@ -420,7 +420,7 @@ type TradeRecordInput struct {
 	Outcome    string // "win", "loss", "neutral", ""
 }
 
-func (v *ClawVault) RecordTrade(trade TradeRecordInput) (*VaultEntry, error) {
+func (v *GoVault) RecordTrade(trade TradeRecordInput) (*VaultEntry, error) {
 	pnlStr := "Position open"
 	if trade.ExitPrice > 0 {
 		pnlStr = fmt.Sprintf("PnL: $%.2f (%.2f%%)", trade.PnlUSD, trade.PnlPct)
@@ -478,7 +478,7 @@ func (v *ClawVault) RecordTrade(trade TradeRecordInput) (*VaultEntry, error) {
 	})
 }
 
-func (v *ClawVault) GetTradeHistory(token string, limit int) []VaultEntry {
+func (v *GoVault) GetTradeHistory(token string, limit int) []VaultEntry {
 	q := token
 	if q == "" {
 		q = "trade"
@@ -494,7 +494,7 @@ type ReflectResult struct {
 	Archived int
 }
 
-func (v *ClawVault) Reflect() ReflectResult {
+func (v *GoVault) Reflect() ReflectResult {
 	inbox := v.loadAllEntries(CatInbox)
 	var result ReflectResult
 
@@ -523,7 +523,7 @@ func (v *ClawVault) Reflect() ReflectResult {
 
 // ── Context Profile (for agent injection) ────────────────────────────
 
-func (v *ClawVault) BuildContextProfile(query string) string {
+func (v *GoVault) BuildContextProfile(query string) string {
 	memories := v.Recall(query, RecallOpts{Limit: 5})
 	recent := v.GetShortTermContext(5)
 	trades := v.GetTradeHistory("", 3)
@@ -557,7 +557,7 @@ func (v *ClawVault) BuildContextProfile(query string) string {
 
 // ── Internal Utilities ───────────────────────────────────────────────
 
-func (v *ClawVault) autoRoute(content string) VaultCategory {
+func (v *GoVault) autoRoute(content string) VaultCategory {
 	lower := strings.ToLower(content)
 	scores := make(map[VaultCategory]int)
 
@@ -580,7 +580,7 @@ func (v *ClawVault) autoRoute(content string) VaultCategory {
 	return bestCat
 }
 
-func (v *ClawVault) scoreContent(content string) float64 {
+func (v *GoVault) scoreContent(content string) float64 {
 	lower := strings.ToLower(content)
 	score := 0.3
 
@@ -609,7 +609,7 @@ func (v *ClawVault) scoreContent(content string) float64 {
 	return score
 }
 
-func (v *ClawVault) computeRelevance(query string, entry VaultEntry) float64 {
+func (v *GoVault) computeRelevance(query string, entry VaultEntry) float64 {
 	queryWords := strings.Fields(strings.ToLower(query))
 	contentWords := make(map[string]bool)
 	for _, w := range strings.Fields(strings.ToLower(entry.Content)) {
@@ -649,7 +649,7 @@ func (v *ClawVault) computeRelevance(query string, entry VaultEntry) float64 {
 	return rel
 }
 
-func (v *ClawVault) extractTitle(content string) string {
+func (v *GoVault) extractTitle(content string) string {
 	lines := strings.SplitN(content, "\n", 3)
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -666,7 +666,7 @@ func (v *ClawVault) extractTitle(content string) string {
 	return "Untitled"
 }
 
-func (v *ClawVault) extractTags(content string) []string {
+func (v *GoVault) extractTags(content string) []string {
 	tags := make(map[string]bool)
 
 	// $TOKEN tags
@@ -705,7 +705,7 @@ func (v *ClawVault) extractTags(content string) []string {
 	return result
 }
 
-func (v *ClawVault) generateID(category VaultCategory) string {
+func (v *GoVault) generateID(category VaultCategory) string {
 	date := time.Now().Format("20060102")
 	chars := "abcdefghijklmnopqrstuvwxyz0123456789"
 	b := make([]byte, 5)
@@ -715,11 +715,11 @@ func (v *ClawVault) generateID(category VaultCategory) string {
 	return fmt.Sprintf("%s-%s-%s", category, date, string(b))
 }
 
-func (v *ClawVault) entryPath(entry *VaultEntry) string {
+func (v *GoVault) entryPath(entry *VaultEntry) string {
 	return filepath.Join(v.vaultPath, string(entry.Category), entry.ID+".md")
 }
 
-func (v *ClawVault) loadEntry(filePath string) *VaultEntry {
+func (v *GoVault) loadEntry(filePath string) *VaultEntry {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil
@@ -769,7 +769,7 @@ func (v *ClawVault) loadEntry(filePath string) *VaultEntry {
 	return entry
 }
 
-func (v *ClawVault) loadAllEntries(category VaultCategory) []VaultEntry {
+func (v *GoVault) loadAllEntries(category VaultCategory) []VaultEntry {
 	categories := allCategories
 	if category != "" {
 		categories = []VaultCategory{category}
@@ -794,7 +794,7 @@ func (v *ClawVault) loadAllEntries(category VaultCategory) []VaultEntry {
 	return entries
 }
 
-func (v *ClawVault) saveGraphIndex() error {
+func (v *GoVault) saveGraphIndex() error {
 	v.graphIndex.LastUpdated = time.Now().Format(time.RFC3339)
 	data, err := json.MarshalIndent(v.graphIndex, "", "  ")
 	if err != nil {

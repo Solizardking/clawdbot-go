@@ -1,7 +1,7 @@
 // Package hardware — HardwareAdapter.
 //
 // HardwareAdapter connects the Arduino Modulino® I2C sensor cluster to the
-// ClawdBot OODA agent lifecycle.  It implements agent.AgentHooks so the agent
+// GoBot OODA agent lifecycle.  It implements agent.AgentHooks so the agent
 // core never needs to know about I2C — the adapter handles everything:
 //
 //	Pixels LEDs  → visual status (idle/signal/trade/win/loss/error)
@@ -661,7 +661,7 @@ func (a *HardwareAdapter) playStartup() {
 // ── Environment snapshot ──────────────────────────────────────────────
 
 // EnvironmentSnapshot returns a map of current sensor readings.
-// Can be stored to ClawVault for context-aware trading.
+// Can be stored to GoVault for context-aware trading.
 func (a *HardwareAdapter) EnvironmentSnapshot() map[string]interface{} {
 	if a.hub == nil {
 		return nil

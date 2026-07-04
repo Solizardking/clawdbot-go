@@ -1,4 +1,4 @@
-# ClawdBot Web — Makefile
+# GoBot Web — Makefile
 # Adapted from PicoClaw web/Makefile
 
 .PHONY: all frontend backend clean dev
@@ -11,11 +11,11 @@ frontend:
 
 # Build Go backend
 backend:
-	go build -o ../build/clawdbot-web ./backend/
+	go build -o ../build/gobot-web ./backend/
 
 # Dev mode — run both frontend and backend
 dev:
-	@echo "Starting ClawdBot Web Console..."
+	@echo "Starting GoBot Web Console..."
 	@echo "Frontend: http://localhost:5173"
 	@echo "Backend:  http://localhost:18800"
 	cd frontend && npm run dev &
@@ -23,8 +23,8 @@ dev:
 
 # Cross-compile backend for ARM64 (Orin Nano)
 orin:
-	GOOS=linux GOARCH=arm64 go build -o ../build/clawdbot-web-orin ./backend/
+	GOOS=linux GOARCH=arm64 go build -o ../build/gobot-web-orin ./backend/
 
 clean:
 	rm -rf frontend/dist frontend/node_modules
-	rm -f ../build/clawdbot-web ../build/clawdbot-web-orin
+	rm -f ../build/gobot-web ../build/gobot-web-orin

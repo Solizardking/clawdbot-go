@@ -1,4 +1,4 @@
-// Package research provides the autonomous experiment loop for ClawdBot.
+// Package research provides the autonomous experiment loop for GoBot.
 // Ported from the overnight research system.
 //
 // Flow: Read program.md → Query vault lessons → Generate hypothesis →
@@ -16,8 +16,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/logger"
-	"github.com/8bitlabs/clawdbot/pkg/memory"
+	"github.com/8bitlabs/gobot/pkg/logger"
+	"github.com/8bitlabs/gobot/pkg/memory"
 )
 
 // ── Strategy Parameters ──────────────────────────────────────────────
@@ -78,7 +78,7 @@ type ExperimentResult struct {
 // ── ResearchLoop ─────────────────────────────────────────────────────
 
 type ResearchLoop struct {
-	vault          *memory.ClawVault
+	vault          *memory.GoVault
 	memEngine      *memory.MemoryEngine
 	bestMetric     float64
 	currentParams  StrategyParams
@@ -88,7 +88,7 @@ type ResearchLoop struct {
 }
 
 type ResearchConfig struct {
-	Vault          *memory.ClawVault
+	Vault          *memory.GoVault
 	MemEngine      *memory.MemoryEngine
 	ProgramPath    string
 	StrategyPath   string
@@ -372,7 +372,7 @@ func (rl *ResearchLoop) storeResult(result ExperimentResult) {
 
 func (rl *ResearchLoop) updateStrategy(result ExperimentResult) {
 	paramsJSON, _ := json.MarshalIndent(result.Params, "", "  ")
-	content := fmt.Sprintf(`# ClawdBot Strategy
+	content := fmt.Sprintf(`# GoBot Strategy
 
 Last updated: %s
 Best metric: %.4f

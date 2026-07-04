@@ -1,4 +1,4 @@
-// Package heartbeat provides periodic heartbeat messages for ClawdBot.
+// Package heartbeat provides periodic heartbeat messages for GoBot.
 // Adapted from PicoClaw — cron-triggered proactive notifications.
 package heartbeat
 
@@ -6,7 +6,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/logger"
+	"github.com/8bitlabs/gobot/pkg/logger"
 )
 
 type HeartbeatFunc func(ctx context.Context, content, channel, chatID string) (string, error)

@@ -1,4 +1,4 @@
-// Package voice provides audio transcription for ClawdBot.
+// Package voice provides audio transcription for GoBot.
 // Adapted from PicoClaw — supports Whisper API for voice input.
 package voice
 

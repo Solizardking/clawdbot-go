@@ -127,7 +127,7 @@ func Run(ctx context.Context, options Options) (Result, error) {
 
 func Format(result Result) string {
 	lines := []string{
-		fmt.Sprintf("ClawdBot performance bench (%s/%s, %s)", result.GOOS, result.GOARCH, result.GoVersion),
+		fmt.Sprintf("GoBot performance bench (%s/%s, %s)", result.GOOS, result.GOARCH, result.GoVersion),
 		"command: " + strings.Join(result.Command, " "),
 		fmt.Sprintf("iterations: %d measured, %d warmup", result.Iterations, result.WarmupIterations),
 		fmt.Sprintf("cold start: median %.2fms, p95 %.2fms (warn > %.2fms)", result.ColdStartMs.Median, result.ColdStartMs.P95, result.Thresholds.ColdStartP95Ms),

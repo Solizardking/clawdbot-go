@@ -1,4 +1,4 @@
-// Package providers abstracts LLM providers for ClawdBot.
+// Package providers abstracts LLM providers for GoBot.
 // Adapted from PicoClaw — supports OpenRouter, Anthropic, OpenAI, Ollama.
 package providers
 
@@ -61,7 +61,7 @@ type ToolDef struct {
 }
 
 // ── OpenRouter Provider ──────────────────────────────────────────────
-// Primary provider for ClawdBot — GPT-5.4 via OpenRouter.
+// Primary provider for GoBot — GPT-5.4 via OpenRouter.
 
 type OpenRouterProvider struct {
 	apiKey  string
@@ -120,8 +120,8 @@ func (p *OpenRouterProvider) Chat(ctx context.Context, opts ChatOptions) (*Respo
 	}
 	req.Header.Set("Authorization", "Bearer "+p.apiKey)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("HTTP-Referer", "https://clawdbot.dev")
-	req.Header.Set("X-Title", "ClawdBot Go")
+	req.Header.Set("HTTP-Referer", "https://gobot.dev")
+	req.Header.Set("X-Title", "GoBot Go")
 
 	resp, err := p.client.Do(req)
 	if err != nil {

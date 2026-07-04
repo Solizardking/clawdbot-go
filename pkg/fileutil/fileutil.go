@@ -1,4 +1,4 @@
-// Package fileutil provides file operation helpers for ClawdBot.
+// Package fileutil provides file operation helpers for GoBot.
 // Adapted from PicoClaw — restricted workspace file ops.
 package fileutil
 

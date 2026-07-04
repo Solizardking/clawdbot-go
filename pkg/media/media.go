@@ -1,4 +1,4 @@
-// Package media provides media file lifecycle management for ClawdBot.
+// Package media provides media file lifecycle management for GoBot.
 // Adapted from PicoClaw — stores, resolves, and releases media refs.
 package media
 

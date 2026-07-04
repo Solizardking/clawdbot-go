@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	DefaultClawdSkillsRepo = "https://github.com/Solizardking/skills"
+	DefaultGoBotSkillsRepo = "https://github.com/Solizardking/skills"
 	DefaultGoSkillsRepo    = "https://github.com/samber/cc-skills-golang"
 	BirthManifestName      = "birth-skills.json"
 )
@@ -35,9 +35,9 @@ func DefaultBirthSources() []BirthSource {
 	return []BirthSource{
 		{
 			Name:        "solizardking-skills",
-			URL:         DefaultClawdSkillsRepo,
+			URL:         DefaultGoBotSkillsRepo,
 			InstallArgs: []string{"--all"},
-			Reason:      "Canonical Clawd/Solana/trading skill pack for every spawned agent.",
+			Reason:      "Canonical GoBot/Solana/trading skill pack for every spawned agent.",
 		},
 		{
 			Name:        "golang-skills",
@@ -106,7 +106,7 @@ func InstallBirthSources(ctx context.Context, sources []BirthSource, w io.Writer
 
 func FormatBirthManifest(manifest BirthManifest) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "ClawdBot birth skill seed (%s)\n", manifest.GeneratedAt)
+	fmt.Fprintf(&b, "GoBot birth skill seed (%s)\n", manifest.GeneratedAt)
 	for _, source := range manifest.Sources {
 		fmt.Fprintf(&b, "- %s: %s (%s)\n", source.Name, source.URL, source.Reason)
 	}

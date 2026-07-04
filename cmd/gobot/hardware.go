@@ -9,10 +9,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/8bitlabs/clawdbot/pkg/hardware"
+	"github.com/8bitlabs/gobot/pkg/hardware"
 )
 
-// NewHardwareCommand builds the `clawdbot hardware` subcommand tree.
+// NewHardwareCommand builds the `gobot hardware` subcommand tree.
 func NewHardwareCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "hardware",
@@ -81,7 +81,7 @@ func NewHardwareScanCommand() *cobra.Command {
 			}
 
 			fmt.Printf("Found %s%d devices%s:\n\n", colorGreen, len(addrs), colorReset)
-			fmt.Printf("  %-8s %-12s %-14s %-20s %s\n", "Addr", "Modulino", "Sensor", "ClawdBot Use", "Status")
+			fmt.Printf("  %-8s %-12s %-14s %-20s %s\n", "Addr", "Modulino", "Sensor", "GoBot Use", "Status")
 			fmt.Printf("  %s\n", "─────────────────────────────────────────────────────────────────")
 
 			recognized := 0
@@ -143,7 +143,7 @@ func NewHardwareTestCommand() *cobra.Command {
 		Use:   "test",
 		Short: "Run hardware self-test (LEDs, buzzer, sensors)",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("%s🧪 ClawdBot Hardware Self-Test%s\n\n", colorGreen, colorReset)
+			fmt.Printf("%s🧪 GoBot Hardware Self-Test%s\n\n", colorGreen, colorReset)
 
 			hub, err := hardware.NewHardwareHub(busNum)
 			if err != nil {
@@ -387,11 +387,11 @@ func NewHardwareDemoCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "demo",
-		Short: "Play ClawdBot trading event animations",
+		Short: "Play GoBot trading event animations",
 		Long: `Plays the full set of hardware animations:
   signal → trade open → win → loss → learning → error`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("%s🎬 ClawdBot Hardware Demo%s\n\n", colorGreen, colorReset)
+			fmt.Printf("%s🎬 GoBot Hardware Demo%s\n\n", colorGreen, colorReset)
 
 			hub, err := hardware.NewHardwareHub(busNum)
 			if err != nil {
@@ -421,7 +421,7 @@ func NewHardwareDemoCommand() *cobra.Command {
 					}
 				}},
 				{"Signal detected", func() {
-					fmt.Printf("    %s→ Signal: LONG CLAWD%s\n", colorPurple, colorReset)
+					fmt.Printf("    %s→ Signal: LONG GOBOT%s\n", colorPurple, colorReset)
 					if hub.Pixels != nil {
 						hub.Pixels.SetAll(hardware.ColorSignal)
 						hub.Pixels.Show()

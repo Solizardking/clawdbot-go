@@ -7,10 +7,10 @@ import (
 
 // Build-time variables injected via ldflags.
 //
-//	-X github.com/8bitlabs/clawdbot/pkg/config.Version=<version>
-//	-X github.com/8bitlabs/clawdbot/pkg/config.GitCommit=<commit>
-//	-X github.com/8bitlabs/clawdbot/pkg/config.BuildTime=<timestamp>
-//	-X github.com/8bitlabs/clawdbot/pkg/config.GoVersion=<go-version>
+//	-X github.com/8bitlabs/gobot/pkg/config.Version=<version>
+//	-X github.com/8bitlabs/gobot/pkg/config.GitCommit=<commit>
+//	-X github.com/8bitlabs/gobot/pkg/config.BuildTime=<timestamp>
+//	-X github.com/8bitlabs/gobot/pkg/config.GoVersion=<go-version>
 var (
 	Version   = "dev"
 	GitCommit string

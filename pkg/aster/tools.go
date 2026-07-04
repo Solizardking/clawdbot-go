@@ -1,5 +1,5 @@
 // Package aster :: tools.go
-// Tool definitions for the ClawdBot agent tool registry.
+// Tool definitions for the GoBot agent tool registry.
 // These are the functions the LLM can call autonomously.
 package aster
 
@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/tools"
+	"github.com/8bitlabs/gobot/pkg/tools"
 )
 
 // RegisterTools adds all Aster perp trading tools to the agent's tool registry.
@@ -343,7 +343,7 @@ func RegisterTools(registry *tools.Registry, trader *PerpTrader, client *Client)
 			if direction == "to_spot" {
 				kindType = "FUTURE_SPOT"
 			}
-			clientTranID := fmt.Sprintf("clawdbot-%d", time.Now().UnixMilli())
+			clientTranID := fmt.Sprintf("gobot-%d", time.Now().UnixMilli())
 			resp, err := client.Transfer("USDT", amount, kindType, clientTranID)
 			if err != nil {
 				return "", err

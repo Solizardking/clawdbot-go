@@ -1,5 +1,5 @@
 // Package agent :: toolexec.go
-// Tool executor for ClawdBot agent loop.
+// Tool executor for GoBot agent loop.
 // Ported from ToolExecutor.ts — executes tool calls with approval gate.
 package agent
 
@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/tools"
+	"github.com/8bitlabs/gobot/pkg/tools"
 )
 
 // ── Event Types ──────────────────────────────────────────────────────

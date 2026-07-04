@@ -1,6 +1,6 @@
-# clawd-zk — ZK Primitives Reference
+# gobot-zk — ZK Primitives Reference
 
-Zero-knowledge primitives for the Clawd agent fleet on Solana.
+Zero-knowledge primitives for the Go Bot agent fleet on Solana.
 Built on [Light Protocol V2](https://www.zkcompression.com) for rent-free compressed state.
 
 ---
@@ -15,7 +15,7 @@ Built on [Light Protocol V2](https://www.zkcompression.com) for rent-free compre
 | Consume attestation (one-shot) | `consume_attestation` | ~310k CU, ~5k lamports |
 | Encrypted state commitment | `commit_encrypted_state` | ~410k CU, ~5.3k lamports |
 
-Program ID: `CLAWDzk11111111111111111111111111111111111`
+Program ID: `GOBOTzk11111111111111111111111111111111111`
 
 ---
 
@@ -97,7 +97,7 @@ nullifier = SHA-256(secret || context || nonce)
 
 **Address derivation**:
 ```rust
-const NULLIFIER_PREFIX: &[u8] = b"clawd-zk-nullifier";
+const NULLIFIER_PREFIX: &[u8] = b"gobot-zk-nullifier";
 
 let (address, seed) = derive_address(
     &[NULLIFIER_PREFIX, nullifier.as_slice()],
@@ -110,7 +110,7 @@ let (address, seed) = derive_address(
 | Storage | Cost |
 |---|---|
 | Regular PDA | 890,880 lamports |
-| Compressed PDA (clawd-zk) | 15,000 lamports |
+| Compressed PDA (gobot-zk) | 15,000 lamports |
 
 ---
 
@@ -131,18 +131,18 @@ VK is supplied as instruction data — enables per-circuit support without progr
 
 ---
 
-## TypeScript SDK — `@clawd/zk-client`
+## TypeScript SDK — `@gobot/zk-client`
 
 ### Install
 
 ```bash
-npm install @clawd/zk-client @lightprotocol/stateless.js @solana/kit
+npm install @gobot/zk-client @lightprotocol/stateless.js @solana/kit
 ```
 
 ### Compute a nullifier
 
 ```typescript
-import { computeNullifier, NULLIFIER_PREFIX } from "@clawd/zk-client";
+import { computeNullifier, NULLIFIER_PREFIX } from "@gobot/zk-client";
 
 const secret  = crypto.getRandomValues(new Uint8Array(32));
 const context = "solana-clawd/attestation/v1";
@@ -154,7 +154,7 @@ const nullifier = computeNullifier({ secret, context });
 ### Assemble public inputs
 
 ```typescript
-import { buildPublishPublicInputs } from "@clawd/zk-client";
+import { buildPublishPublicInputs } from "@gobot/zk-client";
 
 const inputs = buildPublishPublicInputs({
   attester:          signer.publicKey.toBytes(),
@@ -168,13 +168,13 @@ const inputs = buildPublishPublicInputs({
 ### Build a `publish_attestation` instruction
 
 ```typescript
-import { ClawdZkClient } from "@clawd/zk-client";
+import { GoBotZkClient } from "@gobot/zk-client";
 import { createSolanaRpc } from "@solana/kit";
 
 const rpc    = createSolanaRpc("https://mainnet.helius-rpc.com/?api-key=...");
-const client = new ClawdZkClient({
+const client = new GoBotZkClient({
   rpc,
-  programId: new PublicKey("CLAWDzk11111111111111111111111111111111111"),
+  programId: new PublicKey("GOBOTzk11111111111111111111111111111111111"),
   photonUrl: "https://mainnet.helius-rpc.com/?api-key=...",
 });
 
@@ -203,7 +203,7 @@ const ix = await client.commitEncryptedState({
 ### Verify a proof off-chain (sanity check)
 
 ```typescript
-import { verifyGroth16Offchain, buildPublishPublicInputs } from "@clawd/zk-client";
+import { verifyGroth16Offchain, buildPublishPublicInputs } from "@gobot/zk-client";
 
 const ok = verifyGroth16Offchain(proof, buildPublishPublicInputs({ ... }));
 // true/false — no pairing, structural check only
@@ -211,37 +211,37 @@ const ok = verifyGroth16Offchain(proof, buildPublishPublicInputs({ ... }));
 
 ---
 
-## Agent API — `@clawd/zk-agent`
+## Agent API — `@gobot/zk-agent`
 
-The high-level wrapper. Wraps `@clawd/zk-client` with a natural-language router,
+The high-level wrapper. Wraps `@gobot/zk-client` with a natural-language router,
 optional signing, and a CLI binary.
 
 ### Install
 
 ```bash
-npm install @clawd/zk-agent
+npm install @gobot/zk-agent
 ```
 
 ### Environment
 
 | Variable | Required | Default | Notes |
 |---|---|---|---|
-| `CLAWD_ZK_RPC_URL` | yes | — | Helius or any Solana RPC |
-| `CLAWD_ZK_PROGRAM_ID` | no | `DEFAULT_PROGRAM_ID` | base58 or alias (see below) |
-| `CLAWD_ZK_PHOTON_URL` | no | = `CLAWD_ZK_RPC_URL` | Helius Photon indexer |
-| `CLAWD_ZK_API_KEY` | no | — | separate RPC header key |
-| `CLAWD_ZK_COMMITMENT` | no | `confirmed` | `processed\|confirmed\|finalized` |
-| `CLAWD_ZK_KEYPAIR` | no | — | path to Solana CLI keypair JSON |
-| `CLAWD_ZK_NETWORK` | no | `mainnet` | `mainnet\|devnet\|localnet` |
+| `GOBOT_ZK_RPC_URL` | yes | — | Helius or any Solana RPC |
+| `GOBOT_ZK_PROGRAM_ID` | no | `DEFAULT_PROGRAM_ID` | base58 or alias (see below) |
+| `GOBOT_ZK_PHOTON_URL` | no | = `GOBOT_ZK_RPC_URL` | Helius Photon indexer |
+| `GOBOT_ZK_API_KEY` | no | — | separate RPC header key |
+| `GOBOT_ZK_COMMITMENT` | no | `confirmed` | `processed\|confirmed\|finalized` |
+| `GOBOT_ZK_KEYPAIR` | no | — | path to Solana CLI keypair JSON |
+| `GOBOT_ZK_NETWORK` | no | `mainnet` | `mainnet\|devnet\|localnet` |
 
-**Program ID aliases**: `CLAWDZK_MAINNET`, `CLAWDZK_DEVNET`, `CLAWDZK_LOCALNET`
+**Program ID aliases**: `GOBOTZK_MAINNET`, `GOBOTZK_DEVNET`, `GOBOTZK_LOCALNET`
 
 ### Quick start
 
 ```typescript
-import { ClawdZkAgent, routeIntent, dispatchRoute } from "@clawd/zk-agent";
+import { GoBotZkAgent, routeIntent, dispatchRoute } from "@gobot/zk-agent";
 
-const agent = await ClawdZkAgent.fromEnv();
+const agent = await GoBotZkAgent.fromEnv();
 
 // Option A: direct call
 const result = await agent.attestModel({
@@ -287,22 +287,22 @@ Deterministic, rule-based — no model calls.
 
 ```bash
 # Show active config
-clawd-zk-agent inspect
+gobot-zk-agent inspect
 
 # Build publish_attestation instruction
-clawd-zk-agent attest <modelHash> <payloadCommitment> <proof.json> [--context "v1"]
+gobot-zk-agent attest <modelHash> <payloadCommitment> <proof.json> [--context "v1"]
 
 # Build commit_encrypted_state instruction
-clawd-zk-agent commit <ciphertextCommitment> <stateVersion> <proof.json> [--model <hash>]
+gobot-zk-agent commit <ciphertextCommitment> <stateVersion> <proof.json> [--model <hash>]
 
 # Off-chain verify
-clawd-zk-agent verify <proof.json>
+gobot-zk-agent verify <proof.json>
 
 # Derive nullifier
-clawd-zk-agent nullifier "context-tag"
+gobot-zk-agent nullifier "context-tag"
 
 # Natural-language router
-clawd-zk-agent ask "attest this model 0xab12…"
+gobot-zk-agent ask "attest this model 0xab12…"
 ```
 
 ---
@@ -365,7 +365,7 @@ npm test
 
 # On-chain Rust (requires light test-validator in a separate terminal)
 light test-validator
-cargo test-sbf -p clawd-zk
+cargo test-sbf -p gobot-zk
 ```
 
 ---
@@ -403,23 +403,23 @@ zk-primitives/
 ├── configs/
 │   └── light-trees.yaml           — canonical V2 tree addresses (pinned)
 ├── programs/
-│   └── clawd-zk/src/
+│   └── gobot-zk/src/
 │       ├── lib.rs                 — instruction dispatch
 │       ├── nullifier.rs           — compressed PDA nullifiers
 │       ├── proof.rs               — Groth16 verification
 │       └── state.rs               — Light CPI state writes
-├── client/                        — @clawd/zk-client npm package
+├── client/                        — @gobot/zk-client npm package
 │   └── src/
 │       ├── nullifier.ts
 │       ├── proof.ts
 │       ├── state.ts
-│       └── client.ts              — ClawdZkClient orchestrator
-├── agent/                         — @clawd/zk-agent npm package
+│       └── client.ts              — GoBotZkClient orchestrator
+├── agent/                         — @gobot/zk-agent npm package
 │   └── src/
-│       ├── agent.ts               — ClawdZkAgent class
+│       ├── agent.ts               — GoBotZkAgent class
 │       ├── intents.ts             — NL intent router
 │       ├── config.ts              — env-driven config
-│       └── cli.ts                 — clawd-zk-agent binary
+│       └── cli.ts                 — gobot-zk-agent binary
 └── tests/
     └── nullifier.test.ts
 ```

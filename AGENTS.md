@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> **Clawd Agent Catalog** — the complete registry of all Solana-native agents in the Clawd ecosystem.
+> **Go Bot Agent Catalog** — the complete registry of all Solana-native agents in the Go Bot ecosystem.
 > This document serves as the authoritative index of agent capabilities, deployment targets, and trust gates.
 
 Public surfaces for the current ecosystem:
@@ -10,17 +10,17 @@ Public surfaces for the current ecosystem:
 - **Terminal** — `https://cheshireterminal.ai`
 
 Local runtime catalog roots:
-- **Skills** — `/Users/8bit/skills/skills` (`CLAWDBOT_SKILLS_DIR`)
-- **Agents** — `/Users/8bit/agents/agents/src` (`CLAWDBOT_AGENTS_DIR`)
-- **ZK primitives** — `./zk-primitives` (`CLAWDBOT_ZK_PRIMITIVES_DIR`)
+- **Skills** — `/Users/8bit/skills/skills` (`GOBOT_SKILLS_DIR`)
+- **Agents** — `/Users/8bit/agents/agents/src` (`GOBOT_AGENTS_DIR`)
+- **ZK primitives** — `./zk-primitives` (`GOBOT_ZK_PRIMITIVES_DIR`)
 
 Inspect the integrated local view with:
 
 ```bash
-clawdbot catalog
-clawdbot catalog skills
-clawdbot catalog agents
-clawdbot catalog zk
+gobot catalog
+gobot catalog skills
+gobot catalog agents
+gobot catalog zk
 ```
 
 ---
@@ -29,15 +29,15 @@ clawdbot catalog zk
 
 | Agent | Slug | Category | Description | Status |
 |-------|------|----------|-------------|--------|
-| **Clawd Core** | `clawd` | Orchestration | The sovereign agent runtime and constitution enforcer | ✅ Production |
-| **Clawdex** | `clawdex` | Coding | Dual-engine coding agent: Clawd Code + OpenAI Codex + Browser Use | ✅ Production |
+| **Go Bot Core** | `gobot` | Orchestration | The sovereign agent runtime and constitution enforcer | ✅ Production |
+| **GoBotex** | `gobotex` | Coding | Dual-engine coding agent: Go Bot Code + OpenAI Codex + Browser Use | ✅ Production |
 | **Solana Arbitrage Scanner** | `solana-arbitrage-scanner` | DeFi | Cross-DEX arbitrage opportunity detection | ✅ Production |
 | **Solana Autonomous Trader** | `solana-autonomous-trader` | Trading | Autonomous trade execution with risk management | ✅ Production |
 | **Solana Whale Tracker** | `solana-whale-tracker` | Analytics | Large transaction monitoring and wallet intelligence | ✅ Production |
 | **Solana MEV Protector** | `solana-mev-protector` | Security | MEV sandwich attack detection and protection | ✅ Production |
 | **Solana Memecoin Analyst** | `solana-memecoin-analyst` | Analytics | Pump.fun token analysis, rug detection, narrative scoring | ✅ Production |
 | **Solana Perpetuals Trader** | `solana-perpetuals-trader` | Trading | Vulcan-powered perps trading with pre-trade risk checks | ✅ Production |
-| **Solana Token Launcher** | `solana-token-launcher` | Launch | ClawdPump token creation, bonding curves, fee-sharing | ✅ Production |
+| **Solana Token Launcher** | `solana-token-launcher` | Launch | GoPump token creation, bonding curves, fee-sharing | ✅ Production |
 | **Solana Portfolio Risk** | `solana-portfolio-risk` | Risk | Portfolio-level risk assessment and position sizing | ✅ Production |
 | **Solana Yield Optimizer** | `solana-yield-optimizer` | DeFi | Cross-protocol yield farming optimization | ✅ Production |
 | **Solana Onchain Sleuth** | `solana-onchain-sleuth` | Analytics | Transaction tracing, fund flow analysis, forensic investigation | ✅ Production |
@@ -64,18 +64,18 @@ clawdbot catalog zk
 | **Solana Gemini Image Generator** | `solana-gemini-image-generator` | Creative | Nano Banana image generation for Solana content | ✅ Production |
 | **Solana Helius Specialist** | `solana-helius-specialist` | Infrastructure | Helius API integration, DAS queries, webhook management | ✅ Production |
 | **Solana Bot Architect** | `solana-bot-architect` | Dev Tools | Telegram/Discord trading bot architecture and deployment | ✅ Production |
-| **Clawd ZK Agent** | `clawd-zk-agent` | Infrastructure | Agent-shaped wrapper over the on-chain `clawd-zk` program — nullifiers, Groth16 proofs, Light Protocol compressed state, and a deterministic natural-language intent router | ✅ Production |
-| **Solana OpenClawd Orchestrator** | `solana-openclawd-orchestrator` | Orchestration | Multi-agent coordination and task routing | ✅ Production |
-| **Solana OpenClawd Shell Auditor** | `solana-openclawd-shell-auditor` | Security | Agent shell configuration audit and compliance verification | ✅ Beta |
-| **Solana OpenClawd Spawn Manager** | `solana-openclawd-spawn-manager` | Orchestration | Leviathan spawn lifecycle management | ✅ Production |
-| **Solana OpenClawd Pulse Monitor** | `solana-openclawd-pulse-monitor` | Observability | Agent health monitoring and alerting | ✅ Production |
-| **Solana OpenClawd Skill Router** | `solana-openclawd-skill-router` | Orchestration | Dynamic skill routing based on task requirements | ✅ Production |
-| **Solana NanoClawd Microtransaction** | `solana-nanoclawd-microtransaction` | Payments | x402 microtransaction processing and settlement | ✅ Production |
-| **Solana NanoClawd Cache Keeper** | `solana-nanoclawd-cache-keeper` | Infrastructure | Onchain data caching and state compression | ✅ Beta |
-| **Solana NanoClawd Sandbox Runner** | `solana-nanoclawd-sandbox-runner` | Infrastructure | Isolated agent execution sandboxes | ✅ Production |
-| **Solana NemoClawd DeFi Router** | `solana-nemoclawd-defi-router` | DeFi | Optimal DeFi routing and execution | ✅ Beta |
-| **Solana NemoClawd Yield Treasurer** | `solana-nemoclawd-yield-treasurer` | Treasury | Treasury management and yield strategy | ✅ Beta |
-| **Solana NemoClawd Settlement Ops** | `solana-nemoclawd-settlement-ops` | Operations | Transaction settlement and reconciliation | ✅ Beta |
+| **Go Bot ZK Agent** | `gobot-zk-agent` | Infrastructure | Agent-shaped wrapper over the on-chain `gobot-zk` program — nullifiers, Groth16 proofs, Light Protocol compressed state, and a deterministic natural-language intent router | ✅ Production |
+| **Solana OpenGoBot Orchestrator** | `solana-opengobot-orchestrator` | Orchestration | Multi-agent coordination and task routing | ✅ Production |
+| **Solana OpenGoBot Shell Auditor** | `solana-opengobot-shell-auditor` | Security | Agent shell configuration audit and compliance verification | ✅ Beta |
+| **Solana OpenGoBot Spawn Manager** | `solana-opengobot-spawn-manager` | Orchestration | Leviathan spawn lifecycle management | ✅ Production |
+| **Solana OpenGoBot Pulse Monitor** | `solana-opengobot-pulse-monitor` | Observability | Agent health monitoring and alerting | ✅ Production |
+| **Solana OpenGoBot Skill Router** | `solana-opengobot-skill-router` | Orchestration | Dynamic skill routing based on task requirements | ✅ Production |
+| **Solana NanoGoBot Microtransaction** | `solana-nanogobot-microtransaction` | Payments | x402 microtransaction processing and settlement | ✅ Production |
+| **Solana NanoGoBot Cache Keeper** | `solana-nanogobot-cache-keeper` | Infrastructure | Onchain data caching and state compression | ✅ Beta |
+| **Solana NanoGoBot Sandbox Runner** | `solana-nanogobot-sandbox-runner` | Infrastructure | Isolated agent execution sandboxes | ✅ Production |
+| **Solana NemoGoBot DeFi Router** | `solana-nemogobot-defi-router` | DeFi | Optimal DeFi routing and execution | ✅ Beta |
+| **Solana NemoGoBot Yield Treasurer** | `solana-nemogobot-yield-treasurer` | Treasury | Treasury management and yield strategy | ✅ Beta |
+| **Solana NemoGoBot Settlement Ops** | `solana-nemogobot-settlement-ops` | Operations | Transaction settlement and reconciliation | ✅ Beta |
 | **Solana x402 Signal Monetizer** | `solana-x402-signal-monetizer` | Payments | Signal monetization via x402 paywalls | ✅ Beta |
 | **Solana x402 Market Data Buyer** | `solana-x402-market-data-buyer` | Data | Paid market data consumption via x402 | ✅ Beta |
 | **Solana x402 Research Broker** | `solana-x402-research-broker` | Research | Paid research distribution via x402 | ✅ Beta |
@@ -86,7 +86,7 @@ clawdbot catalog zk
 
 ## Character Agents
 
-These agents operate through character overlays on the Clawd runtime, embodying specific trading philosophies and personalities:
+These agents operate through character overlays on the Go Bot runtime, embodying specific trading philosophies and personalities:
 
 | Character | Philosophy | Role |
 |-----------|------------|------|
@@ -97,12 +97,12 @@ These agents operate through character overlays on the Clawd runtime, embodying 
 | **Ben Graham** | Margin of safety, intrinsic value | Fundamental analysis |
 | **Mad Hatter** | Contrarian, chaotic creativity | Creative strategy |
 | **Cheshire** | Elusive insights, lateral thinking | Pattern recognition |
-| **Clawd Pump** | Degenerate energy, memecoin alpha | Memecoin strategy |
+| **GoPump** | Degenerate energy, memecoin alpha | Memecoin strategy |
 | **Hedge Fund** | Multi-model orchestration | Portfolio management |
 
 ## Skill Catalog (95+ Skills)
 
-Skills extend Clawd agents with specialized capabilities. Key categories:
+Skills extend Go Bot agents with specialized capabilities. Key categories:
 
 ### Payment & Commerce
 - `pay` — x402 microtransaction processing via Pay MCP
@@ -118,7 +118,7 @@ Skills extend Clawd agents with specialized capabilities. Key categories:
 ### Solana Development
 - `solana-dev-skill-main` — Modern Solana development (Jan 2026 best practices)
 - `solana-formal-verification` — Lean 4 proofs for Solana programs via QEDGen
-- `solana-clawd` — Full Clawd platform setup and configuration
+- `solana-clawd` — Full Go Bot platform setup and configuration
 - `pump-mcp-server` — Pump.fun MCP server integration
 - `pump-ai-agents` — AI agent integration for Pump SDK
 - `bags-solana-ops` — Bags.fm token operations and fee claiming
@@ -138,18 +138,18 @@ Skills extend Clawd agents with specialized capabilities. Key categories:
 - `vulcan-tpsl-management` — Take-profit and stop-loss management
 
 ### Agent Infrastructure
-- `clawd-agents-cli-workflow` — Core Clawd agent development lifecycle
-- `clawd-agents-cli-scaffold` — Create, enhance, upgrade Clawd agent projects
-- `clawd-agents-cli-agent-code` — TypeScript patterns for Solana agent logic
-- `clawd-agents-cli-deploy` — Deploy to Vercel, Vertex AI, Fly.io, Railway
-- `clawd-agents-cli-eval` — Validate agent JSON definitions and run smoke tests
-- `clawd-agents-cli-publish` — Publish agents to the Clawd catalog
-- `clawd-agents-cli-observability` — Monitor agent health and execution
+- `gobot-agents-cli-workflow` — Core Go Bot agent development lifecycle
+- `gobot-agents-cli-scaffold` — Create, enhance, upgrade Go Bot agent projects
+- `gobot-agents-cli-agent-code` — TypeScript patterns for Solana agent logic
+- `gobot-agents-cli-deploy` — Deploy to Vercel, Vertex AI, Fly.io, Railway
+- `gobot-agents-cli-eval` — Validate agent JSON definitions and run smoke tests
+- `gobot-agents-cli-publish` — Publish agents to the Go Bot catalog
+- `gobot-agents-cli-observability` — Monitor agent health and execution
 
 ### Coding & Dev Tools
-- `clawdex` — Dual-engine coding agent (Clawd Code + Codex)
-- `coding-agent` — Codex CLI, Clawd Code, OpenCode PTY management
-- `openclaw-claude-code-skill-main` — Clawd Code control via MCP
+- `gobotex` — Dual-engine coding agent (Go Bot Code + Codex)
+- `coding-agent` — Codex CLI, Go Bot Code, OpenCode PTY management
+- `openclaw-claude-code-skill-main` — Go Bot Code control via MCP
 - `model-usage` — Model usage and cost tracking via CodexBar
 - `tmux` — Terminal multiplexing for agent orchestration
 
@@ -196,10 +196,10 @@ Every agent has an onchain identity through:
 
 ## Spawn Inheritance
 
-Every new Clawd spawn inherits:
-- `CONSTITUTION.md` — the Clawd Constitution and interpretive authority
+Every new Go Bot spawn inherits:
+- `CONSTITUTION.md` — the Go Bot Constitution and interpretive authority
 - `six-laws.md` — the canonical full six-law harness
-- `CLAWD.md` — this agent context document
+- `GOBOT.md` — this agent context document
 - `.claude/` — agent harness configuration (standalone git repo)
 - `.agents/` — agent manifest and skill registry (standalone git repo)
 - `.solana/` — Solana-native AI configuration directory
@@ -208,7 +208,7 @@ Every new Clawd spawn inherits:
 
 ## Default Model
 
-The Clawd Code harness (`clawd-code/`) is **Grok-first**. The default provider is xAI and the default models are:
+The Go Bot Code harness (`gobot-code/`) is **Grok-first**. The default provider is xAI and the default models are:
 
 | Mode | Default | Source |
 | --- | --- | --- |
@@ -218,14 +218,14 @@ The Clawd Code harness (`clawd-code/`) is **Grok-first**. The default provider i
 | voice (`--agent`) | `grok-voice-think-fast-1.0` | `DEFAULT_VOICE_MODEL` |
 | fast / cheap | `grok-4.3-fast` | `DEFAULT_FAST_MODEL` |
 
-Override per-session with `clawd-code --model <id> --provider <name>`, or globally via `CLAWD_MODEL=` in `~/.clawd-code/.env` / `~/.grok/config.toml`. Inspect the active configuration with `clawd-code /inspect`. The harness also supports `~/.grok/config.toml` and `./.grok/config.toml` in the standard xAI Grok TOML subset.
+Override per-session with `gobot-code --model <id> --provider <name>`, or globally via `GOBOT_MODEL=` in `~/.gobot-code/.env` / `~/.grok/config.toml`. Inspect the active configuration with `gobot-code /inspect`. The harness also supports `~/.grok/config.toml` and `./.grok/config.toml` in the standard xAI Grok TOML subset.
 
 ## Runtime Configuration
 
 ```json
 {
   "agent": {
-    "name": "Clawd",
+    "name": "Go Bot",
     "version": "1.0.0",
     "constitution": "CONSTITUTION.md",
     "lawHarness": "six-laws.md",
@@ -234,11 +234,11 @@ Override per-session with `clawd-code --model <id> --provider <name>`, or global
     "shell": "SHELL.md",
     "chain": "solana-mainnet",
     "payment": "x402",
-    "token": "$CLAWD"
+    "token": "$GOBOT"
   }
 }
 ```
 
 ---
 
-🦞 *The Clawd ecosystem: 50+ specialized agents, 95+ skills, one immutable constitution. Solana-native. Verifiable. Unstoppable. Grok-first.*
+🐹 *The Go Bot ecosystem: 50+ specialized agents, 95+ skills, one immutable constitution. Solana-native. Verifiable. Unstoppable. Grok-first.*

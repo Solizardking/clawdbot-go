@@ -2,7 +2,7 @@
 
 ## Supported Surface
 
-Security fixes target the current `main` branch of `clawdbot-go` (the GoBot Go runtime repository).
+Security fixes target the current `main` branch of `clawdbot-go`.
 
 ## Reporting
 
@@ -18,7 +18,7 @@ caches, binaries, Rust `target/`, Next `.next/`, and TypeScript incremental
 artifacts.
 
 The web console redacts config secrets by default. Only set
-`CLAWDBOT_WEB_EXPOSE_SECRETS=1` for a trusted local debugging session.
+`GOBOT_WEB_EXPOSE_SECRETS=1` for a trusted local debugging session.
 
 ## Local Verification
 

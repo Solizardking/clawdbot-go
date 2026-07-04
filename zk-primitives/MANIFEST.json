@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "name": "Clawd ZK Primitives",
-  "slug": "clawd-zk-primitives",
+  "name": "Go Bot ZK Primitives",
+  "slug": "gobot-zk-primitives",
   "status": "scaffold-production-facing",
   "category": "infrastructure",
-  "description": "Nullifiers, Groth16 proof preparation, and Light Protocol compressed-state helpers for Solana-native Clawd and ZK Shark agents.",
+  "description": "Nullifiers, Groth16 proof preparation, and Light Protocol compressed-state helpers for Solana-native Go Bot and ZK Shark agents.",
   "integratedFrom": "/Users/8bit/zk-router/zk-primitives",
   "packageManager": "pnpm",
   "roots": {
@@ -17,21 +17,21 @@
   },
   "packages": {
     "agent": {
-      "name": "@clawd/zk-shark-agent",
+      "name": "@gobot/zk-shark-agent",
       "path": "agent",
       "skill": "agent/SKILL.md",
       "manifest": "agent/agent.json",
       "binary": "zk-shark-agent",
-      "binaryAliases": ["shark-of-all-streets", "clawd-zk-agent"]
+      "binaryAliases": ["shark-of-all-streets", "gobot-zk-agent"]
     },
     "client": {
-      "name": "@clawd/zk-client",
+      "name": "@gobot/zk-client",
       "path": "client"
     },
     "program": {
-      "name": "clawd-zk",
-      "path": "programs/clawd-zk",
-      "programId": "CLAWDzk11111111111111111111111111111111111"
+      "name": "gobot-zk",
+      "path": "programs/gobot-zk",
+      "programId": "GOBOTzk11111111111111111111111111111111111"
     }
   },
   "operations": [
@@ -42,14 +42,14 @@
     "compute_nullifier"
   ],
   "environment": {
-    "requiredForOnchainActions": ["CLAWD_ZK_RPC_URL"],
+    "requiredForOnchainActions": ["GOBOT_ZK_RPC_URL"],
     "optional": [
-      "CLAWD_ZK_PROGRAM_ID",
-      "CLAWD_ZK_PHOTON_URL",
-      "CLAWD_ZK_API_KEY",
-      "CLAWD_ZK_COMMITMENT",
-      "CLAWD_ZK_KEYPAIR",
-      "CLAWD_ZK_NETWORK",
+      "GOBOT_ZK_PROGRAM_ID",
+      "GOBOT_ZK_PHOTON_URL",
+      "GOBOT_ZK_API_KEY",
+      "GOBOT_ZK_COMMITMENT",
+      "GOBOT_ZK_KEYPAIR",
+      "GOBOT_ZK_NETWORK",
       "ZK_SHARK_RPC_URL",
       "ZK_SHARK_PROGRAM_ID",
       "ZK_SHARK_PHOTON_URL",
@@ -60,10 +60,10 @@
     ]
   },
   "catalogIntegration": {
-    "runtimeCommand": "clawdbot catalog zk",
-    "skillsRootEnv": "CLAWDBOT_SKILLS_DIR",
-    "agentsRootEnv": "CLAWDBOT_AGENTS_DIR",
-    "zkRootEnv": "CLAWDBOT_ZK_PRIMITIVES_DIR",
+    "runtimeCommand": "gobot catalog zk",
+    "skillsRootEnv": "GOBOT_SKILLS_DIR",
+    "agentsRootEnv": "GOBOT_AGENTS_DIR",
+    "zkRootEnv": "GOBOT_ZK_PRIMITIVES_DIR",
     "defaultSkillsRoot": "/Users/8bit/skills/skills",
     "defaultAgentsRoot": "/Users/8bit/agents/agents/src"
   },

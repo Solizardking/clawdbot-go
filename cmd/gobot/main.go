@@ -52,43 +52,41 @@ const (
 	colorReset  = "\033[0m"
 
 	banner = "\r\n" +
-		colorGreen + "    ███╗   ███╗ █████╗ ██╗    ██╗██████╗ " + colorPurple + "██████╗  ██████╗ ████████╗\n" +
-		colorGreen + "    ████╗ ████║██╔══██╗██║    ██║██╔══██╗" + colorPurple + "██╔══██╗██╔═══██╗╚══██╔══╝\n" +
-		colorGreen + "    ██╔████╔██║███████║██║ █╗ ██║██║  ██║" + colorPurple + "██████╔╝██║   ██║   ██║   \n" +
-		colorGreen + "    ██║╚██╔╝██║██╔══██║██║███╗██║██║  ██║" + colorPurple + "██╔══██╗██║   ██║   ██║   \n" +
-		colorGreen + "    ██║ ╚═╝ ██║██║  ██║╚███╔███╔╝██████╔╝" + colorPurple + "██████╔╝╚██████╔╝   ██║   \n" +
-		colorGreen + "    ╚═╝     ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═════╝ " + colorPurple + "╚═════╝  ╚═════╝    ╚═╝   \n" +
+		colorGreen + "     ██████╗  ██████╗ " + colorPurple + "██████╗  ██████╗ ████████╗\n" +
+		colorGreen + "    ██╔════╝ ██╔═══██╗" + colorPurple + "██╔══██╗██╔═══██╗╚══██╔══╝\n" +
+		colorGreen + "    ██║  ███╗██║   ██║" + colorPurple + "██████╔╝██║   ██║   ██║   \n" +
+		colorGreen + "    ██║   ██║██║   ██║" + colorPurple + "██╔══██╗██║   ██║   ██║   \n" +
+		colorGreen + "    ╚██████╔╝╚██████╔╝" + colorPurple + "██████╔╝╚██████╔╝   ██║   \n" +
+		colorGreen + "     ╚═════╝  ╚═════╝ " + colorPurple + "╚═════╝  ╚═════╝    ╚═╝   \n" +
 		colorReset + "\n" +
 		colorDim + "    ┌─────────────────────────────────────────────────────────┐\n" +
-		colorDim + "    │" + colorTeal + "  🦞 Sentient Solana Trading Intelligence" + colorDim + "                 │\n" +
+		colorDim + "    │" + colorTeal + "  🐹 Sentient Solana Trading Intelligence" + colorDim + "                 │\n" +
 		colorDim + "    │" + colorAmber + "  NVIDIA Orin Nano · <10MB RAM · Go Runtime" + colorDim + "             │\n" +
 		colorDim + "    │" + colorGreen + "  $GOBOT :: Droids Lead The Way" + colorDim + "                          │\n" +
 		colorDim + "    └─────────────────────────────────────────────────────────┘\n" +
 		colorReset + "\n"
 
-	lobster = colorRed + `              ,
-             /|      __
-            / |   ,-~ /
-           Y :|  //  /
-           | jj /( .^
-           >-"~"-v"
-          /       Y
-         jo  o    |
-        ( ~T~     j
-         >._-' _./
-        /   "~"  |
-       Y     _,  |
-      /| ;-"~ _  l
-     / l/ ,-"~    \
-     \//\/      .- \
-      Y        /    Y
-      l       I     !
-      ]\      _\    /"\
-     (" ~----( ~   Y.  )` + colorReset + "\n"
+	gopher = colorRed + `           _...--"""--..._
+         .-"             "-.
+        /                   \
+       |     ●         ●     |
+       |          <>          |
+        \        ___         /
+         "-.   \___/    .-"
+            "--.....--"
+              /   |   \
+             /    |    \
+            (     |     )
+             \____|____/
+                  |
+                  |
+                 / \
+                /   \
+               '     '` + colorReset + "\n"
 )
 
 func NewGoBotCommand() *cobra.Command {
-	short := fmt.Sprintf("%s GoBot — Sentient Solana Trading Intelligence v%s", "🦞", config.GetVersion())
+	short := fmt.Sprintf("%s GoBot — Sentient Solana Trading Intelligence v%s", "🐹", config.GetVersion())
 
 	cmd := &cobra.Command{
 		Use:   "gobot",
@@ -367,8 +365,8 @@ func NewAgentCommand() *cobra.Command {
 			}
 
 			// Interactive REPL mode
-			fmt.Print(lobster)
-			fmt.Printf("%s🦞 GoBot Interactive Mode%s\n", colorGreen, colorReset)
+			fmt.Print(gopher)
+			fmt.Printf("%s🐹 GoBot Interactive Mode%s\n", colorGreen, colorReset)
 			fmt.Printf("%sModel: %s | Workspace: %s%s\n", colorDim, cfg.Agents.Defaults.ModelName, cfg.Agents.Defaults.Workspace, colorReset)
 			fmt.Printf("%sType your message or use memory commands (!remember, !recall, !trades, !lessons)%s\n\n", colorDim, colorReset)
 
@@ -391,7 +389,7 @@ func NewGatewayCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("config error: %w", err)
 			}
-			fmt.Printf("%s🦞 GoBot Gateway starting...%s\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Gateway starting...%s\n", colorGreen, colorReset)
 			fmt.Printf("%sHost: %s:%d%s\n", colorDim, cfg.Gateway.Host, cfg.Gateway.Port, colorReset)
 
 			// Print enabled channels
@@ -468,8 +466,8 @@ func NewOnboardCommand() *cobra.Command {
 		Use:   "onboard",
 		Short: "Initialize GoBot config & workspace",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Print(lobster)
-			fmt.Printf("%s🦞 Welcome to GoBot!%s\n\n", colorGreen, colorReset)
+			fmt.Print(gopher)
+			fmt.Printf("%s🐹 Welcome to GoBot!%s\n\n", colorGreen, colorReset)
 
 			configPath := config.DefaultConfigPath()
 			workspacePath := config.DefaultWorkspacePath()
@@ -627,7 +625,7 @@ func NewStatusCommand() *cobra.Command {
 				return fmt.Errorf("config error: %w", err)
 			}
 
-			fmt.Printf("%s🦞 GoBot Status%s\n\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Status%s\n\n", colorGreen, colorReset)
 			fmt.Printf("Version:    %s\n", config.FormatVersion())
 			buildTime, goVer := config.FormatBuildInfo()
 			fmt.Printf("Go:         %s\n", goVer)
@@ -710,7 +708,7 @@ trading endpoints.`,
 			if jsonOut {
 				return writeJSON(r)
 			}
-			fmt.Printf("%s🦞 GoBot Catalog%s\n\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Catalog%s\n\n", colorGreen, colorReset)
 			fmt.Printf("Skills:       %d\n", len(r.Skills))
 			fmt.Printf("Agents:       %d\n", len(r.Agents))
 			if r.ZK != nil {
@@ -2060,7 +2058,7 @@ func runInteractiveAgent(cfg *config.Config) error {
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Printf("%s🦞 > %s", colorGreen, colorReset)
+		fmt.Printf("%s🐹 > %s", colorGreen, colorReset)
 		input, err := reader.ReadString('\n')
 		if err != nil {
 			return nil
@@ -2104,7 +2102,7 @@ func NewWebCommand() *cobra.Command {
 		Use:   "web",
 		Short: "Start GoBot web console (dashboard + REST API, default :18800)",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("%s🦞 GoBot Web Console%s\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Web Console%s\n", colorGreen, colorReset)
 			fmt.Printf("%s  Dashboard → http://localhost:%s%s\n", colorTeal, port, colorReset)
 			fmt.Printf("%s  Config:     %s%s\n\n", colorDim, config.DefaultConfigPath(), colorReset)
 

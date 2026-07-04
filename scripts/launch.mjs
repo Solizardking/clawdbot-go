@@ -55,7 +55,7 @@ const LOBSTER = `${C.red}
              /    \ \_____/ /    \
             /  /\  \     /  /\   \
            |  / /  /     \  \ \   |
-           | / /  | 🦞   \  \ \  |
+           | / /  | 🐹   \  \ \  |
            |/ /  /|       |\  \ \ |
             ,/  / |       | \  \,
                 | |       | |
@@ -158,7 +158,7 @@ function animatedBoot() {
   return new Promise((resolve) => {
     const { frames, interval } = spinners.cascade;
     const bootLines = [
-      `${C.dim}    │${C.teal}  🦞 Sentient Solana Trading Intelligence${C.dim}                     │${C.reset}`,
+      `${C.dim}    │${C.teal}  🐹 Sentient Solana Trading Intelligence${C.dim}                     │${C.reset}`,
       `${C.dim}    │${C.amber}  OODA Loop · GoVault Memory · Birdeye Analytics${C.dim}            │${C.reset}`,
       `${C.dim}    │${C.purple}  Vulcan Phoenix Perps · Jupiter Swaps · Helius RPC${C.dim}            │${C.reset}`,
       `${C.dim}    │${C.green}  $GOBOT :: Droids Lead The Way${C.dim}                                 │${C.reset}`,
@@ -442,7 +442,7 @@ async function main() {
   console.log(`${C.dim}    │${C.teal}  Gateway:${C.dim} ${GATEWAY_URL.padEnd(48)}${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.teal}  Terminal:${C.dim}${TERMINAL_URL.padEnd(48)}${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
-  console.log(`${C.dim}    │${C.purple}  🦞 $GOBOT :: Droids Lead The Way${C.dim}                              │${C.reset}`);
+  console.log(`${C.dim}    │${C.purple}  🐹 $GOBOT :: Droids Lead The Way${C.dim}                              │${C.reset}`);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
   console.log(DIVIDER_END);
   console.log();

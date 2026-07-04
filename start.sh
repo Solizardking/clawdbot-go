@@ -18,7 +18,7 @@ ROOT="$SCRIPT_DIR"
 cd "$ROOT"
 
 echo ""
-echo -e "${GREEN}    🦞 GoBot Go — One-Shot Start${RESET}"
+echo -e "${GREEN}    🐹 GoBot Go — One-Shot Start${RESET}"
 echo -e "${DIM}    ────────────────────────────────${RESET}"
 echo -e "${DIM}    Runtime: https://github.com/Solizardking/clawdbot-go${RESET}"
 echo -e "${DIM}    Hub:     https://github.com/solizardking/solana-clawd${RESET}"

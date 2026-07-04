@@ -1,4 +1,4 @@
-# 🦞🔐 Go Bot ZK Primitives
+# 🐹🔐 Go Bot ZK Primitives
 
 > **A zero-knowledge primitive layer for Solana-native AI models.**
 > Built on [Light Protocol](https://www.zkcompression.com).

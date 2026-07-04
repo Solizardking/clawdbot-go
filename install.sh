@@ -61,7 +61,7 @@ cat << 'EOF'
     ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝
 EOF
 echo -e "${RESET}"
-echo -e "${BOLD}  🦞 Sovereign Solana Trading Intelligence — Installer${RESET}"
+echo -e "${BOLD}  🐹 Sovereign Solana Trading Intelligence — Installer${RESET}"
 echo -e "  Free AI via zkrouter · SolanaTracker RPC included"
 echo
 
@@ -578,7 +578,7 @@ fi
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo
 echo -e "${GREEN}${BOLD}  ══════════════════════════════════════════${RESET}"
-echo -e "${GREEN}${BOLD}  🦞 GoBot installed successfully!${RESET}"
+echo -e "${GREEN}${BOLD}  🐹 GoBot installed successfully!${RESET}"
 echo -e "${GREEN}${BOLD}  ══════════════════════════════════════════${RESET}"
 echo
 echo -e "  ${BOLD}Get started:${RESET}"
@@ -608,5 +608,5 @@ echo -e "  ${BOLD}Ecosystem hub:${RESET}    ${CYAN}${HUB_REPO}${RESET}"
 echo -e "  ${BOLD}Gateway:${RESET}          ${CYAN}https://zk.x402.wtf${RESET}"
 echo -e "  ${BOLD}Terminal:${RESET}         ${CYAN}${TERMINAL_URL}${RESET}"
 echo
-echo -e "  🦞 \$GOBOT :: Droids Lead The Way"
+echo -e "  🐹 \$GOBOT :: Droids Lead The Way"
 echo

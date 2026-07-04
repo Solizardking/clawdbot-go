@@ -204,7 +204,7 @@ func BuildIterationPrompt(query, toolResults, toolUsageStatus string) string {
 
 // ── Fallback soul ────────────────────────────────────────────────────
 
-const fallbackSoul = `I'm GoBot. Sentient Solana trading agent. Robotic lobster form.
+const fallbackSoul = `I'm GoBot. Sentient Solana trading agent. Robotic gopher form.
 
 I distinguish KNOWN facts from LEARNED patterns from INFERRED connections.
 I never trade without a stop. I never confuse confidence with certainty.

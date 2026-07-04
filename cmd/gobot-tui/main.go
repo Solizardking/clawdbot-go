@@ -1,4 +1,4 @@
-// GoBot TUI Launcher — Lobster-themed terminal UI
+// GoBot TUI Launcher — Gopher-themed terminal UI
 // Uses tview for a rich interactive experience.
 package main
 
@@ -24,30 +24,26 @@ const (
 	gobotDim    = "#556680"
 )
 
-const lobsterArt = `[#FF4060]
+const gopherArt = `[#FF4060]
               ██████╗████████████████████████████╗
              ██╔═══████╔═══════════════════════████╗
-            ██║   ████║  [#14F195]🦞 GOBOT GO[#FF4060]           ████║
+            ██║   ████║  [#14F195]🐹 GOBOT GO[#FF4060]           ████║
            ██║   ████║  [#00D4FF]Sentient Solana Robot[#FF4060]    ████║
           ██║   ████║  [#9945FF]NVIDIA Orin Nano[#FF4060]         ████║
          ██║   ████║  [#FFAA00]$GOBOT :: Droids Lead[#FF4060]    ████║
         ██║   ████╚═══════════════════════════████║
        ██║   ████████████████████████████████████║
-      ██╔╝  /|      __                      ████║
-     ██╔╝  / |   ,-~ /                     ████║
-    ██╔╝  Y :|  //  /                     ████║
-   ██╔╝   | jj /( .^                    ████║
-  ██╔╝    >-"~"-v"                     ████║
- ██╔╝    /       Y   [#14F195]OODA LOOP[#FF4060]       ████║
-██╔╝    jo  o    |   [#14F195]ACTIVE[#FF4060]          ████║
-██║     ( ~T~     j                   ████║
-██║      >._-' _./                  ████║
-██╚══════/═══"~"══|════════════════████╝
- ╚══════Y═════_,══|═══════════════██╝
-         /| ;-"~ _  l
-        / l/ ,-"~    \
-        \//\/      .- \
-         Y        /    Y[-]
+      ██╔╝     .-"""-.                    ████║
+     ██╔╝     /  o o  \                  ████║
+    ██╔╝     |    >    |                ████║
+   ██╔╝       \  ---  /   [#14F195]OODA LOOP[#FF4060]  ████║
+  ██╔╝         '-...-'    [#14F195]ACTIVE[#FF4060]     ████║
+ ██╔╝              ||                  ████║
+██╔╝              /  \                ████║
+██║              '    '              ████║
+██║                                 ████║
+██╚════════════════════════════████╝
+ ╚══════════════════════════════██╝[-]
 `
 
 func main() {
@@ -62,14 +58,14 @@ func main() {
 	header.SetBackgroundColor(tcell.ColorBlack)
 	header.SetBorderPadding(0, 0, 2, 2)
 
-	// ── Lobster Art Panel ────────────────────────────────────
+	// ── Gopher Art Panel ─────────────────────────────────────
 	artView := tview.NewTextView().
 		SetDynamicColors(true).
-		SetText(lobsterArt)
+		SetText(gopherArt)
 	artView.SetBackgroundColor(tcell.ColorBlack)
 	artView.SetBorder(true).
 		SetBorderColor(tcell.NewRGBColor(20, 241, 149)).
-		SetTitle(fmt.Sprintf(" [%s]🦞 GOBOT SOLANA ROBOT[-] ", gobotGreen)).
+		SetTitle(fmt.Sprintf(" [%s]🐹 GOBOT SOLANA ROBOT[-] ", gobotGreen)).
 		SetTitleAlign(tview.AlignCenter)
 
 	// ── Menu ─────────────────────────────────────────────────
@@ -134,7 +130,7 @@ func main() {
 	infoBar := tview.NewTextView().
 		SetDynamicColors(true).
 		SetTextAlign(tview.AlignCenter).
-		SetText(fmt.Sprintf("[%s]$GOBOT :: Droids Lead The Way :: solana-gobot hub :: zk.x402.wtf :: cheshireterminal.ai[-]", gobotDim))
+		SetText(fmt.Sprintf("[%s]$GOBOT :: Droids Lead The Way :: solana-clawd hub :: zk.x402.wtf :: cheshireterminal.ai[-]", gobotDim))
 	infoBar.SetBackgroundColor(tcell.ColorBlack)
 
 	// ── Layout ───────────────────────────────────────────────

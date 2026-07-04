@@ -41,7 +41,7 @@ import (
 
 const banner = `
   ╔══════════════════════════════════════════════╗
-  ║       🦞 GoBot OS — Web Console           ║
+  ║       🐹 GoBot OS — Web Console           ║
   ║   Sentient Solana Trading Intelligence       ║
   ╚══════════════════════════════════════════════╝`
 
@@ -928,7 +928,7 @@ a:hover{text-decoration:underline}
 </head>
 <body>
 <div class="container">
-  <h1>🦞 GoBot OS</h1>
+  <h1>🐹 GoBot OS</h1>
   <p class="status">Web Console Running</p>
   <p>API: <a href="/api/status">/api/status</a> | <a href="/api/dna">/api/dna</a> | <a href="/api/connectors">/api/connectors</a> | <a href="/api/trading/cockpit">/api/trading/cockpit</a> | <a href="/api/laws">/api/laws</a> | <a href="/api/doctor">/api/doctor</a></p>
   <p class="info">Build the frontend with: cd web/frontend && npm run build</p>

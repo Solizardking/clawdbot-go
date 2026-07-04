@@ -188,7 +188,7 @@ func (a *OODAAgent) Start() error {
 	a.running = true
 	a.mu.Unlock()
 
-	log.Printf("[OODA] 🦞 GoBot starting (mode=%s interval=%ds)",
+	log.Printf("[OODA] 🐹 GoBot starting (mode=%s interval=%ds)",
 		a.cfg.OODA.Mode, a.cfg.OODA.IntervalSeconds)
 	log.Printf("[OODA] Watchlist: %v", a.cfg.OODA.Watchlist)
 	log.Printf("[OODA] Strategy: RSI(%d/%d) EMA(%d/%d) SL=%.0f%% TP=%.0f%%",

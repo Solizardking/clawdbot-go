@@ -50,21 +50,21 @@ all: build tui
 # ── Build for current platform ────────────────────────────────────────
 
 build:
-	@echo "🦞 Building GoBot CLI..."
+	@echo "🐹 Building GoBot CLI..."
 	@mkdir -p $(BUILD_DIR)
 	$(GOBUILD) -o $(BIN_CLI) ./cmd/gobot
 	@echo "✓ $(BIN_CLI) built ($(shell file $(BIN_CLI) | cut -d: -f2))"
 	@ls -lh $(BIN_CLI)
 
 tui:
-	@echo "🦞 Building GoBot TUI Launcher..."
+	@echo "🐹 Building GoBot TUI Launcher..."
 	@mkdir -p $(BUILD_DIR)
 	$(GOBUILD) -o $(BIN_TUI) ./cmd/gobot-tui
 	@echo "✓ $(BIN_TUI) built"
 	@ls -lh $(BIN_TUI)
 
 web:
-	@echo "🦞 Building GoBot Web Console..."
+	@echo "🐹 Building GoBot Web Console..."
 	$(MAKE) -C web all
 
 # ── NVIDIA Orin Nano (Linux ARM64) ────────────────────────────────────
@@ -72,7 +72,7 @@ web:
 # CGO enabled for I2C syscalls (hardware/modulino.go)
 
 orin:
-	@echo "🦞 Cross-compiling for NVIDIA Orin Nano (linux/arm64)..."
+	@echo "🐹 Cross-compiling for NVIDIA Orin Nano (linux/arm64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
 		$(GOBUILD) -o $(BUILD_DIR)/gobot-orin ./cmd/gobot
@@ -88,7 +88,7 @@ orin:
 # ── Raspberry Pi / Generic ARM ────────────────────────────────────────
 
 rpi:
-	@echo "🦞 Cross-compiling for Raspberry Pi (linux/arm64)..."
+	@echo "🐹 Cross-compiling for Raspberry Pi (linux/arm64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
 		$(GOBUILD) -o $(BUILD_DIR)/gobot-rpi ./cmd/gobot
@@ -97,7 +97,7 @@ rpi:
 # ── RISC-V ────────────────────────────────────────────────────────────
 
 riscv:
-	@echo "🦞 Cross-compiling for RISC-V (linux/riscv64)..."
+	@echo "🐹 Cross-compiling for RISC-V (linux/riscv64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=linux GOARCH=riscv64 CGO_ENABLED=0 \
 		$(GOBUILD) -o $(BUILD_DIR)/gobot-riscv ./cmd/gobot
@@ -106,7 +106,7 @@ riscv:
 # ── macOS (Apple Silicon) ─────────────────────────────────────────────
 
 macos:
-	@echo "🦞 Building for macOS (darwin/arm64)..."
+	@echo "🐹 Building for macOS (darwin/arm64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=darwin GOARCH=arm64 \
 		$(GOBUILD) -o $(BUILD_DIR)/gobot-macos ./cmd/gobot
@@ -116,7 +116,7 @@ macos:
 
 cross: build orin rpi riscv macos
 	@echo ""
-	@echo "🦞 All cross-compilation complete:"
+	@echo "🐹 All cross-compilation complete:"
 	@ls -lh $(BUILD_DIR)/
 
 # ── Docker ────────────────────────────────────────────────────────────
@@ -163,7 +163,7 @@ verify:
 	$(GO) vet ./...
 	@echo "🧪 Running race tests..."
 	$(GOTEST) ./...
-	@echo "🦞 Building release entrypoints..."
+	@echo "🐹 Building release entrypoints..."
 	$(GOBUILD) -o /tmp/gobot-verify ./cmd/gobot
 	$(GOBUILD) -o /tmp/gobot-tui-verify ./cmd/gobot-tui
 

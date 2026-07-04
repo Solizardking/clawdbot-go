@@ -1,7 +1,7 @@
 {
-  "name": "@clawd/zk-shark-agent",
+  "name": "@gobot/zk-shark-agent",
   "version": "0.1.0",
-  "description": "ZK Shark, the Shark of All Streets agent: an intent-routable wrapper around @clawd/zk-client for nullifiers, Groth16 proofs, and Light Protocol primitives.",
+  "description": "ZK Shark, the Shark of All Streets agent: an intent-routable wrapper around @gobot/zk-client for nullifiers, Groth16 proofs, and Light Protocol primitives.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -9,7 +9,7 @@
   "bin": {
     "zk-shark-agent": "./dist/cli.js",
     "shark-of-all-streets": "./dist/cli.js",
-    "clawd-zk-agent": "./dist/cli.js"
+    "gobot-zk-agent": "./dist/cli.js"
   },
   "exports": {
     ".": {
@@ -48,7 +48,7 @@
     "solana",
     "zk",
     "light-protocol",
-    "clawd",
+    "gobot",
     "zk-shark",
     "shark-of-all-streets",
     "ordinals",
@@ -60,7 +60,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@clawd/zk-client": "workspace:*",
+    "@gobot/zk-client": "workspace:*",
     "@solana/kit": "^2.1.0",
     "@solana/web3.js": "^1.95.0"
   },

@@ -1,5 +1,5 @@
 /**
- * Unit tests for @clawd/zk-shark-agent.
+ * Unit tests for @gobot/zk-shark-agent.
  *
  * Pure-logic tests: no RPC calls, no signer. The tests exercise:
  *   - config loading (defaults + env overrides + bad values)
@@ -12,11 +12,11 @@
 import { test, describe, expect, vi } from "vitest";
 
 // The zk-client has a pre-existing bug: it tries to
-// `new PublicKey("CLAWDzk11…111")` at module load, and that string
+// `new PublicKey("GOBOTzk11…111")` at module load, and that string
 // is too short to be a valid base58 pubkey. Importing it pulls
 // that line in, so we mock the module entirely for the off-chain
 // unit tests with a minimal surface area.
-vi.mock("@clawd/zk-client", () => {
+vi.mock("@gobot/zk-client", () => {
   // Re-implement the small bits we exercise (nullifier computation,
   // public-input packing, proof serialization) in a way that
   // doesn't touch the broken top-level constant.
@@ -69,11 +69,11 @@ vi.mock("@clawd/zk-client", () => {
     if (args.proof.c.length !== 64) return { ok: false, reason: "proof.c must be 64 bytes" };
     return { ok: true };
   }
-  class ClawdZkClient {
+  class GoBotZkClient {
     constructor(_: unknown) {}
   }
   return {
-    ClawdZkClient,
+    GoBotZkClient,
     computeNullifier,
     packPublicInputs,
     buildPublishPublicInputs,
@@ -87,13 +87,13 @@ import {
   type IntentRoute,
 } from "../src/intents.js";
 import { loadAgentConfig, DEFAULT_PROGRAM_ID } from "../src/config.js";
-import { ZkSharkAgent, ClawdZkAgent } from "../src/agent.js";
+import { ZkSharkAgent, GoBotZkAgent } from "../src/agent.js";
 import {
   packPublicInputs,
   buildPublishPublicInputs,
   type Groth16Proof,
   type Bytes32,
-} from "@clawd/zk-client";
+} from "@gobot/zk-client";
 
 import { Buffer } from "node:buffer";
 
@@ -140,11 +140,11 @@ describe("loadAgentConfig", () => {
     expect(cfg.programId.toBase58()).not.toBe(DEFAULT_PROGRAM_ID.toBase58());
   });
 
-  test("accepts legacy CLAWD_ZK env aliases", () => {
+  test("accepts legacy GOBOT_ZK env aliases", () => {
     const cfg = loadAgentConfig({
-      CLAWD_ZK_RPC_URL: "https://legacy.example",
-      CLAWD_ZK_PROGRAM_ID: "CLAWDZK_LOCALNET",
-      CLAWD_ZK_NETWORK: "localnet",
+      GOBOT_ZK_RPC_URL: "https://legacy.example",
+      GOBOT_ZK_PROGRAM_ID: "GOBOTZK_LOCALNET",
+      GOBOT_ZK_NETWORK: "localnet",
     });
     expect(cfg.rpcUrl).toBe("https://legacy.example");
     expect(cfg.network).toBe("localnet");
@@ -335,8 +335,8 @@ describe("ZkSharkAgent.loadProof", () => {
 });
 
 describe("legacy class alias", () => {
-  test("keeps ClawdZkAgent as a compatibility export", () => {
-    expect(ClawdZkAgent).toBe(ZkSharkAgent);
+  test("keeps GoBotZkAgent as a compatibility export", () => {
+    expect(GoBotZkAgent).toBe(ZkSharkAgent);
   });
 });
 

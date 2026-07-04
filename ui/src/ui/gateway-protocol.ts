@@ -1,6 +1,6 @@
 export const GATEWAY_CLIENT_NAMES = {
   CONTROL_UI: "control-ui",
-  CLAWDBOT_UI: "clawdbot-ui",
+  GOBOT_UI: "gobot-ui",
 } as const;
 
 export type GatewayClientName =

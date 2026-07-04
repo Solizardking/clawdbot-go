@@ -1,12 +1,12 @@
 /**
- * Integration tests for the @clawd/zk-client SDK.
+ * Integration tests for the @gobot/zk-client SDK.
  *
  * The TypeScript tests in this file exercise the off-chain pieces that
  * do NOT need the on-chain program: nullifier computation, public-input
  * packing, off-chain proof sanity checks, and end-to-end instruction
  * shape.
  *
- * On-chain tests live in `programs/clawd-zk/tests/` and require a
+ * On-chain tests live in `programs/gobot-zk/tests/` and require a
  * running `light test-validator`.
  */
 
@@ -72,7 +72,7 @@ describe("nullifier computation", () => {
 
   it("uses the documented NULLIFIER_PREFIX on-chain", () => {
     expect(Buffer.from(NULLIFIER_PREFIX).toString("utf8")).toBe(
-      "clawd-zk-nullifier",
+      "gobot-zk-nullifier",
     );
   });
 });

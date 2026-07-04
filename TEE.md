@@ -1,6 +1,6 @@
 # TEE Verifier Deployment Report
 
-> **Clawd RedPill TEE Gateway** — Solana-powered Trusted Execution Environment attestation anchoring on Solana devnet.
+> **Go Bot RedPill TEE Gateway** — Solana-powered Trusted Execution Environment attestation anchoring on Solana devnet.
 >
 > Deploy timestamp: July 3, 2026
 > Deployer: `Ds6Q...` (funded from local devnet authority)
@@ -25,7 +25,7 @@
 
 ## Architecture Overview
 
-The Clawd TEE Verifier is a Solana RedPill attestation anchoring system composed of three layers:
+The Go Bot TEE Verifier is a Solana RedPill attestation anchoring system composed of three layers:
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -338,8 +338,8 @@ curl -X POST https://tee.onchainai.fund/v1/proof \
 
 <div align="center">
 
-**Clawd TEE Gateway** · Solana-native attestation anchoring  
-Built with 🦞 by the Clawd ecosystem · [`github.com/Solizardking/clawdbot-go`](https://github.com/Solizardking/clawdbot-go)
+**Go Bot TEE Gateway** · Solana-native attestation anchoring  
+Built with 🐹 by the GoBot ecosystem · [`github.com/Solizardking/clawdbot-go`](https://github.com/Solizardking/clawdbot-go)
 
 *The shell molts. The proofs do not.*
 

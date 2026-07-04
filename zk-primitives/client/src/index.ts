@@ -1,7 +1,7 @@
 /**
- * @clawd/zk-client
+ * @gobot/zk-client
  *
- * TypeScript client SDK for the Clawd ZK primitive on Solana.
+ * TypeScript client SDK for the Go Bot ZK primitive on Solana.
  *
  * The SDK wraps three things:
  *   1. **Nullifier computation** — deterministic hashes from a (secret, context) pair.
@@ -12,14 +12,14 @@
  * ## Quick start
  *
  * ```ts
- * import { ClawdZkClient, computeNullifier, buildPublicInputs } from "@clawd/zk-client";
+ * import { GoBotZkClient, computeNullifier, buildPublicInputs } from "@gobot/zk-client";
  * import { createSolanaRpc, createKeyPairSignerFromBytes } from "@solana/kit";
  *
  * const rpc = createSolanaRpc("https://mainnet.helius-rpc.com?api-key=...");
  * const signer = await createKeyPairSignerFromBytes(secretKey);
- * const client = new ClawdZkClient({
+ * const client = new GoBotZkClient({
  *   rpc,
- *   programId: "CLAWDzk...",
+ *   programId: "GOBOTzk...",
  *   photonUrl: "https://mainnet.helius-rpc.com",
  *   apiKey: "...",
  * });

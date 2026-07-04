@@ -21,9 +21,9 @@ describe("parseAgentSessionKey", () => {
   });
 
   it("parses legacy routing session keys", () => {
-    expect(parseAgentSessionKey("clawd:telegram:1234")).toEqual({
-      raw: "clawd:telegram:1234",
-      agentId: "clawd",
+    expect(parseAgentSessionKey("gobot:telegram:1234")).toEqual({
+      raw: "gobot:telegram:1234",
+      agentId: "gobot",
       channel: "telegram",
       peer: "1234",
     });

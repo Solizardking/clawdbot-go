@@ -1,5 +1,5 @@
 /**
- * ClawdZkClient — high-level orchestrator.
+ * GoBotZkClient — high-level orchestrator.
  *
  * Glues together nullifier computation, Groth16 proof assembly, and
  * Light Protocol validity-proof fetching into single-method calls
@@ -8,7 +8,7 @@
 
 import { PublicKey, TransactionInstruction } from "@solana/web3.js";
 import {
-  ClawdZkClientConfig,
+  GoBotZkClientConfig,
   CommitStateArgs,
   PublishAttestationArgs,
   Groth16Proof,
@@ -31,14 +31,14 @@ const PROGRAM_IDENTITY: PublicKey = new PublicKey(
   "4vJ9JU1bJJE96FWSVKmnrL3xFU5jSBSVdk9x4La2vzhn",
 );
 
-export class ClawdZkClient {
+export class GoBotZkClient {
   readonly rpc: any;
   readonly programId: PublicKey;
   readonly photonUrl: string;
   readonly apiKey?: string;
   readonly commitment: "processed" | "confirmed" | "finalized";
 
-  constructor(config: ClawdZkClientConfig) {
+  constructor(config: GoBotZkClientConfig) {
     this.rpc = config.rpc;
     this.programId = config.programId ?? PROGRAM_IDENTITY;
     this.photonUrl = config.photonUrl ?? "";

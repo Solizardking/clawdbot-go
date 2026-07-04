@@ -31,7 +31,7 @@ import { resolve as resolvePath } from "node:path";
 import { Buffer } from "node:buffer";
 
 import {
-  ClawdZkClient,
+  GoBotZkClient,
   computeNullifier,
   verifyGroth16Offchain,
   buildPublishPublicInputs,
@@ -40,7 +40,7 @@ import {
   type Bytes32,
   type PublishAttestationArgs,
   type CommitStateArgs,
-} from "@clawd/zk-client";
+} from "@gobot/zk-client";
 
 import { loadAgentConfig, type ZkSharkAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 import { routeIntent, type IntentContext, type IntentRoute } from "./intents.js";
@@ -52,13 +52,13 @@ import { routeIntent, type IntentContext, type IntentRoute } from "./intents.js"
 export interface ZkSharkAgentOptions {
   /** Pre-built config. If omitted, the agent reads from `process.env`. */
   config?: ZkSharkAgentConfig;
-  /** Pre-built ClawdZkClient. If omitted, the agent constructs one. */
-  client?: ClawdZkClient;
+  /** Pre-built GoBotZkClient. If omitted, the agent constructs one. */
+  client?: GoBotZkClient;
   /** Optional keypair for signing. */
   signer?: Keypair;
 }
 
-export type ClawdZkAgentOptions = ZkSharkAgentOptions;
+export type GoBotZkAgentOptions = ZkSharkAgentOptions;
 
 export interface AttestModelArgs {
   /** 32-byte hash identifying the model being attested to. */
@@ -164,11 +164,11 @@ async function loadProofFromFile(path: string): Promise<Groth16Proof> {
 
 export class ZkSharkAgent {
   readonly config: ZkSharkAgentConfig;
-  readonly client: ClawdZkClient;
+  readonly client: GoBotZkClient;
   /** Optional signer; the agent can attest / commit without one (instruction-only). */
   signer?: Keypair;
 
-  private constructor(config: ZkSharkAgentConfig, client: ClawdZkClient, signer?: Keypair) {
+  private constructor(config: ZkSharkAgentConfig, client: GoBotZkClient, signer?: Keypair) {
     this.config = config;
     this.client = client;
     this.signer = signer;
@@ -179,7 +179,7 @@ export class ZkSharkAgent {
     const config = opts.config ?? loadAgentConfig();
     const client =
       opts.client ??
-      new ClawdZkClient({
+      new GoBotZkClient({
         rpc: createSolanaRpc(config.rpcUrl),
         programId: config.programId,
         photonUrl: config.photonUrl,
@@ -406,12 +406,12 @@ function randomSecret(): Uint8Array {
   return out;
 }
 
-export { ZkSharkAgent as ClawdZkAgent };
+export { ZkSharkAgent as GoBotZkAgent };
 
 // Re-export for callers that want to build their own agent without
 // `ZkSharkAgent.create`.
 export { DEFAULT_PROGRAM_ID };
-// Type-only re-exports so callers don't have to dig into @clawd/zk-client.
+// Type-only re-exports so callers don't have to dig into @gobot/zk-client.
 export type { Groth16Proof, Bytes32 };
 export type { Keypair as SolanaKeypair } from "@solana/web3.js";
 export type { createKeyPairSignerFromBytes } from "@solana/kit";

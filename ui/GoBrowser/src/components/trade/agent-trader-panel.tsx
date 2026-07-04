@@ -108,7 +108,7 @@ export function AgentTraderPanel() {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-zinc-200 flex items-center gap-2">
           <Bot size={14} className="text-amber-400" />
-          ClawdBot Trader
+          GoBot Trader
         </h3>
         {agent && (
           <span className="text-[10px] text-zinc-500 font-mono truncate max-w-[140px]">

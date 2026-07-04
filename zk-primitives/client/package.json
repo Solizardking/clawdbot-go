@@ -1,7 +1,7 @@
 {
-  "name": "@clawd/zk-client",
+  "name": "@gobot/zk-client",
   "version": "0.1.0",
-  "description": "TypeScript client SDK for the Clawd ZK primitive on Solana (nullifiers, Groth16 proofs, Light Protocol compressed state).",
+  "description": "TypeScript client SDK for the Go Bot ZK primitive on Solana (nullifiers, Groth16 proofs, Light Protocol compressed state).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -40,7 +40,7 @@
     "solana",
     "zk",
     "light-protocol",
-    "clawd",
+    "gobot",
     "nullifier",
     "groth16",
     "agent",

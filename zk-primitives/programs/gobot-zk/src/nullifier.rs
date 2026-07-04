@@ -1,4 +1,4 @@
-//! Nullifier module — compressed PDA nullifiers for the Clawd ZK primitive.
+//! Nullifier module — compressed PDA nullifiers for the Go Bot ZK primitive.
 //!
 //! Adapted from the reference `nullifier_creation` crate shipped by
 //! Light Protocol. The empty-account pattern is intentional: existence
@@ -14,7 +14,7 @@ use light_sdk::{
     },
 };
 
-pub const NULLIFIER_PREFIX: &[u8] = b"clawd-zk-nullifier";
+pub const NULLIFIER_PREFIX: &[u8] = b"gobot-zk-nullifier";
 
 /// Compressed nullifier account. Empty struct by design — the very
 /// existence of this account at the derived address proves the nullifier
@@ -43,7 +43,7 @@ pub fn create_nullifiers<'info>(
     signer: &AccountInfo<'info>,
     remaining_accounts: &[AccountInfo<'info>],
 ) -> Result<()> {
-    require!(!nullifiers.is_empty(), ClawdNullifierError::NoNullifiers);
+    require!(!nullifiers.is_empty(), GoBotNullifierError::NoNullifiers);
 
     let light_cpi_accounts = CpiAccounts::new(
         signer,
@@ -54,7 +54,7 @@ pub fn create_nullifiers<'info>(
     let address_tree_pubkey = data
         .address_tree_info
         .get_tree_pubkey(&light_cpi_accounts)
-        .map_err(|_| error!(ClawdNullifierError::TreeLookupFailed))?;
+        .map_err(|_| error!(GoBotNullifierError::TreeLookupFailed))?;
 
     let mut cpi_builder = LightSystemProgramCpi::new_cpi(crate::LIGHT_CPI_SIGNER, data.proof);
     let mut new_address_params: Vec<NewAddressParamsAssignedPacked> =
@@ -88,7 +88,7 @@ pub fn create_nullifiers<'info>(
 }
 
 #[error_code]
-pub enum ClawdNullifierError {
+pub enum GoBotNullifierError {
     #[msg("At least one nullifier must be provided.")]
     NoNullifiers,
     #[msg("Could not resolve the address tree pubkey from the packed info.")]

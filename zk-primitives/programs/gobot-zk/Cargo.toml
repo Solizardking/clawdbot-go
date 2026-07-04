@@ -1,14 +1,14 @@
 [package]
-name = "clawd-zk"
+name = "gobot-zk"
 version = "0.1.0"
-description = "ZK primitive for Solana Clawd AI model attestations: nullifiers, Groth16 proofs, compressed state via Light Protocol"
+description = "ZK primitive for Solana Go Bot AI model attestations: nullifiers, Groth16 proofs, compressed state via Light Protocol"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/Solizardking/solana-clawd"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "clawd_zk"
+name = "gobot_zk"
 
 [features]
 no-entrypoint = []

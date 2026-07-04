@@ -71,7 +71,7 @@ Environment:
   ZK_SHARK_KEYPAIR          (optional)  Path to a Solana keypair JSON.
   ZK_SHARK_NETWORK          (optional)  mainnet | devnet | localnet.
 
-Legacy CLAWD_ZK_* variables are still accepted as fallbacks.
+Legacy GOBOT_ZK_* variables are still accepted as fallbacks.
 `);
 }
 

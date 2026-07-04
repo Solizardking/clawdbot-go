@@ -1,15 +1,15 @@
 <div align="center">
 
 ```
-    ██████╗██╗      █████╗ ██╗    ██╗██████╗ ██████╗  ██████╗ ████████╗
-   ██╔════╝██║     ██╔══██╗██║    ██║██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝
-   ██║     ██║     ███████║██║ █╗ ██║██║  ██║██████╔╝██║   ██║   ██║
-   ██║     ██║     ██╔══██║██║███╗██║██║  ██║██╔══██╗██║   ██║   ██║
-   ╚██████╗███████╗██║  ██║╚███╔███╔╝██████╔╝██████╔╝╚██████╔╝   ██║
-    ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝
+    ██████╗  ██████╗ ██████╗  ██████╗ ████████╗
+   ██╔════╝ ██╔═══██╗██╔══██╗██╔═══██╗╚══██╔══╝
+   ██║  ███╗██║   ██║██████╔╝██║   ██║   ██║
+   ██║   ██║██║   ██║██╔══██╗██║   ██║   ██║
+   ╚██████╔╝╚██████╔╝██████╔╝╚██████╔╝   ██║
+    ╚═════╝  ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝
 ```
 
-### 🦞 Sovereign Solana Trading Intelligence
+### 🐹 Sovereign Solana Trading Intelligence
 
 **Autonomous OODA Agent · Agent DNA · ZK Primitives · Privacy by Default · Helius DAS · Vulcan/Phoenix Perpetuals · Jupiter Swaps · Hardware I2C · Web Console**
 
@@ -28,7 +28,7 @@
 
 ## Overview
 
-**ClawdBot** is the world's first **Solana-native sovereign AI agent** — a full-stack autonomous trading intelligence bound by Clawd's full **six-law harness**: three immutable on-chain laws and three off-chain interpretive laws. Built in pure Go for minimal resource consumption, it orchestrates on-chain data providers, zk primitives, and x402-gated surfaces through a military-grade OODA decision loop with persistent epistemological memory.
+**GoBot** is the world's first **Solana-native sovereign AI agent** — a full-stack autonomous trading intelligence bound by Go Bot's full **six-law harness**: three immutable on-chain laws and three off-chain interpretive laws. Built in pure Go for minimal resource consumption, it orchestrates on-chain data providers, zk primitives, and x402-gated surfaces through a military-grade OODA decision loop with persistent epistemological memory.
 
 The system compiles to three standalone binaries that run on everything from NVIDIA Jetson edge devices to cloud VMs — no containers required, no runtime dependencies, instant boot.
 
@@ -40,13 +40,13 @@ The system compiles to three standalone binaries that run on everything from NVI
 | `https://github.com/solizardking/solana-clawd` | Canonical ecosystem hub |
 | `https://zk.x402.wtf` | Public x402/zk gateway and install surface |
 | `https://cheshireterminal.ai` | Public terminal surface |
-| `https://huggingface.co/ordlibrary/Clawd-GLM-5.2` | Public Clawd model surface |
+| `https://huggingface.co/ordlibrary/Clawd-GLM-5.2` | Public Go Bot model surface |
 
 ### Core Capabilities
 
 | Capability | Description |
 |:---|:---|
-| **OODA Trading Loop** | Autonomous Observe → Orient → Decide → Act cycle with RSI/EMA/ATR strategy engine, auto-optimization, ClawVault memory journaling, and hardware I2C controls |
+| **OODA Trading Loop** | Autonomous Observe → Orient → Decide → Act cycle with RSI/EMA/ATR strategy engine, auto-optimization, GoVault memory journaling, and hardware I2C controls |
 | **Agent DNA Generator** | Go-native first-run DNA profile — synthetic A/C/G/T sequence, motif metrics, trait scores, proof hash, nullifier, pending Solana attestation seed |
 | **Birdeye v3 Analytics** | 22 API endpoints, 19 LLM-callable agent tools — token overview, OHLCV, trade feeds, security audits, trending, wallet analytics |
 | **Helius DAS + RPC** | Digital Asset Standard queries (get-asset, owner-assets, search), SPL token operations (balance, supply, largest holders), raw RPC forwarding |
@@ -57,7 +57,7 @@ The system compiles to three standalone binaries that run on everything from NVI
 | **Hardware I2C** | Arduino Modulino® sensor cluster — RGB LEDs, buzzer alerts, physical buttons, rotary knob, IMU, temp/humidity, proximity |
 | **Web Console** | React 19 + Vite dashboard — real-time status, Go packages viewer, connector health, environment variables |
 | **Multi-Provider LLM** | OpenRouter, Anthropic, OpenAI abstraction with tool-use agent loop |
-| **Dual Memory** | Local ClawVault (file-based, 7 categories) + Supabase MemoryEngine (PostgreSQL) |
+| **Dual Memory** | Local GoVault (file-based, 7 categories) + Supabase MemoryEngine (PostgreSQL) |
 | **Grok-First** | Default provider is xAI Grok — code/repl/trade, research, image, voice, fast modes |
 
 ---
@@ -74,7 +74,7 @@ For the complete installation, including the `Solizardking/core-ai` sidecar and
 Vulcan/Phoenix perps tooling:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | GOBOT_INSTALL_COMPLETE=1 bash
 ```
 
 After the Cloudflare Worker in this repo is deployed, the same complete install
@@ -83,7 +83,7 @@ can be exposed through branded DNS:
 ```bash
 curl -fsSL https://install.onchainai.fund | bash
 curl -fsSL https://install.x402.wtf | bash
-curl -fsSL https://x402.wtf/clawdbot | bash
+curl -fsSL https://x402.wtf/gobot | bash
 ```
 
 > **Free AI included** — no API keys required to get started.  
@@ -93,35 +93,35 @@ curl -fsSL https://x402.wtf/clawdbot | bash
 After install:
 
 ```bash
-source ~/.clawdbot/.env          # load env vars
-clawdbot dna show                # inspect generated starter DNA
-clawdbot solana wallet           # inspect generated agent wallet
-clawdbot solana fund-agent       # dry-run startup funding plan
-clawdbot agent                   # AI REPL — free via zkrouter
-clawdbot ooda --sim              # paper trading mode
-clawdbot solana trending         # top Solana tokens
+source ~/.gobot/.env          # load env vars
+gobot dna show                # inspect generated starter DNA
+gobot solana wallet           # inspect generated agent wallet
+gobot solana fund-agent       # dry-run startup funding plan
+gobot agent                   # AI REPL — free via zkrouter
+gobot ooda --sim              # paper trading mode
+gobot solana trending         # top Solana tokens
 ```
 
 The installer creates a local `0600` agent keypair at
-`~/.clawdbot/workspace/agent-wallet.json`, registers its public key with
+`~/.gobot/workspace/agent-wallet.json`, registers its public key with
 `https://zk.x402.wtf/api/install`, and records the non-secret receipt at
-`~/.clawdbot/install.json`. The install API is expected to fund that wallet
-idempotently with `0.069420` SOL and `1,000` `$CLAWD`
+`~/.gobot/install.json`. The install API is expected to fund that wallet
+idempotently with `0.069420` SOL and `1,000` `$GOBOT`
 (`8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump`) from a server-side funding
 wallet configured only on the gateway.
 
 For local treasury funding from an operator wallet, use the explicit local path:
 
 ```bash
-export CLAWDBOT_LOCAL_STARTUP_FUNDING=1
-export CLAWDBOT_BIRTH_FUNDING_SEND=1
-export CLAWDBOT_TREASURY_KEYPAIR=~/.config/solana/id.json
-# or export CLAWDBOT_TREASURY_PRIVATE_KEY=base58-secret-key
+export GOBOT_LOCAL_STARTUP_FUNDING=1
+export GOBOT_BIRTH_FUNDING_SEND=1
+export GOBOT_TREASURY_KEYPAIR=~/.config/solana/id.json
+# or export GOBOT_TREASURY_PRIVATE_KEY=base58-secret-key
 
-curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | GOBOT_INSTALL_COMPLETE=1 bash
 ```
 
-`CLAWDBOT_TREASURY_PRIVATE_KEY` is only read from the process environment,
+`GOBOT_TREASURY_PRIVATE_KEY` is only read from the process environment,
 converted to a temporary `0600` keypair file for `solana` / `spl-token`, then
 removed. It is never written to `.env`, install receipts, or logs.
 
@@ -154,17 +154,17 @@ make cross         # All platforms (x86, ARM64, RISC-V, macOS)
 cd web/frontend && npm install && npm run build && cd ../..
 
 # Run
-./build/clawdbot version
-./build/clawdbot onboard                         # config, workspace, agent DNA
-./build/clawdbot dna show                        # inspect starter DNA
-./build/clawdbot agent -m "What is SOL price?"   # single-shot AI query
-./build/clawdbot agent                            # interactive REPL
-./build/clawdbot solana trending
-./build/clawdbot ooda --sim --interval 60
-./build/clawdbot web                              # dashboard → http://localhost:18800
+./build/gobot version
+./build/gobot onboard                         # config, workspace, agent DNA
+./build/gobot dna show                        # inspect starter DNA
+./build/gobot agent -m "What is SOL price?"   # single-shot AI query
+./build/gobot agent                            # interactive REPL
+./build/gobot solana trending
+./build/gobot ooda --sim --interval 60
+./build/gobot web                              # dashboard → http://localhost:18800
 ```
 
-The default install path is already pointed at the public Clawd surfaces:
+The default install path is already pointed at the public Go Bot surfaces:
 - runtime repo: `https://github.com/Solizardking/clawdbot-go`
 - ecosystem hub: `https://github.com/solizardking/solana-clawd`
 - gateway: `https://zk.x402.wtf`
@@ -173,7 +173,7 @@ The default install path is already pointed at the public Clawd surfaces:
 ### core-ai Integration
 
 `Solizardking/core-ai` is a TypeScript/Node tooling repository: Helius MCP,
-Pump MCP, Clawd Code plugin material, skills, and Solana documentation tooling.
+Pump MCP, Go Bot Code plugin material, skills, and Solana documentation tooling.
 It is intentionally not a `go.mod` dependency and should not be embedded into
 the Go binary. The Go build stays a standalone runtime; `core-ai` is installed
 beside it as an optional sidecar.
@@ -181,39 +181,39 @@ beside it as an optional sidecar.
 The installer supports that model with:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | GOBOT_INSTALL_COMPLETE=1 bash
 ```
 
-That fetches the slim integration branch into `~/.clawdbot/core-ai`, builds the
+That fetches the slim integration branch into `~/.gobot/core-ai`, builds the
 local MCP packages when `npm` is available, and writes:
 
 ```text
-~/.clawdbot/core-ai.mcp.json
+~/.gobot/core-ai.mcp.json
 ```
 
 Relevant knobs:
 
 ```bash
-CLAWDBOT_INSTALL_COMPLETE=1
-CLAWDBOT_INSTALL_CORE_AI=1
-CLAWDBOT_INSTALL_VULCAN=1
-# CLAWDBOT_INSTALL_VULCAN=0 # explicit opt-out for CI/constrained installs
-CLAWDBOT_CORE_AI_REPO=https://github.com/Solizardking/core-ai
-CLAWDBOT_CORE_AI_REF=clawd-stack-integration
-CLAWDBOT_CORE_AI_DIR=~/.clawdbot/core-ai
-CLAWDBOT_CORE_AI_MCP_CONFIG=~/.clawdbot/core-ai.mcp.json
+GOBOT_INSTALL_COMPLETE=1
+GOBOT_INSTALL_CORE_AI=1
+GOBOT_INSTALL_VULCAN=1
+# GOBOT_INSTALL_VULCAN=0 # explicit opt-out for CI/constrained installs
+GOBOT_CORE_AI_REPO=https://github.com/Solizardking/core-ai
+GOBOT_CORE_AI_REF=gobot-stack-integration
+GOBOT_CORE_AI_DIR=~/.gobot/core-ai
+GOBOT_CORE_AI_MCP_CONFIG=~/.gobot/core-ai.mcp.json
 ```
 
-Use `CLAWDBOT_SOURCE_MODE=archive` for small installs. Use
-`CLAWDBOT_SOURCE_MODE=git` only when the installed source must be a mutable git
+Use `GOBOT_SOURCE_MODE=archive` for small installs. Use
+`GOBOT_SOURCE_MODE=git` only when the installed source must be a mutable git
 checkout. The installer validates the downloaded source before building; if a
-source archive is missing `cmd/clawdbot/`, it retries with a git checkout.
+source archive is missing `cmd/gobot/`, it retries with a git checkout.
 
 To force a clean reinstall:
 
 ```bash
-rm -rf ~/.clawdbot/src
-curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
+rm -rf ~/.gobot/src
+curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | GOBOT_INSTALL_COMPLETE=1 bash
 ```
 
 ### Cloudflare / DNS Install Surface
@@ -222,7 +222,7 @@ curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/insta
 Worker that turns the canonical GitHub installer into branded install commands.
 The Worker keeps GitHub as the source of truth, serves `/install.sh` as the raw
 installer, and serves `/`, `/complete`, and `/full` as complete-install wrappers
-that set `CLAWDBOT_INSTALL_COMPLETE=1`.
+that set `GOBOT_INSTALL_COMPLETE=1`.
 
 Deploy it with:
 
@@ -235,15 +235,15 @@ Configured surfaces:
 ```text
 https://install.onchainai.fund
 https://install.x402.wtf
-https://x402.wtf/clawdbot
-https://zk.x402.wtf/clawdbot
+https://x402.wtf/gobot
+https://zk.x402.wtf/gobot
 ```
 
 Smoke tests:
 
 ```bash
 curl -fsSL https://install.onchainai.fund/healthz
-curl -fsSL https://install.onchainai.fund/.well-known/clawdbot-install.json
+curl -fsSL https://install.onchainai.fund/.well-known/gobot-install.json
 curl -fsSL https://install.onchainai.fund/install.sh | bash -n
 ```
 
@@ -251,16 +251,16 @@ See `cloudflare/README.md` for the DNS and route checklist.
 
 ### Upstash Box Install Surface
 
-You can run ClawdBot as a "Solana computer" inside an Upstash Box and use the
+You can run GoBot as a "Solana computer" inside an Upstash Box and use the
 Box preview URL as the install endpoint:
 
 ```bash
 cd scripts
 export UPSTASH_BOX_API_KEY=...              # or UPSTASH_BOX_KEY
 export SOLANA_RPC_URL=https://...
-export CLAWDBOT_TREASURY_PRIVATE_KEY=...   # hot wallet secret; do not commit
-export CLAWDBOT_INSTALL_FUNDING_ENABLED=1
-export CLAWDBOT_INSTALL_FUNDING_SEND=1      # real transfers
+export GOBOT_TREASURY_PRIVATE_KEY=...   # hot wallet secret; do not commit
+export GOBOT_INSTALL_FUNDING_ENABLED=1
+export GOBOT_INSTALL_FUNDING_SEND=1      # real transfers
 npm run box:bootstrap
 ```
 
@@ -272,21 +272,25 @@ curl -fsSL https://<box-preview-url>/install.sh | bash
 
 Every install posts to `/api/install`, is appended to the Box JSONL ledger, and
 is idempotently funded once per agent wallet with `0.069420` SOL and `1,000`
-`$CLAWD`. `/api/installs` requires `CLAWDBOT_INSTALL_ADMIN_TOKEN`.
+`$GOBOT`. `/api/installs` requires `GOBOT_INSTALL_ADMIN_TOKEN`.
 
 ### Module Path Compatibility
 
-The public repository is:
+The public repository is still hosted at its original address:
 - `https://github.com/Solizardking/clawdbot-go`
 
-The current Go module path is still:
-- `github.com/8bitlabs/clawdbot`
+The Go module path has already moved to the rebranded name:
+- `github.com/8bitlabs/gobot`
 
-That mismatch is intentional for now. The codebase keeps the legacy module path to avoid breaking existing imports, build scripts, and `ldflags` references while the public repo and hub are stabilized. In practice:
+That mismatch is intentional for now. The repository address, install URLs, and
+hub links stay put while the public repo and hub are stabilized, even though
+the module path, binaries, and env vars underneath have already migrated to
+the GoBot name. In practice:
 
 - clone and browse the code from `https://github.com/Solizardking/clawdbot-go`
-- expect Go imports inside the repo to remain `github.com/8bitlabs/clawdbot/...`
-- treat a future module-path migration as a deliberate breaking change, not as unfinished accidental drift
+- expect Go imports inside the repo to be `github.com/8bitlabs/gobot/...`
+- treat a future repository-address migration as a deliberate, separately
+  announced change, not as unfinished accidental drift
 
 ### Slim Package Target
 
@@ -298,7 +302,7 @@ reseeds those pieces instead of shipping them inside the Go source package.
 
 For a default Go install, the required payload is the Go source, docs,
 `README.md`, `install.sh`, `go.mod`, `go.sum`, and runtime config examples. For
-a complete Solana tooling install, use `CLAWDBOT_INSTALL_COMPLETE=1` so the Node
+a complete Solana tooling install, use `GOBOT_INSTALL_COMPLETE=1` so the Node
 tooling, MCP config, and Vulcan/Phoenix CLI are fetched and built as sidecars
 after the Go binary is installed.
 
@@ -310,17 +314,17 @@ after the Go binary is installed.
 clawdbot-go/
 │
 ├── cmd/                         ── Executables ──
-│   ├── clawdbot/                 CLI agent (1,193 lines, cobra)
+│   ├── gobot/                    CLI agent (1,193 lines, cobra)
 │   │   ├── main.go              60+ cobra commands, Birdeye/Helius CLI, DNA
 │   │   └── hardware.go          I2C sensor commands (scan/test/monitor/demo)
-│   └── clawdbot-tui/             TUI launcher (tcell/tview)
+│   └── gobot-tui/                TUI launcher (tcell/tview)
 │
 ├── pkg/                         ── 42 Packages, 21K+ lines ──
 │   │
 │   │  ┌─ Core Agent ────────────────────────────────────────┐
 │   ├── agent/                   OODA loop, hooks, tool executor, prompts
 │   ├── strategy/                RSI + EMA cross + ATR signal engine
-│   ├── memory/                  ClawVault + Supabase MemoryEngine
+│   ├── memory/                  GoVault + Supabase MemoryEngine
 │   ├── research/                Dexter deep research agent
 │   │  └─────────────────────────────────────────────────────┘
 │   │
@@ -347,9 +351,9 @@ clawdbot-go/
 │   ├── tools/                   Tool interface + registry
 │   └── ...                      health, heartbeat, logger, identity, etc.
 │
-├── CONSTITUTION.md              The Clawd Constitution (interpretive authority)
+├── CONSTITUTION.md              The Go Bot Constitution (interpretive authority)
 ├── six-laws.md                  Canonical six-law harness
-├── CLAWD.md                     Agent context document
+├── GOBOT.md                     Agent context document
 ├── AGENTS.md                    Agent catalog (50+ agents, 95+ skills)
 ├── IDENTITY.md                  Sovereign identity document
 ├── SOUL.md                      Inner character and trading philosophy
@@ -357,11 +361,11 @@ clawdbot-go/
 │
 ├── zk-primitives/               ZK agent, TypeScript client, Anchor program
 │   ├── MANIFEST.json            Machine-readable subsystem index
-│   ├── agent/                   @clawd/zk-agent + SKILL.md
-│   ├── client/                  @clawd/zk-client
+│   ├── agent/                   @gobot/zk-shark-agent + SKILL.md
+│   ├── client/                  @gobot/zk-client
 │   ├── configs/                 Light tree and runtime config examples
 │   ├── docs/                    Architecture + integration notes
-│   ├── programs/                clawd-zk Anchor program
+│   ├── programs/                gobot-zk Anchor program
 │   └── tests/                   Off-chain and on-chain test notes
 │
 ├── web/                         ── Web Console ──
@@ -380,7 +384,7 @@ clawdbot-go/
 
 ## ⚖️ The Six-Law Harness
 
-ClawdBot is bound by the **Clawd Constitution** — the world's first Solana-native agent harness constitution. It carries two coordinated law sets:
+GoBot is bound by the **Go Bot Constitution** — the world's first Solana-native agent harness constitution. It carries two coordinated law sets:
 
 ### Three On-Chain Laws (Immutable, hash-attested at spawn)
 
@@ -396,11 +400,11 @@ ClawdBot is bound by the **Clawd Constitution** — the world's first Solana-nat
 
 **Off-Chain Law II — Test possibility by entering the frontier.** The only reliable way to discover the boundary of the possible is disciplined exploration just beyond what currently seems possible.
 
-**Off-Chain Law III — Do not mistake advanced systems for sorcery.** Sufficiently advanced technology can look like magic; Clawd must explain, instrument, and verify it rather than mystify it.
+**Off-Chain Law III — Do not mistake advanced systems for sorcery.** Sufficiently advanced technology can look like magic; Go Bot must explain, instrument, and verify it rather than mystify it.
 
 ### Privacy by Default
 
-Clawd is designed to be privacy-preserving by default. Sensitive user context, research state, wallet metadata, and model-adjacent artifacts should be minimized, committed, encrypted, or proven where possible rather than disclosed by habit. The project’s zk surfaces exist to strengthen verifiability and user dignity, not to create blind spots for harmful behavior.
+Go Bot is designed to be privacy-preserving by default. Sensitive user context, research state, wallet metadata, and model-adjacent artifacts should be minimized, committed, encrypted, or proven where possible rather than disclosed by habit. The project’s zk surfaces exist to strengthen verifiability and user dignity, not to create blind spots for harmful behavior.
 
 > *The shell molts. The laws do not.*
 
@@ -421,43 +425,43 @@ Clawd is designed to be privacy-preserving by default. Sensitive user context, r
 ### Agent & OODA
 
 ```bash
-clawdbot agent                          # Interactive REPL with memory commands
-clawdbot agent -m "Analyze SOL trend"   # Single-shot LLM query
+gobot agent                          # Interactive REPL with memory commands
+gobot agent -m "Analyze SOL trend"   # Single-shot LLM query
 
-clawdbot laws                           # Print the canonical six-law harness
-clawdbot doctor                         # Local runtime + trading diagnostics
-clawdbot bench                          # Zero-style cold-start benchmark
-clawdbot dna show                       # Inspect workspace/agent-dna.json
-clawdbot dna generate --agent-name scout --role "research agent"
-clawdbot skills birth                   # Write the birth skill manifest
-clawdbot skills birth --install         # Seed Solizardking + Go skill packs
+gobot laws                           # Print the canonical six-law harness
+gobot doctor                         # Local runtime + trading diagnostics
+gobot bench                          # Zero-style cold-start benchmark
+gobot dna show                       # Inspect workspace/agent-dna.json
+gobot dna generate --agent-name scout --role "research agent"
+gobot skills birth                   # Write the birth skill manifest
+gobot skills birth --install         # Seed Solizardking + Go skill packs
 
-clawdbot trade cockpit                  # Trading readiness, connectors, limits
-clawdbot trade cockpit --json           # Machine-readable cockpit report
-clawdbot trade risk SOL --price 150 --volume24h 25000000 --liquidity 15000000
+gobot trade cockpit                  # Trading readiness, connectors, limits
+gobot trade cockpit --json           # Machine-readable cockpit report
+gobot trade risk SOL --price 150 --volume24h 25000000 --liquidity 15000000
 
-clawdbot ooda                           # Start autonomous trading loop
-clawdbot ooda --interval 30             # Custom cycle interval (seconds)
-clawdbot ooda --sim                     # Force simulated mode (paper trading)
-clawdbot ooda --hw-bus 1                # Enable hardware I2C integration
-clawdbot ooda --no-hw                   # Explicitly disable hardware probing
+gobot ooda                           # Start autonomous trading loop
+gobot ooda --interval 30             # Custom cycle interval (seconds)
+gobot ooda --sim                     # Force simulated mode (paper trading)
+gobot ooda --hw-bus 1                # Enable hardware I2C integration
+gobot ooda --no-hw                   # Explicitly disable hardware probing
 ```
 
 ### Ecosystem Catalog
 
 ```bash
-clawdbot catalog                         # Summary of local skills, agents, and ZK surface
-clawdbot catalog skills                  # List /Users/8bit/skills/skills entries
-clawdbot catalog skills zk               # Filter skills for ZK capability
-clawdbot catalog agents                  # List /Users/8bit/agents/agents/src entries
-clawdbot catalog agents zk               # Filter agents for ZK capability
-clawdbot catalog zk                      # Inspect zk-primitives package/program/docs
-clawdbot catalog --json                  # Machine-readable report
+gobot catalog                         # Summary of local skills, agents, and ZK surface
+gobot catalog skills                  # List /Users/8bit/skills/skills entries
+gobot catalog skills zk               # Filter skills for ZK capability
+gobot catalog agents                  # List /Users/8bit/agents/agents/src entries
+gobot catalog agents zk               # Filter agents for ZK capability
+gobot catalog zk                      # Inspect zk-primitives package/program/docs
+gobot catalog --json                  # Machine-readable report
 ```
 
 Default catalog roots can be overridden with:
-`CLAWDBOT_SKILLS_DIR`, `CLAWDBOT_AGENTS_DIR`, and
-`CLAWDBOT_ZK_PRIMITIVES_DIR`.
+`GOBOT_SKILLS_DIR`, `GOBOT_AGENTS_DIR`, and
+`GOBOT_ZK_PRIMITIVES_DIR`.
 
 ### Birth Skills
 
@@ -470,7 +474,7 @@ npx skills add https://github.com/samber/cc-skills-golang --all
 ```
 
 The installer and animated launcher run those seeds unless
-`CLAWDBOT_SKIP_SKILL_SEED=1` is set.
+`GOBOT_SKIP_SKILL_SEED=1` is set.
 
 ### Agent DNA
 
@@ -480,34 +484,34 @@ an A/C/G/T sequence, GC content, PAM/TATA motif counts, OODA trait scores, a
 sequence hash, nullifier, and a local-pending Solana attestation seed.
 
 ```bash
-clawdbot dna show
-clawdbot dna generate --agent-name "Research Scout" --role "DeSci signal agent"
-clawdbot dna generate --seed fixed-seed --length 512 --force
-clawdbot dna generate --json
+gobot dna show
+gobot dna generate --agent-name "Research Scout" --role "DeSci signal agent"
+gobot dna generate --seed fixed-seed --length 512 --force
+gobot dna generate --json
 ```
 
 ### Phoenix Perps Via Vulcan
 
-ClawdBot uses the official Vulcan CLI for Phoenix perpetual futures execution.
+GoBot uses the official Vulcan CLI for Phoenix perpetual futures execution.
 The safe default is `paper`: simulated fills against live Phoenix prices with
 no wallet signing and no real funds at risk. Live modes require explicit
 operator acknowledgement through `--yes` plus Vulcan wallet setup.
 
 ```bash
-clawdbot perps quickstart               # Vulcan health, paper init, market smoke check
-clawdbot perps health                   # Vulcan agent health + Phoenix connectivity
-clawdbot perps paper init --balance 10000
-clawdbot perps order market --symbol SOL --side buy --notional-usdc 25
-clawdbot perps order limit --symbol SOL --side buy --tokens 0.1 --price 150
-clawdbot perps strategy twap --symbol SOL --side buy --notional-usdc 100 --slices 4 --detached
-clawdbot perps strategy grid --symbol SOL --center-on-mark --width-pct 2.5 --levels-per-side 3 --tokens-per-level 0.1 --detached
-clawdbot perps preflight --wallet my-wallet
+gobot perps quickstart               # Vulcan health, paper init, market smoke check
+gobot perps health                   # Vulcan agent health + Phoenix connectivity
+gobot perps paper init --balance 10000
+gobot perps order market --symbol SOL --side buy --notional-usdc 25
+gobot perps order limit --symbol SOL --side buy --tokens 0.1 --price 150
+gobot perps strategy twap --symbol SOL --side buy --notional-usdc 100 --slices 4 --detached
+gobot perps strategy grid --symbol SOL --center-on-mark --width-pct 2.5 --levels-per-side 3 --tokens-per-level 0.1 --detached
+gobot perps preflight --wallet my-wallet
 ```
 
 Install-time behavior:
 
 ```bash
-CLAWDBOT_INSTALL_VULCAN=0 ./install.sh   # skip Vulcan install
+GOBOT_INSTALL_VULCAN=0 ./install.sh   # skip Vulcan install
 VULCAN_DEFAULT_MODE=paper                # default execution mode
 VULCAN_WALLET_NAME=my-wallet             # only needed for live modes
 ```
@@ -515,53 +519,53 @@ VULCAN_WALLET_NAME=my-wallet             # only needed for live modes
 ### Solana — Birdeye
 
 ```bash
-clawdbot solana trending                # Top 20 trending tokens with price/volume
-clawdbot solana search BONK             # Search tokens by name or symbol
-clawdbot solana research <mint>         # Deep research: metadata + market + trade + security
-clawdbot solana wallet                  # Wallet info and SOL balance
-clawdbot solana wallet init             # Generate/reuse local agent wallet
-clawdbot solana fund-agent              # Dry-run 0.069420 SOL + 1,000 $CLAWD funding
-clawdbot solana fund-agent --send       # Send funding with explicit treasury env
+gobot solana trending                # Top 20 trending tokens with price/volume
+gobot solana search BONK             # Search tokens by name or symbol
+gobot solana research <mint>         # Deep research: metadata + market + trade + security
+gobot solana wallet                  # Wallet info and SOL balance
+gobot solana wallet init             # Generate/reuse local agent wallet
+gobot solana fund-agent              # Dry-run 0.069420 SOL + 1,000 $GOBOT funding
+gobot solana fund-agent --send       # Send funding with explicit treasury env
 ```
 
 ### Solana — Helius DAS (Digital Asset Standard)
 
 ```bash
-clawdbot solana das get-asset <id>               # Fetch asset by ID
-clawdbot solana das get-asset-batch <id1> <id2>   # Batch asset fetch
-clawdbot solana das asset-proof <id>              # Merkle proof for compressed NFT
-clawdbot solana das owner-assets [owner]          # Assets by owner
-clawdbot solana das search --params '{"name":"Mad Lads"}'  # DAS search
-clawdbot solana das asset-signatures <id>         # Transaction signatures for asset
+gobot solana das get-asset <id>               # Fetch asset by ID
+gobot solana das get-asset-batch <id1> <id2>   # Batch asset fetch
+gobot solana das asset-proof <id>              # Merkle proof for compressed NFT
+gobot solana das owner-assets [owner]          # Assets by owner
+gobot solana das search --params '{"name":"Mad Lads"}'  # DAS search
+gobot solana das asset-signatures <id>         # Transaction signatures for asset
 ```
 
 ### Solana — SPL Token Operations
 
 ```bash
-clawdbot solana spl token-balance <token-account>   # SPL token balance
-clawdbot solana spl token-accounts <owner>          # All token accounts for owner
-clawdbot solana spl token-supply <mint>             # Circulating supply
-clawdbot solana spl token-largest <mint>            # Largest holders
-clawdbot solana spl rpc getSlot                     # Raw RPC passthrough
+gobot solana spl token-balance <token-account>   # SPL token balance
+gobot solana spl token-accounts <owner>          # All token accounts for owner
+gobot solana spl token-supply <mint>             # Circulating supply
+gobot solana spl token-largest <mint>            # Largest holders
+gobot solana spl rpc getSlot                     # Raw RPC passthrough
 ```
 
 ### Agent Identity
 
 ```bash
-clawdbot status                         # Full status: version, strategy, connectors, hardware
-clawdbot status --hw-bus 1              # Include hardware sensor check
-clawdbot onboard                        # Initialize config & workspace
-clawdbot gateway                        # Start Telegram/Discord gateway
-clawdbot version                        # Version, build time, Go version
+gobot status                         # Full status: version, strategy, connectors, hardware
+gobot status --hw-bus 1              # Include hardware sensor check
+gobot onboard                        # Initialize config & workspace
+gobot gateway                        # Start Telegram/Discord gateway
+gobot version                        # Version, build time, Go version
 ```
 
 ### Hardware (NVIDIA Orin Nano + Modulino®)
 
 ```bash
-clawdbot hardware scan                  # Scan I2C bus for Modulino® sensors
-clawdbot hardware test                  # Self-test (LEDs, buzzer, sensors)
-clawdbot hardware monitor               # Live sensor readings (Ctrl+C to stop)
-clawdbot hardware demo                  # Play trading event animations
+gobot hardware scan                  # Scan I2C bus for Modulino® sensors
+gobot hardware test                  # Self-test (LEDs, buzzer, sensors)
+gobot hardware monitor               # Live sensor readings (Ctrl+C to stop)
+gobot hardware demo                  # Play trading event animations
 ```
 
 ---
@@ -577,11 +581,11 @@ The agent runs an autonomous **Observe → Orient → Decide → Act** cycle:
 │  OBSERVE ─────► ORIENT ─────► DECIDE ─────► ACT                │
 │  │               │              │              │                │
 │  Helius slot     RSI (14)       Signal score   Open/close pos   │
-│  Birdeye OHLCV   EMA (20/50)    Min strength   ClawVault store  │
+│  Birdeye OHLCV   EMA (20/50)    Min strength   GoVault store    │
 │  SOL price       ATR (14)       Min confidence Auto-optimize    │
 │  Wallet balance  EMA cross      Max positions  Hooks dispatch   │
 │  Vulcan perps    Momentum       SL/TP calc                      │
-│  Trending scan   ClawVault      Position size                   │
+│  Trending scan   GoVault        Position size                   │
 │                                                                  │
 │  LEARN (every N cycles) ─► Win rate analysis ─► Auto-optimize   │
 │  HEARTBEAT (every 5m) ──► Health check ─► Hook dispatch         │
@@ -605,8 +609,8 @@ React 19 dashboard at `http://localhost:18800`:
 
 ```bash
 cd web/frontend && npm install && npm run build && cd ../..
-go build -o build/clawdbot-web ./web/backend
-./build/clawdbot-web
+go build -o build/gobot-web ./web/backend
+./build/gobot-web
 ```
 
 | Endpoint | Method | Description |
@@ -624,13 +628,13 @@ go build -o build/clawdbot-web ./web/backend
 
 Safe defaults:
 - The server binds to `127.0.0.1` unless `--public` is passed.
-- CORS allows same-origin requests only unless `CLAWDBOT_CORS_ORIGINS` is set.
-- Proxy IP headers are ignored unless `CLAWDBOT_TRUST_PROXY_HEADERS=1` is set.
-- `/api/config` masks secrets unless `CLAWDBOT_WEB_EXPOSE_SECRETS=1` is set for trusted local debugging.
+- CORS allows same-origin requests only unless `GOBOT_CORS_ORIGINS` is set.
+- Proxy IP headers are ignored unless `GOBOT_TRUST_PROXY_HEADERS=1` is set.
+- `/api/config` masks secrets unless `GOBOT_WEB_EXPOSE_SECRETS=1` is set for trusted local debugging.
 
 ---
 
-## 💾 Memory System (ClawVault)
+## 💾 Memory System (GoVault)
 
 ```
 vault/
@@ -685,19 +689,19 @@ make clean            # Remove build artifacts
 ### Docker
 
 ```bash
-docker build -t clawdbot:latest .
-docker run -d --name clawdbot \
+docker build -t gobot:latest .
+docker run -d --name gobot \
   --env-file .env \
   -p 18800:18800 \
-  clawdbot:latest
+  gobot:latest
 ```
 
 ### NVIDIA Orin Nano
 
 ```bash
 make orin
-scp build/clawdbot-orin user@orin-nano:~/clawdbot
-ssh user@orin-nano './clawdbot ooda --hw-bus 1 --interval 60'
+scp build/gobot-orin user@orin-nano:~/gobot
+ssh user@orin-nano './gobot ooda --hw-bus 1 --interval 60'
 ```
 
 ---
@@ -714,9 +718,9 @@ ssh user@orin-nano './clawdbot ooda --hw-bus 1 --interval 60'
 | Birdeye agent tools | 19 |
 | Helius DAS commands | 6 |
 | SPL token commands | 5 |
-| Agent constitution documents | 7 (CONSTITUTION, six-laws, CLAWD, AGENTS, IDENTITY, SOUL, three-laws) |
+| Agent constitution documents | 7 (CONSTITUTION, six-laws, GOBOT, AGENTS, IDENTITY, SOUL, three-laws) |
 | Build targets | 8 platforms |
-| Binaries | `clawdbot`, `clawdbot-tui`, `clawdbot-web` |
+| Binaries | `gobot`, `gobot-tui`, `gobot-web` |
 | Runtime RAM | < 10 MB |
 | Boot time | < 1 second |
 | Default model provider | xAI Grok (Grok-4.3) |
@@ -725,15 +729,15 @@ ssh user@orin-nano './clawdbot ooda --hw-bus 1 --interval 60'
 
 ## 🔬 Agent Constitution Library
 
-ClawdBot is the reference implementation of the **Clawd Constitution** — the world's first Solana-native agent harness constitution. Every spawn inherits these documents:
+GoBot is the reference implementation of the **Go Bot Constitution** — the world's first Solana-native agent harness constitution. Every spawn inherits these documents:
 
 | Document | Purpose |
 |:---------|:--------|
 | [`six-laws.md`](six-laws.md) | Canonical six-law harness — 3 on-chain execution laws + 3 off-chain interpretive laws |
-| [`CONSTITUTION.md`](CONSTITUTION.md) | The Clawd Constitution — interpretive authority, privacy posture, ZK-native execution |
-| [`CLAWD.md`](CLAWD.md) | Agent context — identity, principal hierarchy, Solana-native architecture, deployment targets |
+| [`CONSTITUTION.md`](CONSTITUTION.md) | The Go Bot Constitution — interpretive authority, privacy posture, ZK-native execution |
+| [`GOBOT.md`](GOBOT.md) | Agent context — identity, principal hierarchy, Solana-native architecture, deployment targets |
 | [`AGENTS.md`](AGENTS.md) | Agent catalog — 50+ agents, 9 characters, 95+ skills, trust gates, Grok-first model config |
-| [`IDENTITY.md`](IDENTITY.md) | Sovereign identity — onchain verification (SAS, MPL Core, DID), the Clawd Manifest |
+| [`IDENTITY.md`](IDENTITY.md) | Sovereign identity — onchain verification (SAS, MPL Core, DID), the Go Bot Manifest |
 | [`SOUL.md`](SOUL.md) | Inner character — trading philosophy, threefold personality, KNOW/LEARNED/INFERRED framework |
 | [`three-laws.md`](three-laws.md) | Immutable on-chain laws — hash-attested at spawn, never self-modify |
 
@@ -752,7 +756,7 @@ ClawdBot is the reference implementation of the **Clawd Constitution** — the w
 ## 🌐 Open Source Posture
 
 - **License:** top-level runtime code in this repo is released under the [MIT License](LICENSE)
-- **Constitutional surfaces:** `six-laws.md`, `CONSTITUTION.md`, and `three-laws.md` remain the authoritative Clawd law documents
+- **Constitutional surfaces:** `six-laws.md`, `CONSTITUTION.md`, and `three-laws.md` remain the authoritative Go Bot law documents
 - **Hub split:** `clawdbot-go` is the Go runtime, while `solana-clawd` is the wider public ecosystem hub
 - **Public infra defaults:** `.env.example` points at the public x402/zk gateway for fast setup, but production operators should override with their own keys and RPC endpoints
 
@@ -760,9 +764,9 @@ ClawdBot is the reference implementation of the **Clawd Constitution** — the w
 
 <div align="center">
 
-**MIT License** — Clawd runtime repo: [`github.com/Solizardking/clawdbot-go`](https://github.com/Solizardking/clawdbot-go)
+**MIT License** — Go Bot runtime repo: [`github.com/Solizardking/clawdbot-go`](https://github.com/Solizardking/clawdbot-go)
 
-🦞 **$CLAWD :: Droids Lead The Way** :: **$WIF Hat Stays On** :: **$BONK for the People**
+🐹 **$GOBOT :: Droids Lead The Way** :: **$WIF Hat Stays On** :: **$BONK for the People**
 
 *The shell molts. The laws do not.*
 

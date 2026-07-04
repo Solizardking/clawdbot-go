@@ -1,4 +1,4 @@
-// ClawdBot Go — Ultra-lightweight Solana Trading Intelligence
+// GoBot Go — Ultra-lightweight Solana Trading Intelligence
 // Adapted from PicoClaw architecture for NVIDIA Orin Nano deployment.
 // Public runtime repo: see pkg/config.RuntimeRepoURL
 // Public ecosystem hub: see pkg/config.HubRepoURL
@@ -22,24 +22,24 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/8bitlabs/clawdbot/pkg/agent"
-	"github.com/8bitlabs/clawdbot/pkg/birthfund"
-	"github.com/8bitlabs/clawdbot/pkg/bus"
-	"github.com/8bitlabs/clawdbot/pkg/catalog"
-	"github.com/8bitlabs/clawdbot/pkg/channels"
-	"github.com/8bitlabs/clawdbot/pkg/config"
-	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
-	"github.com/8bitlabs/clawdbot/pkg/doctor"
-	"github.com/8bitlabs/clawdbot/pkg/hardware"
-	"github.com/8bitlabs/clawdbot/pkg/laws"
-	"github.com/8bitlabs/clawdbot/pkg/perfbench"
-	"github.com/8bitlabs/clawdbot/pkg/phoenix"
-	"github.com/8bitlabs/clawdbot/pkg/providers"
-	skillsPkg "github.com/8bitlabs/clawdbot/pkg/skills"
-	"github.com/8bitlabs/clawdbot/pkg/solana"
-	"github.com/8bitlabs/clawdbot/pkg/trading"
-	"github.com/8bitlabs/clawdbot/pkg/vulcan"
-	walletPkg "github.com/8bitlabs/clawdbot/pkg/wallet"
+	"github.com/8bitlabs/gobot/pkg/agent"
+	"github.com/8bitlabs/gobot/pkg/birthfund"
+	"github.com/8bitlabs/gobot/pkg/bus"
+	"github.com/8bitlabs/gobot/pkg/catalog"
+	"github.com/8bitlabs/gobot/pkg/channels"
+	"github.com/8bitlabs/gobot/pkg/config"
+	dnaPkg "github.com/8bitlabs/gobot/pkg/dna"
+	"github.com/8bitlabs/gobot/pkg/doctor"
+	"github.com/8bitlabs/gobot/pkg/hardware"
+	"github.com/8bitlabs/gobot/pkg/laws"
+	"github.com/8bitlabs/gobot/pkg/perfbench"
+	"github.com/8bitlabs/gobot/pkg/phoenix"
+	"github.com/8bitlabs/gobot/pkg/providers"
+	skillsPkg "github.com/8bitlabs/gobot/pkg/skills"
+	"github.com/8bitlabs/gobot/pkg/solana"
+	"github.com/8bitlabs/gobot/pkg/trading"
+	"github.com/8bitlabs/gobot/pkg/vulcan"
+	walletPkg "github.com/8bitlabs/gobot/pkg/wallet"
 )
 
 const (
@@ -52,56 +52,54 @@ const (
 	colorReset  = "\033[0m"
 
 	banner = "\r\n" +
-		colorGreen + "    ███╗   ███╗ █████╗ ██╗    ██╗██████╗ " + colorPurple + "██████╗  ██████╗ ████████╗\n" +
-		colorGreen + "    ████╗ ████║██╔══██╗██║    ██║██╔══██╗" + colorPurple + "██╔══██╗██╔═══██╗╚══██╔══╝\n" +
-		colorGreen + "    ██╔████╔██║███████║██║ █╗ ██║██║  ██║" + colorPurple + "██████╔╝██║   ██║   ██║   \n" +
-		colorGreen + "    ██║╚██╔╝██║██╔══██║██║███╗██║██║  ██║" + colorPurple + "██╔══██╗██║   ██║   ██║   \n" +
-		colorGreen + "    ██║ ╚═╝ ██║██║  ██║╚███╔███╔╝██████╔╝" + colorPurple + "██████╔╝╚██████╔╝   ██║   \n" +
-		colorGreen + "    ╚═╝     ╚═╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═════╝ " + colorPurple + "╚═════╝  ╚═════╝    ╚═╝   \n" +
+		colorGreen + "     ██████╗  ██████╗ " + colorPurple + "██████╗  ██████╗ ████████╗\n" +
+		colorGreen + "    ██╔════╝ ██╔═══██╗" + colorPurple + "██╔══██╗██╔═══██╗╚══██╔══╝\n" +
+		colorGreen + "    ██║  ███╗██║   ██║" + colorPurple + "██████╔╝██║   ██║   ██║   \n" +
+		colorGreen + "    ██║   ██║██║   ██║" + colorPurple + "██╔══██╗██║   ██║   ██║   \n" +
+		colorGreen + "    ╚██████╔╝╚██████╔╝" + colorPurple + "██████╔╝╚██████╔╝   ██║   \n" +
+		colorGreen + "     ╚═════╝  ╚═════╝ " + colorPurple + "╚═════╝  ╚═════╝    ╚═╝   \n" +
 		colorReset + "\n" +
 		colorDim + "    ┌─────────────────────────────────────────────────────────┐\n" +
-		colorDim + "    │" + colorTeal + "  🦞 Sentient Solana Trading Intelligence" + colorDim + "                 │\n" +
+		colorDim + "    │" + colorTeal + "  🐹 Sentient Solana Trading Intelligence" + colorDim + "                 │\n" +
 		colorDim + "    │" + colorAmber + "  NVIDIA Orin Nano · <10MB RAM · Go Runtime" + colorDim + "             │\n" +
-		colorDim + "    │" + colorGreen + "  $CLAWD :: Droids Lead The Way" + colorDim + "                          │\n" +
+		colorDim + "    │" + colorGreen + "  $GOBOT :: Droids Lead The Way" + colorDim + "                          │\n" +
 		colorDim + "    └─────────────────────────────────────────────────────────┘\n" +
 		colorReset + "\n"
 
-	lobster = colorRed + `              ,
-             /|      __
-            / |   ,-~ /
-           Y :|  //  /
-           | jj /( .^
-           >-"~"-v"
-          /       Y
-         jo  o    |
-        ( ~T~     j
-         >._-' _./
-        /   "~"  |
-       Y     _,  |
-      /| ;-"~ _  l
-     / l/ ,-"~    \
-     \//\/      .- \
-      Y        /    Y
-      l       I     !
-      ]\      _\    /"\
-     (" ~----( ~   Y.  )` + colorReset + "\n"
+	gopher = colorRed + `           _...--"""--..._
+         .-"             "-.
+        /                   \
+       |     ●         ●     |
+       |          <>          |
+        \        ___         /
+         "-.   \___/    .-"
+            "--.....--"
+              /   |   \
+             /    |    \
+            (     |     )
+             \____|____/
+                  |
+                  |
+                 / \
+                /   \
+               '     '` + colorReset + "\n"
 )
 
-func NewClawdBotCommand() *cobra.Command {
-	short := fmt.Sprintf("%s ClawdBot — Sentient Solana Trading Intelligence v%s", "🦞", config.GetVersion())
+func NewGoBotCommand() *cobra.Command {
+	short := fmt.Sprintf("%s GoBot — Sentient Solana Trading Intelligence v%s", "🐹", config.GetVersion())
 
 	cmd := &cobra.Command{
-		Use:   "clawdbot",
+		Use:   "gobot",
 		Short: short,
-		Long: `ClawdBot Go — Ultra-lightweight autonomous trading agent for Solana.
+		Long: `GoBot Go — Ultra-lightweight autonomous trading agent for Solana.
 Powered by the PicoClaw Go runtime, adapted for NVIDIA Orin Nano hardware.
 
 Features:
   • OODA Loop (Observe → Orient → Decide → Act)
-  • ClawVault persistent memory (known/learned/inferred)
+  • GoVault persistent memory (known/learned/inferred)
   • Six-law trading harness (3 on-chain + 3 off-chain)
   • Trading cockpit, risk gate, doctor, and performance bench
-  • ClawdBot Strategy: RSI + EMA cross + ATR signal engine
+  • GoBot Strategy: RSI + EMA cross + ATR signal engine
   • Solana: Jupiter swaps, Birdeye analytics, Helius RPC, Vulcan/Phoenix perps
   • Arduino Modulino® I2C: LEDs, buzzer, buttons, knob, sensors
   • Dexter deep research agent
@@ -113,7 +111,7 @@ Public surfaces:
   • Ecosystem hub: https://github.com/solizardking/solana-clawd
   • x402 gateway: https://zk.x402.wtf
   • Terminal: https://cheshireterminal.ai`,
-		Example: "clawdbot agent -m \"What is SOL price?\"\nclawdbot ooda --interval 60\nclawdbot ooda --hw-bus 1\nclawdbot hardware scan\nclawdbot hardware demo\nclawdbot status",
+		Example: "gobot agent -m \"What is SOL price?\"\ngobot ooda --interval 60\ngobot ooda --hw-bus 1\ngobot hardware scan\ngobot hardware demo\ngobot status",
 	}
 
 	cmd.AddCommand(
@@ -145,7 +143,7 @@ func NewLawsCommand() *cobra.Command {
 	var jsonOut bool
 	cmd := &cobra.Command{
 		Use:   "laws",
-		Short: "Print the Clawd six-law trading harness",
+		Short: "Print the GoBot six-law trading harness",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := laws.Validate(); err != nil {
 				return err
@@ -168,7 +166,7 @@ func NewDoctorCommand() *cobra.Command {
 	var fail bool
 	cmd := &cobra.Command{
 		Use:   "doctor",
-		Short: "Run local ClawdBot runtime and trading diagnostics",
+		Short: "Run local GoBot runtime and trading diagnostics",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load()
 			if err != nil {
@@ -212,7 +210,7 @@ func NewBenchCommand() *cobra.Command {
 	)
 	cmd := &cobra.Command{
 		Use:   "bench",
-		Short: "Run a fast Zero-style ClawdBot startup benchmark",
+		Short: "Run a fast Zero-style GoBot startup benchmark",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeoutSec)*time.Second)
 			defer cancel()
@@ -299,7 +297,7 @@ func newTradeRiskCommand() *cobra.Command {
 	)
 	cmd := &cobra.Command{
 		Use:   "risk [symbol]",
-		Short: "Score a token against ClawdBot trading risk gates",
+		Short: "Score a token against GoBot trading risk gates",
 		Args:  cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 0 && symbol == "" {
@@ -343,7 +341,7 @@ func NewAgentCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "agent",
-		Short: "Chat with ClawdBot agent",
+		Short: "Chat with GoBot agent",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load()
 			if err != nil {
@@ -351,8 +349,8 @@ func NewAgentCommand() *cobra.Command {
 			}
 
 			if message != "" {
-				fmt.Printf("%s[CLAWDBOT]%s Processing: %s\n\n", colorGreen, colorReset, message)
-				a, err := newClawdAgent(cfg)
+				fmt.Printf("%s[GOBOT]%s Processing: %s\n\n", colorGreen, colorReset, message)
+				a, err := newGoBotAgent(cfg)
 				if err != nil {
 					return fmt.Errorf("agent init: %w", err)
 				}
@@ -362,13 +360,13 @@ func NewAgentCommand() *cobra.Command {
 				if err != nil {
 					return fmt.Errorf("agent error: %w", err)
 				}
-				fmt.Printf("%s[CLAWDBOT]%s %s\n", colorGreen, colorReset, answer)
+				fmt.Printf("%s[GOBOT]%s %s\n", colorGreen, colorReset, answer)
 				return nil
 			}
 
 			// Interactive REPL mode
-			fmt.Print(lobster)
-			fmt.Printf("%s🦞 ClawdBot Interactive Mode%s\n", colorGreen, colorReset)
+			fmt.Print(gopher)
+			fmt.Printf("%s🐹 GoBot Interactive Mode%s\n", colorGreen, colorReset)
 			fmt.Printf("%sModel: %s | Workspace: %s%s\n", colorDim, cfg.Agents.Defaults.ModelName, cfg.Agents.Defaults.Workspace, colorReset)
 			fmt.Printf("%sType your message or use memory commands (!remember, !recall, !trades, !lessons)%s\n\n", colorDim, colorReset)
 
@@ -385,13 +383,13 @@ func NewAgentCommand() *cobra.Command {
 func NewGatewayCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "gateway",
-		Short: "Start ClawdBot gateway (Telegram, Discord, WebSocket)",
+		Short: "Start GoBot gateway (Telegram, Discord, WebSocket)",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load()
 			if err != nil {
 				return fmt.Errorf("config error: %w", err)
 			}
-			fmt.Printf("%s🦞 ClawdBot Gateway starting...%s\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Gateway starting...%s\n", colorGreen, colorReset)
 			fmt.Printf("%sHost: %s:%d%s\n", colorDim, cfg.Gateway.Host, cfg.Gateway.Port, colorReset)
 
 			// Print enabled channels
@@ -466,10 +464,10 @@ func runGatewayRuntime(cfg *config.Config) error {
 func NewOnboardCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "onboard",
-		Short: "Initialize ClawdBot config & workspace",
+		Short: "Initialize GoBot config & workspace",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Print(lobster)
-			fmt.Printf("%s🦞 Welcome to ClawdBot!%s\n\n", colorGreen, colorReset)
+			fmt.Print(gopher)
+			fmt.Printf("%s🐹 Welcome to GoBot!%s\n\n", colorGreen, colorReset)
 
 			configPath := config.DefaultConfigPath()
 			workspacePath := config.DefaultWorkspacePath()
@@ -483,15 +481,15 @@ func NewOnboardCommand() *cobra.Command {
 				return fmt.Errorf("onboard failed: %w", err)
 			}
 
-			fmt.Printf("\n%s✓ ClawdBot initialized!%s\n", colorGreen, colorReset)
+			fmt.Printf("\n%s✓ GoBot initialized!%s\n", colorGreen, colorReset)
 			fmt.Printf("%sEdit %s to configure API keys.%s\n", colorDim, configPath, colorReset)
 			fmt.Printf("\nQuick start:\n")
-			fmt.Printf("  %sclawdbot dna show%s\n", colorGreen, colorReset)
-			fmt.Printf("  %sclawdbot agent -m \"Hello\"%s\n", colorGreen, colorReset)
-			fmt.Printf("  %sclawdbot ooda --interval 60%s\n", colorGreen, colorReset)
-			fmt.Printf("  %sclawdbot solana wallet%s\n", colorGreen, colorReset)
-			fmt.Printf("  %sclawdbot perps quickstart%s\n", colorGreen, colorReset)
-			fmt.Printf("  %sclawdbot skills birth --install%s\n", colorGreen, colorReset)
+			fmt.Printf("  %sgobot dna show%s\n", colorGreen, colorReset)
+			fmt.Printf("  %sgobot agent -m \"Hello\"%s\n", colorGreen, colorReset)
+			fmt.Printf("  %sgobot ooda --interval 60%s\n", colorGreen, colorReset)
+			fmt.Printf("  %sgobot solana wallet%s\n", colorGreen, colorReset)
+			fmt.Printf("  %sgobot perps quickstart%s\n", colorGreen, colorReset)
+			fmt.Printf("  %sgobot skills birth --install%s\n", colorGreen, colorReset)
 			return nil
 		},
 	}
@@ -508,7 +506,7 @@ func NewDNACommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "dna",
 		Short: "Generate and inspect synthetic starter DNA for this agent",
-		Long: `Generate a local synthetic DNA profile for a Clawd agent.
+		Long: `Generate a local synthetic DNA profile for a GoBot agent.
 
 The DNA profile is identity and attestation metadata: A/C/G/T sequence,
 motif metrics, trait scores, proof hashes, and a pending Solana attestation
@@ -557,7 +555,7 @@ seed. It is not biological or clinical instruction.`,
 			return printDNA(path, value, true, jsonOut)
 		},
 	}
-	generate.Flags().StringVar(&agentName, "agent-name", "ClawdBot", "Agent name embedded in the DNA profile")
+	generate.Flags().StringVar(&agentName, "agent-name", "GoBot", "Agent name embedded in the DNA profile")
 	generate.Flags().StringVar(&role, "role", "sovereign Solana trading intelligence", "Agent role embedded in the DNA profile")
 	generate.Flags().StringVar(&seed, "seed", "", "Optional deterministic seed; random when empty")
 	generate.Flags().IntVar(&length, "length", dnaPkg.DefaultSequenceLength, "Synthetic DNA sequence length")
@@ -588,7 +586,7 @@ func showDNA(path string, jsonOut bool) error {
 	value, err := dnaPkg.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf("agent DNA missing at %s; run `clawdbot dna generate` or `clawdbot onboard`", path)
+			return fmt.Errorf("agent DNA missing at %s; run `gobot dna generate` or `gobot onboard`", path)
 		}
 		return err
 	}
@@ -620,14 +618,14 @@ func NewStatusCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "status",
-		Short: "Show ClawdBot status",
+		Short: "Show GoBot status",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := config.Load()
 			if err != nil {
 				return fmt.Errorf("config error: %w", err)
 			}
 
-			fmt.Printf("%s🦞 ClawdBot Status%s\n\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Status%s\n\n", colorGreen, colorReset)
 			fmt.Printf("Version:    %s\n", config.FormatVersion())
 			buildTime, goVer := config.FormatBuildInfo()
 			fmt.Printf("Go:         %s\n", goVer)
@@ -674,7 +672,7 @@ func NewStatusCommand() *cobra.Command {
 				hw.PrintStatus()
 			} else {
 				fmt.Printf("  %s✗ No Modulino® sensors detected%s\n", colorRed, colorReset)
-				fmt.Printf("  %sRun: clawdbot hardware scan%s\n", colorDim, colorReset)
+				fmt.Printf("  %sRun: gobot hardware scan%s\n", colorDim, colorReset)
 			}
 
 			return nil
@@ -697,11 +695,11 @@ func NewCatalogCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "catalog",
-		Short: "Inspect local Clawd skills, agents, and ZK primitives",
-		Long: `Inspect the local Clawd ecosystem indexes that ClawdBot can use:
+		Short: "Inspect local GoBot skills, agents, and ZK primitives",
+		Long: `Inspect the local GoBot ecosystem indexes that GoBot can use:
   • /Users/8bit/skills/skills        local AgentSkill library
   • /Users/8bit/agents/agents/src    local agent catalog JSON definitions
-  • ./zk-primitives                  Clawd ZK agent/client/program surface
+  • ./zk-primitives                  GoBot ZK agent/client/program surface
 
 The command is read-only. It does not install skills, execute tools, or call live
 trading endpoints.`,
@@ -710,7 +708,7 @@ trading endpoints.`,
 			if jsonOut {
 				return writeJSON(r)
 			}
-			fmt.Printf("%s🦞 Clawd Catalog%s\n\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Catalog%s\n\n", colorGreen, colorReset)
 			fmt.Printf("Skills:       %d\n", len(r.Skills))
 			fmt.Printf("Agents:       %d\n", len(r.Agents))
 			if r.ZK != nil {
@@ -784,7 +782,7 @@ trading endpoints.`,
 
 	cmd.AddCommand(&cobra.Command{
 		Use:   "zk",
-		Short: "Show the Clawd ZK primitive surface",
+		Short: "Show the GoBot ZK primitive surface",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			r := report()
 			if r.ZK == nil {
@@ -794,7 +792,7 @@ trading endpoints.`,
 				return writeJSON(r.ZK)
 			}
 			zk := r.ZK
-			fmt.Printf("%sClawd ZK Primitives%s\n", colorGreen, colorReset)
+			fmt.Printf("%sGoBot ZK Primitives%s\n", colorGreen, colorReset)
 			fmt.Printf("  Root:       %s\n", zk.Root)
 			fmt.Printf("  Skill:      %s\n", zk.SkillFile)
 			fmt.Printf("  Manifest:   %s\n", zk.AgentManifest)
@@ -826,7 +824,7 @@ trading endpoints.`,
 func NewSkillsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "skills",
-		Short: "Manage ClawdBot birth skill seeds",
+		Short: "Manage GoBot birth skill seeds",
 	}
 	cmd.AddCommand(newSkillsBirthCommand())
 	return cmd
@@ -840,8 +838,8 @@ func newSkillsBirthCommand() *cobra.Command {
 	)
 	cmd := &cobra.Command{
 		Use:   "birth",
-		Short: "Write or install the default skill packs every ClawdBot spawn should inherit",
-		Long: `Writes the birth skill manifest into the ClawdBot workspace and can install
+		Short: "Write or install the default skill packs every GoBot spawn should inherit",
+		Long: `Writes the birth skill manifest into the GoBot workspace and can install
 the default all-skills packs:
   - https://github.com/Solizardking/skills --all
   - https://github.com/samber/cc-skills-golang --all`,
@@ -911,7 +909,7 @@ func NewOODACommand() *cobra.Command {
 		Long: `Start the Observe-Orient-Decide-Act autonomous trading cycle.
 The agent will continuously:
   1. OBSERVE: Pull Helius on-chain + Birdeye OHLCV + Vulcan/Phoenix perps
-  2. ORIENT:  RSI/EMA/ATR strategy evaluation + ClawVault recall
+  2. ORIENT:  RSI/EMA/ATR strategy evaluation + GoVault recall
   3. DECIDE:  Signal scoring (strength × confidence threshold)
   4. ACT:     Open/close positions, store vault entries, adjust params
 
@@ -935,7 +933,7 @@ Hardware integration (when --hw-bus is set):
 				cfg.OODA.Mode = "simulated"
 			}
 
-			fmt.Printf("%s🔄 ClawdBot OODA Loop%s\n", colorGreen, colorReset)
+			fmt.Printf("%s🔄 GoBot OODA Loop%s\n", colorGreen, colorReset)
 			fmt.Printf("%sMode: %s | Interval: %ds | Watchlist: %d tokens%s\n",
 				colorDim, cfg.OODA.Mode, cfg.OODA.IntervalSeconds,
 				len(cfg.OODA.Watchlist), colorReset)
@@ -1165,8 +1163,8 @@ func NewSolanaFundAgentCommand() *cobra.Command {
 		jsonOut     bool
 		solAmount   string
 		solLamports string
-		clawdAmount string
-		clawdMint   string
+		gobotAmount string
+		gobotMint   string
 		rpcURL      string
 		ledgerPath  string
 		timeoutSec  int
@@ -1175,11 +1173,11 @@ func NewSolanaFundAgentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "fund-agent [recipient-pubkey]",
 		Aliases: []string{"fund"},
-		Short:   "Plan or send startup SOL + $CLAWD funding to an agent wallet",
+		Short:   "Plan or send startup SOL + $GOBOT funding to an agent wallet",
 		Long: `Plan or send startup funding for a registered agent wallet.
 
 By default this is a dry-run plan. To send real funds, pass --send and provide
-CLAWDBOT_TREASURY_KEYPAIR or CLAWDBOT_TREASURY_PRIVATE_KEY in the environment.
+GOBOT_TREASURY_KEYPAIR or GOBOT_TREASURY_PRIVATE_KEY in the environment.
 Private keys are never written to config, receipts, or command output.`,
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1200,7 +1198,7 @@ Private keys are never written to config, receipts, or command output.`,
 				}
 			}
 			if recipient == "" {
-				return fmt.Errorf("recipient required; pass [recipient-pubkey] or run `clawdbot solana wallet init`")
+				return fmt.Errorf("recipient required; pass [recipient-pubkey] or run `gobot solana wallet init`")
 			}
 
 			funding := birthfund.FromEnv(recipient, config.DefaultWorkspacePath())
@@ -1218,11 +1216,11 @@ Private keys are never written to config, receipts, or command output.`,
 				}
 				funding.SOLAmount = strconv.FormatFloat(float64(lamports)/1_000_000_000, 'f', 9, 64)
 			}
-			if clawdAmount != "" {
-				funding.CLAWDAmount = clawdAmount
+			if gobotAmount != "" {
+				funding.GOBOTAmount = gobotAmount
 			}
-			if clawdMint != "" {
-				funding.CLAWDMint = clawdMint
+			if gobotMint != "" {
+				funding.GOBOTMint = gobotMint
 			}
 			if rpcURL != "" {
 				funding.RPCURL = rpcURL
@@ -1248,26 +1246,26 @@ Private keys are never written to config, receipts, or command output.`,
 			fmt.Printf("status:    %s\n", result.Status)
 			fmt.Printf("recipient: %s\n", result.Recipient)
 			fmt.Printf("sol:       %s SOL (%d lamports)\n", result.SOLAmount, result.SOLLamports)
-			fmt.Printf("clawd:     %s tokens\n", result.CLAWDAmount)
-			fmt.Printf("mint:      %s\n", result.CLAWDMint)
+			fmt.Printf("gobot:     %s tokens\n", result.GOBOTAmount)
+			fmt.Printf("mint:      %s\n", result.GOBOTMint)
 			fmt.Printf("rpc:       %s\n", result.RPCURL)
 			if len(result.SOLCommand) > 0 {
 				fmt.Printf("sol cmd:   %s\n", strings.Join(result.SOLCommand, " "))
 			}
-			if len(result.CLAWDCommand) > 0 {
-				fmt.Printf("clawd cmd: %s\n", strings.Join(result.CLAWDCommand, " "))
+			if len(result.GOBOTCommand) > 0 {
+				fmt.Printf("gobot cmd: %s\n", strings.Join(result.GOBOTCommand, " "))
 			}
 			if result.SOLSignature != "" {
 				fmt.Printf("sol sig:   %s\n", result.SOLSignature)
 			}
-			if result.CLAWDSignature != "" {
-				fmt.Printf("clawd sig: %s\n", result.CLAWDSignature)
+			if result.GOBOTSignature != "" {
+				fmt.Printf("gobot sig: %s\n", result.GOBOTSignature)
 			}
 			for _, warning := range result.Warnings {
 				fmt.Printf("%swarning:%s %s\n", colorAmber, colorReset, warning)
 			}
 			if !result.Send {
-				fmt.Printf("%sdry-run only; pass --send and set CLAWDBOT_TREASURY_KEYPAIR or CLAWDBOT_TREASURY_PRIVATE_KEY to move funds.%s\n", colorDim, colorReset)
+				fmt.Printf("%sdry-run only; pass --send and set GOBOT_TREASURY_KEYPAIR or GOBOT_TREASURY_PRIVATE_KEY to move funds.%s\n", colorDim, colorReset)
 			}
 			return nil
 		},
@@ -1276,8 +1274,8 @@ Private keys are never written to config, receipts, or command output.`,
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "Print JSON")
 	cmd.Flags().StringVar(&solAmount, "sol", "", "SOL amount to send (default: env or 0.069420)")
 	cmd.Flags().StringVar(&solLamports, "sol-lamports", "", "Lamports to send; overrides --sol")
-	cmd.Flags().StringVar(&clawdAmount, "clawd", "", "$CLAWD token amount to send (default: env or 1000)")
-	cmd.Flags().StringVar(&clawdMint, "clawd-mint", "", "$CLAWD token mint (default: env or installer mint)")
+	cmd.Flags().StringVar(&gobotAmount, "gobot", "", "$GOBOT token amount to send (default: env or 1000)")
+	cmd.Flags().StringVar(&gobotMint, "gobot-mint", "", "$GOBOT token mint (default: env or installer mint)")
 	cmd.Flags().StringVar(&rpcURL, "rpc-url", "", "Solana RPC URL")
 	cmd.Flags().StringVar(&ledgerPath, "ledger", "", "JSONL funding ledger path")
 	cmd.Flags().IntVar(&timeoutSec, "timeout", 120, "Funding command timeout in seconds")
@@ -1963,7 +1961,7 @@ func NewVersionCommand() *cobra.Command {
 		Use:   "version",
 		Short: "Show version info",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("clawdbot %s\n", config.FormatVersion())
+			fmt.Printf("gobot %s\n", config.FormatVersion())
 			buildTime, goVer := config.FormatBuildInfo()
 			if buildTime != "" {
 				fmt.Printf("built:  %s\n", buildTime)
@@ -2029,19 +2027,19 @@ func buildProvider(cfg *config.Config) providers.LLMProvider {
 		}
 		key := entry.APIKey
 		if key == "" {
-			key = "clawdbot-free"
+			key = "gobot-free"
 		}
 		return providers.NewOpenAICompatProvider(key, base)
 	}
 	return providers.NewOpenRouterProvider(cfg.Providers.OpenRouter.APIKey)
 }
 
-func newClawdAgent(cfg *config.Config) (*agent.ClawdAgent, error) {
+func newGoBotAgent(cfg *config.Config) (*agent.GoBotAgent, error) {
 	model := "openai/zkrouter-auto"
 	if len(cfg.ModelList) > 0 && cfg.ModelList[0].Model != "" {
 		model = cfg.ModelList[0].Model
 	}
-	return agent.NewClawdAgent(agent.AgentConfig{
+	return agent.NewGoBotAgent(agent.AgentConfig{
 		Model:         model,
 		Provider:      buildProvider(cfg),
 		MaxIterations: cfg.Agents.Defaults.MaxToolIterations,
@@ -2053,14 +2051,14 @@ func newClawdAgent(cfg *config.Config) (*agent.ClawdAgent, error) {
 // ── Interactive REPL ─────────────────────────────────────────────────
 
 func runInteractiveAgent(cfg *config.Config) error {
-	a, err := newClawdAgent(cfg)
+	a, err := newGoBotAgent(cfg)
 	if err != nil {
 		return fmt.Errorf("agent init: %w", err)
 	}
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Printf("%s🦞 > %s", colorGreen, colorReset)
+		fmt.Printf("%s🐹 > %s", colorGreen, colorReset)
 		input, err := reader.ReadString('\n')
 		if err != nil {
 			return nil
@@ -2069,7 +2067,7 @@ func runInteractiveAgent(cfg *config.Config) error {
 
 		switch {
 		case input == "exit" || input == "quit":
-			fmt.Printf("%s💤 ClawdBot sleeping. Vault saved.%s\n", colorDim, colorReset)
+			fmt.Printf("%s💤 GoBot sleeping. Vault saved.%s\n", colorDim, colorReset)
 			return nil
 		case input == "":
 			// skip empty
@@ -2078,7 +2076,7 @@ func runInteractiveAgent(cfg *config.Config) error {
 		case input == "!lessons":
 			fmt.Printf("%s🧠 Learned patterns: (not yet implemented)%s\n", colorDim, colorReset)
 		case len(input) > 10 && input[:10] == "!remember ":
-			fmt.Printf("%s💾 Stored to ClawVault: %s%s\n", colorGreen, input[10:], colorReset)
+			fmt.Printf("%s💾 Stored to GoVault: %s%s\n", colorGreen, input[10:], colorReset)
 		case len(input) > 8 && input[:8] == "!recall ":
 			fmt.Printf("%s🔍 Searching memory: %s%s\n", colorTeal, input[8:], colorReset)
 		default:
@@ -2088,7 +2086,7 @@ func runInteractiveAgent(cfg *config.Config) error {
 			if err != nil {
 				fmt.Printf("%s[ERROR]%s %v\n\n", colorRed, colorReset, err)
 			} else {
-				fmt.Printf("\n%s[CLAWDBOT]%s %s\n\n", colorGreen, colorReset, answer)
+				fmt.Printf("\n%s[GOBOT]%s %s\n\n", colorGreen, colorReset, answer)
 			}
 		}
 	}
@@ -2102,9 +2100,9 @@ func NewWebCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "web",
-		Short: "Start ClawdBot web console (dashboard + REST API, default :18800)",
+		Short: "Start GoBot web console (dashboard + REST API, default :18800)",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("%s🦞 ClawdBot Web Console%s\n", colorGreen, colorReset)
+			fmt.Printf("%s🐹 GoBot Web Console%s\n", colorGreen, colorReset)
 			fmt.Printf("%s  Dashboard → http://localhost:%s%s\n", colorTeal, port, colorReset)
 			fmt.Printf("%s  Config:     %s%s\n\n", colorDim, config.DefaultConfigPath(), colorReset)
 
@@ -2137,14 +2135,14 @@ Use this surface to inspect markets, fetch pricing/candle data, inspect
 trader state, and trade through the official Vulcan CLI. Execution defaults
 to paper mode, which uses live Phoenix prices without wallet signing.`,
 		Example: strings.Join([]string{
-			"  clawdbot perps quickstart",
-			"  clawdbot perps markets",
-			"  clawdbot perps price SOL",
-			"  clawdbot perps candles SOL --tf 1h --limit 20",
-			"  clawdbot perps paper init --balance 10000",
-			"  clawdbot perps order market --symbol SOL --side buy --notional-usdc 25",
-			"  clawdbot perps strategy twap --symbol SOL --side buy --notional-usdc 100 --slices 4 --detached",
-			"  clawdbot perps preflight --wallet my-wallet",
+			"  gobot perps quickstart",
+			"  gobot perps markets",
+			"  gobot perps price SOL",
+			"  gobot perps candles SOL --tf 1h --limit 20",
+			"  gobot perps paper init --balance 10000",
+			"  gobot perps order market --symbol SOL --side buy --notional-usdc 25",
+			"  gobot perps strategy twap --symbol SOL --side buy --notional-usdc 100 --slices 4 --detached",
+			"  gobot perps preflight --wallet my-wallet",
 		}, "\n"),
 	}
 	cmd.AddCommand(
@@ -2251,7 +2249,7 @@ func newPerpsQuickstartCmd() *cobra.Command {
 					return err
 				}
 			}
-			fmt.Printf("%s[VULCAN]%s Paper perps are ready. Try: clawdbot perps order market --symbol %s --side buy --notional-usdc 25\n",
+			fmt.Printf("%s[VULCAN]%s Paper perps are ready. Try: gobot perps order market --symbol %s --side buy --notional-usdc 25\n",
 				colorGreen, colorReset, strings.ToUpper(symbol))
 			return nil
 		},
@@ -2829,7 +2827,7 @@ func main() {
 	if shouldPrintBanner(os.Args[1:]) {
 		fmt.Print(banner)
 	}
-	cmd := NewClawdBotCommand()
+	cmd := NewGoBotCommand()
 	if err := cmd.Execute(); err != nil {
 		os.Exit(1)
 	}

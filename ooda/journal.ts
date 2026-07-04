@@ -5,7 +5,7 @@
  * This is the authoritative external record — the harness's memory.
  * State on restart is reconstructed by replaying this file.
  *
- * Clawd rule: "State lives in git."
+ * GoBot rule: "State lives in git."
  */
 
 import { appendFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';

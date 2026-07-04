@@ -1,4 +1,4 @@
-// Package health provides system health checks for ClawdBot.
+// Package health provides system health checks for GoBot.
 // Adapted from PicoClaw — reports status of all connectors and subsystems.
 package health
 

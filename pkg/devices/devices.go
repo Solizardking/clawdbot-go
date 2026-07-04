@@ -1,4 +1,4 @@
-// Package devices provides device/sensor management for ClawdBot.
+// Package devices provides device/sensor management for GoBot.
 // Adapted from PicoClaw — I2C device registry for Arduino Modulino sensors.
 package devices
 

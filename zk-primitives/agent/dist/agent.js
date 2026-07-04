@@ -28,7 +28,7 @@ import { createSolanaRpc } from "@solana/kit";
 import { readFile } from "node:fs/promises";
 import { resolve as resolvePath } from "node:path";
 import { Buffer } from "node:buffer";
-import { ClawdZkClient, computeNullifier, verifyGroth16Offchain, buildPublishPublicInputs, packPublicInputs, } from "@clawd/zk-client";
+import { GoBotZkClient, computeNullifier, verifyGroth16Offchain, buildPublishPublicInputs, packPublicInputs, } from "@gobot/zk-client";
 import { loadAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 import { routeIntent } from "./intents.js";
 // ---------------------------------------------------------------------------
@@ -79,7 +79,7 @@ export class ZkSharkAgent {
     static create(opts) {
         const config = opts.config ?? loadAgentConfig();
         const client = opts.client ??
-            new ClawdZkClient({
+            new GoBotZkClient({
                 rpc: createSolanaRpc(config.rpcUrl),
                 programId: config.programId,
                 photonUrl: config.photonUrl,
@@ -283,7 +283,7 @@ function randomSecret() {
     }
     return out;
 }
-export { ZkSharkAgent as ClawdZkAgent };
+export { ZkSharkAgent as GoBotZkAgent };
 // Re-export for callers that want to build their own agent without
 // `ZkSharkAgent.create`.
 export { DEFAULT_PROGRAM_ID };

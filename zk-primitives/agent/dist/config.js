@@ -15,7 +15,7 @@
  *   ZK_SHARK_KEYPAIR        - Path to a Solana CLI keypair JSON for signing
  *   ZK_SHARK_NETWORK        - "mainnet" | "devnet" | "localnet" (for intent hints)
  *
- * Legacy CLAWD_ZK_* variables are still accepted as fallbacks.
+ * Legacy GOBOT_ZK_* variables are still accepted as fallbacks.
  */
 import { PublicKey } from "@solana/web3.js";
 /**
@@ -32,9 +32,9 @@ const KNOWN_PROGRAM_IDS = {
     ZKSHARK_MAINNET: "4vJ9JU1bJJE96FWSVKmnrL3xFU5jSBSVdk9x4La2vzhn",
     ZKSHARK_DEVNET: "8qbHbw2BbbNa7jTcimsDVjps5M5hc7bdwA2ZJ47wUGEa",
     ZKSHARK_LOCALNET: "CktRuQ2mN7N5fRTniY5wW84HH6NpisxEZY6e9ckM3XfX",
-    CLAWDZK_MAINNET: "4vJ9JU1bJJE96FWSVKmnrL3xFU5jSBSVdk9x4La2vzhn",
-    CLAWDZK_DEVNET: "8qbHbw2BbbNa7jTcimsDVjps5M5hc7bdwA2ZJ47wUGEa",
-    CLAWDZK_LOCALNET: "CktRuQ2mN7N5fRTniY5wW84HH6NpisxEZY6e9ckM3XfX",
+    GOBOTZK_MAINNET: "4vJ9JU1bJJE96FWSVKmnrL3xFU5jSBSVdk9x4La2vzhn",
+    GOBOTZK_DEVNET: "8qbHbw2BbbNa7jTcimsDVjps5M5hc7bdwA2ZJ47wUGEa",
+    GOBOTZK_LOCALNET: "CktRuQ2mN7N5fRTniY5wW84HH6NpisxEZY6e9ckM3XfX",
 };
 function asString(v, fallback) {
     if (v == null)
@@ -72,29 +72,29 @@ function resolveProgramId(raw) {
         return new PublicKey(raw);
     }
     catch {
-        throw new Error(`Invalid ZK_SHARK_PROGRAM_ID/CLAWD_ZK_PROGRAM_ID: ${raw}. Expected a base58 pubkey or one of: ${Object.keys(KNOWN_PROGRAM_IDS).join(", ")}.`);
+        throw new Error(`Invalid ZK_SHARK_PROGRAM_ID/GOBOT_ZK_PROGRAM_ID: ${raw}. Expected a base58 pubkey or one of: ${Object.keys(KNOWN_PROGRAM_IDS).join(", ")}.`);
     }
 }
 /**
  * Load ZK Shark agent config from the current `process.env`.
  *
- * Throws if neither `ZK_SHARK_RPC_URL` nor legacy `CLAWD_ZK_RPC_URL` is set.
+ * Throws if neither `ZK_SHARK_RPC_URL` nor legacy `GOBOT_ZK_RPC_URL` is set.
  */
 export function loadAgentConfig(env = process.env) {
-    const rpcUrl = asString(firstEnv(env, ["ZK_SHARK_RPC_URL", "CLAWD_ZK_RPC_URL"]), "");
+    const rpcUrl = asString(firstEnv(env, ["ZK_SHARK_RPC_URL", "GOBOT_ZK_RPC_URL"]), "");
     if (!rpcUrl) {
-        throw new Error("ZK_SHARK_RPC_URL is not set. Add it to your environment, or keep using legacy CLAWD_ZK_RPC_URL.");
+        throw new Error("ZK_SHARK_RPC_URL is not set. Add it to your environment, or keep using legacy GOBOT_ZK_RPC_URL.");
     }
-    const programId = resolveProgramId(firstEnv(env, ["ZK_SHARK_PROGRAM_ID", "CLAWD_ZK_PROGRAM_ID"]));
-    const photonUrl = asString(firstEnv(env, ["ZK_SHARK_PHOTON_URL", "CLAWD_ZK_PHOTON_URL"]), rpcUrl);
+    const programId = resolveProgramId(firstEnv(env, ["ZK_SHARK_PROGRAM_ID", "GOBOT_ZK_PROGRAM_ID"]));
+    const photonUrl = asString(firstEnv(env, ["ZK_SHARK_PHOTON_URL", "GOBOT_ZK_PHOTON_URL"]), rpcUrl);
     return {
         rpcUrl,
         programId,
         photonUrl,
-        apiKey: firstEnv(env, ["ZK_SHARK_API_KEY", "CLAWD_ZK_API_KEY"]),
-        commitment: asCommitment(firstEnv(env, ["ZK_SHARK_COMMITMENT", "CLAWD_ZK_COMMITMENT"])),
-        keypairPath: firstEnv(env, ["ZK_SHARK_KEYPAIR", "CLAWD_ZK_KEYPAIR"]),
-        network: asNetwork(firstEnv(env, ["ZK_SHARK_NETWORK", "CLAWD_ZK_NETWORK"])),
+        apiKey: firstEnv(env, ["ZK_SHARK_API_KEY", "GOBOT_ZK_API_KEY"]),
+        commitment: asCommitment(firstEnv(env, ["ZK_SHARK_COMMITMENT", "GOBOT_ZK_COMMITMENT"])),
+        keypairPath: firstEnv(env, ["ZK_SHARK_KEYPAIR", "GOBOT_ZK_KEYPAIR"]),
+        network: asNetwork(firstEnv(env, ["ZK_SHARK_NETWORK", "GOBOT_ZK_NETWORK"])),
     };
 }
 //# sourceMappingURL=config.js.map

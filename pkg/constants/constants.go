@@ -1,9 +1,9 @@
-// Package constants defines ClawdBot system constants.
+// Package constants defines GoBot system constants.
 // Adapted from PicoClaw's constants package.
 package constants
 
 const (
-	AppName    = "ClawdBot"
+	AppName    = "GoBot"
 	AppVersion = "1.0.0"
 	AppTagline = "Sentient Solana Trading Intelligence"
 

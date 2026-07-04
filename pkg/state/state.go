@@ -1,4 +1,4 @@
-// Package state manages persistent agent state for ClawdBot.
+// Package state manages persistent agent state for GoBot.
 // Adapted from PicoClaw — atomic file writes for last-channel tracking.
 package state
 

@@ -1,14 +1,14 @@
-# 🦞🔐 Clawd ZK Primitives
+# 🐹🔐 Go Bot ZK Primitives
 
 > **A zero-knowledge primitive layer for Solana-native AI models.**
 > Built on [Light Protocol](https://www.zkcompression.com).
 > Powers the on-chain identity, attestation, and encrypted-state
-> layer for the Clawd agent fleet.
+> layer for the Go Bot agent fleet.
 
 ## What this is
 
 A focused, audited-friendly on-chain program plus a TypeScript SDK
-that together provide three ZK primitives the rest of the Clawd
+that together provide three ZK primitives the rest of the Go Bot
 model stack relies on:
 
 1. **Nullifier registry** — a 32-byte, deterministic, per-action hash
@@ -39,7 +39,7 @@ zk-primitives/
 ├── docs/
 │   └── ARCHITECTURE.md                      ← deep dive: design, costs, security
 ├── programs/
-│   └── clawd-zk/                           ← Anchor program
+│   └── gobot-zk/                           ← Anchor program
 │       ├── Cargo.toml
 │       ├── Xargo.toml
 │       └── src/
@@ -47,7 +47,7 @@ zk-primitives/
 │           ├── nullifier.rs                 ← compressed-PDA nullifier logic
 │           ├── proof.rs                     ← Groth16 verifier wrapper
 │           └── state.rs                     ← compressed state writes / consumes
-├── client/                                  ← TypeScript SDK (@clawd/zk-client)
+├── client/                                  ← TypeScript SDK (@gobot/zk-client)
 │   ├── package.json
 │   ├── tsconfig.json
 │   └── src/
@@ -56,7 +56,7 @@ zk-primitives/
 │       ├── nullifier.ts                     ← nullifier computation
 │       ├── proof.ts                         ← public-input packing + proof serialization
 │       ├── state.ts                         ← Light Protocol helpers
-│       └── client.ts                        ← high-level ClawdZkClient
+│       └── client.ts                        ← high-level GoBotZkClient
 ├── tests/                                   ← integration tests
 │   ├── nullifier.test.ts                    ← vitest, off-chain pieces
 │   └── nullifier.rs                         ← cargo test-sbf, on-chain pieces
@@ -93,7 +93,7 @@ commit_encrypted_state(model_hash, ciphertext_commitment, version, proof)
 
 ```bash
 # Install the on-chain deps
-cd programs/clawd-zk
+cd programs/gobot-zk
 cargo build-sbf
 
 # Install the client SDK
@@ -104,12 +104,12 @@ pnpm install   # or npm install
 ### Use the SDK
 
 ```ts
-import { ClawdZkClient, computeNullifier } from "@clawd/zk-client";
+import { GoBotZkClient, computeNullifier } from "@gobot/zk-client";
 import { createSolanaRpc, createKeyPairSignerFromBytes } from "@solana/kit";
 
 const rpc = createSolanaRpc("https://mainnet.helius-rpc.com?api-key=...");
 const signer = await createKeyPairSignerFromBytes(secretKey);
-const client = new ClawdZkClient({ rpc, programId: PROGRAM_ID });
+const client = new GoBotZkClient({ rpc, programId: PROGRAM_ID });
 
 // 1. Compute the nullifier.
 const nullifier = await computeNullifier({
@@ -140,17 +140,17 @@ cd client
 pnpm test
 
 # On-chain tests (cargo test-sbf)
-cd programs/clawd-zk
+cd programs/gobot-zk
 # In another terminal, first run:
 #   light test-validator
 # Then:
 cargo test-sbf
 ```
 
-## Why this matters for the Clawd stack
+## Why this matters for the Go Bot stack
 
 The `ai-training/` pipeline produces fine-tuned models. The
-`clawd-zk` primitive gives those models a verifiable on-chain
+`gobot-zk` primitive gives those models a verifiable on-chain
 footprint:
 
 - **Provenance**: every published inference or attestation gets a
@@ -158,7 +158,7 @@ footprint:
 - **Confidentiality**: weights and training data can be committed
   in encrypted form, with the proof attesting the committer's
   authority to publish.
-- **Portability**: a Clawd agent on any chain, on any device, can
+- **Portability**: a Go Bot agent on any chain, on any device, can
   read a model's attestation by querying the Helius Photon indexer
   with a single `getCompressedAccount` call.
 
@@ -188,7 +188,7 @@ is < 400 lines of Rust across 4 files, and the off-chain SDK is
 - [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — the deep dive
 - [`../ai-training/README.md`](../ai-training/README.md) — the model
   training pipeline that produces the weights this primitive attests to
-- [`../AGENTS.md`](../AGENTS.md) — the Clawd agent catalog
+- [`../AGENTS.md`](../AGENTS.md) — the Go Bot agent catalog
 - [Light Protocol docs](https://www.zkcompression.com) — the
   underlying ZK compression framework
 - [light-verifier](https://docs.rs/light-verifier) — the on-chain

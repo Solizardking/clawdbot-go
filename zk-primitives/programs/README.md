@@ -1,10 +1,10 @@
 # ZK Programs
 
-On-chain programs for the Clawd ZK primitive layer.
+On-chain programs for the Go Bot ZK primitive layer.
 
-## `clawd-zk`
+## `gobot-zk`
 
-Path: `programs/clawd-zk`
+Path: `programs/gobot-zk`
 
 Instruction handlers:
 
@@ -17,7 +17,7 @@ Instruction handlers:
 ## Build And Test
 
 ```bash
-cd programs/clawd-zk
+cd programs/gobot-zk
 cargo build-sbf
 cargo test-sbf
 ```

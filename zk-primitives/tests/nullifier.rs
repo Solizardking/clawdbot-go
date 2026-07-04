@@ -1,7 +1,7 @@
-//! Integration tests for the `clawd-zk` program.
+//! Integration tests for the `gobot-zk` program.
 //!
 //! Run with:
-//!   cargo test-sbf -p clawd-zk
+//!   cargo test-sbf -p gobot-zk
 //!
 //! Requires a running Light test validator:
 //!   light test-validator   # in a separate terminal
@@ -17,7 +17,7 @@ mod tests {
     /// (where the off-chain proof generation is easier to wire up).
     #[tokio::test]
     async fn test_program_idl_compiles() {
-        let config = ProgramTestConfig::new("clawd_zk", crate::ID);
+        let config = ProgramTestConfig::new("gobot_zk", crate::ID);
         let mut test = LightProgramTest::new(config).await.unwrap();
         let _ix = test.build_ix().await.unwrap();
         // If we got here, the program deployed successfully.

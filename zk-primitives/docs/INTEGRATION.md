@@ -1,11 +1,11 @@
-# Clawd ZK Integration
+# Go Bot ZK Integration
 
 This directory is the ZK subsystem for `clawdbot-go`. It is designed to be
 read by three surfaces:
 
-- The Go runtime catalog command: `clawdbot catalog zk`
+- The Go runtime catalog command: `gobot catalog zk`
 - The local skill library through `zk-primitives/agent/SKILL.md`
-- The local agent catalog through Clawd agents that call `@clawd/zk-agent`
+- The local agent catalog through Go Bot agents that call `@gobot/zk-agent`
 
 ## Local Catalog Roots
 
@@ -13,18 +13,18 @@ The runtime defaults to these local roots:
 
 | Surface | Default | Override |
 |---|---|---|
-| Skills | `/Users/8bit/skills/skills` | `CLAWDBOT_SKILLS_DIR` |
-| Agents | `/Users/8bit/agents/agents/src` | `CLAWDBOT_AGENTS_DIR` |
-| ZK primitives | `./zk-primitives` | `CLAWDBOT_ZK_PRIMITIVES_DIR` |
+| Skills | `/Users/8bit/skills/skills` | `GOBOT_SKILLS_DIR` |
+| Agents | `/Users/8bit/agents/agents/src` | `GOBOT_AGENTS_DIR` |
+| ZK primitives | `./zk-primitives` | `GOBOT_ZK_PRIMITIVES_DIR` |
 
 Use:
 
 ```bash
-clawdbot catalog
-clawdbot catalog skills zk
-clawdbot catalog agents zk
-clawdbot catalog zk
-clawdbot catalog --json
+gobot catalog
+gobot catalog skills zk
+gobot catalog agents zk
+gobot catalog zk
+gobot catalog --json
 ```
 
 The catalog command is read-only. It does not install packages, execute skills,
@@ -34,10 +34,10 @@ sign transactions, or send Solana instructions.
 
 ```text
 user / agent intent
-  -> @clawd/zk-agent routeIntent()
-  -> ClawdZkAgent method
-  -> @clawd/zk-client instruction builder
-  -> clawd-zk Anchor program
+  -> @gobot/zk-agent routeIntent()
+  -> GoBotZkAgent method
+  -> @gobot/zk-client instruction builder
+  -> gobot-zk Anchor program
   -> Light Protocol compressed state
 ```
 
@@ -75,5 +75,5 @@ The catalog can show that ZK capability exists; it should not silently arm it.
 2. Pin trusted verifying keys per circuit instead of accepting arbitrary VKs.
 3. Replace JSON instruction encoding shims with canonical Anchor/Borsh encoding.
 4. Run `npm test` for the TypeScript packages.
-5. Run `cargo test-sbf -p clawd-zk` with a Light-compatible validator.
+5. Run `cargo test-sbf -p gobot-zk` with a Light-compatible validator.
 6. Publish the final `MANIFEST.json` alongside package versions and deployment IDs.

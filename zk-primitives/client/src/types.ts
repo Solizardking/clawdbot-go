@@ -1,5 +1,5 @@
 /**
- * Shared types for the Clawd ZK client SDK.
+ * Shared types for the Go Bot ZK client SDK.
  */
 
 import type { PublicKey } from "@solana/web3.js";
@@ -42,11 +42,11 @@ export interface CommitStateArgs {
   proof: Groth16Proof;
 }
 
-/** Configuration for the Clawd ZK client. */
-export interface ClawdZkClientConfig {
+/** Configuration for the Go Bot ZK client. */
+export interface GoBotZkClientConfig {
   /** Helius or other Solana RPC (with api-key embedded in URL). */
   rpc: any;
-  /** Address of the deployed `clawd-zk` program. */
+  /** Address of the deployed `gobot-zk` program. */
   programId: PublicKey;
   /** Photon indexer URL (defaults to Helius). */
   photonUrl?: string;

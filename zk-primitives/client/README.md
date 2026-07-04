@@ -1,6 +1,6 @@
-# @clawd/zk-client
+# @gobot/zk-client
 
-Low-level TypeScript SDK for the `clawd-zk` Solana program.
+Low-level TypeScript SDK for the `gobot-zk` Solana program.
 
 ## Responsibilities
 
@@ -25,14 +25,14 @@ npm run build
 
 ```ts
 import {
-  ClawdZkClient,
+  GoBotZkClient,
   computeNullifier,
   buildPublishPublicInputs,
   verifyGroth16Offchain,
-} from "@clawd/zk-client";
+} from "@gobot/zk-client";
 ```
 
-Use `@clawd/zk-agent` when you want natural-language routing or CLI commands.
+Use `@gobot/zk-agent` when you want natural-language routing or CLI commands.
 Use this package directly when another runtime already knows which instruction
 it wants to build.
 

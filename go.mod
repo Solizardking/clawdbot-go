@@ -1,4 +1,4 @@
-module github.com/8bitlabs/clawdbot
+module github.com/8bitlabs/gobot
 
 go 1.26.4
 

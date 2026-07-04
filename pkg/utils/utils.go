@@ -1,4 +1,4 @@
-// Package utils provides shared utility functions for ClawdBot.
+// Package utils provides shared utility functions for GoBot.
 // Adapted from PicoClaw's utils package.
 package utils
 

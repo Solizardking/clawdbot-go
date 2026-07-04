@@ -1,6 +1,6 @@
 # ZK Tests
 
-Cross-package tests for the Clawd ZK primitive layer.
+Cross-package tests for the Go Bot ZK primitive layer.
 
 ## Off-Chain Tests
 
@@ -18,7 +18,7 @@ and deterministic intent routing.
 ## On-Chain Tests
 
 ```bash
-cd programs/clawd-zk
+cd programs/gobot-zk
 cargo test-sbf
 ```
 

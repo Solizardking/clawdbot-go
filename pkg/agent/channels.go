@@ -1,5 +1,5 @@
 // Package agent :: channels.go
-// Per-surface formatting profiles for ClawdBot.
+// Per-surface formatting profiles for GoBot.
 // Ported from Channels.ts.
 //
 // Surfaces:

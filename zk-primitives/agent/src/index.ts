@@ -1,7 +1,7 @@
 /**
- * @clawd/zk-shark-agent - public exports
+ * @gobot/zk-shark-agent - public exports
  *
- * The Shark of All Streets wrapper around `@clawd/zk-client`. Use this when you
+ * The Shark of All Streets wrapper around `@gobot/zk-client`. Use this when you
  * want your ZK Shark agent (or REPL, or MCP tool) to be able to say
  * "attest this model" / "commit this encrypted state" / "verify this
  * proof" without hand-rolling the underlying nullifier, Groth16, and
@@ -10,7 +10,7 @@
  * Quick start:
  *
  * ```ts
- * import { ZkSharkAgent } from "@clawd/zk-shark-agent";
+ * import { ZkSharkAgent } from "@gobot/zk-shark-agent";
  * import { createSolanaRpc } from "@solana/kit";
  *
  * const agent = await ZkSharkAgent.fromEnv();
@@ -30,9 +30,9 @@
 
 export {
   ZkSharkAgent,
-  ClawdZkAgent,
+  GoBotZkAgent,
   type ZkSharkAgentOptions,
-  type ClawdZkAgentOptions,
+  type GoBotZkAgentOptions,
   type AttestModelResult,
   type CommitStateResult,
   type VerifyProofResult,
@@ -57,4 +57,4 @@ export {
   type Bytes32,
   type PublishAttestationArgs,
   type CommitStateArgs,
-} from "@clawd/zk-client";
+} from "@gobot/zk-client";

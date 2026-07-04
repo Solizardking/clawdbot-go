@@ -1,5 +1,5 @@
-// Package agent implements the ClawdBot OODA trading loop in Go.
-// Ported from src/agent/TradingAgent.ts and src/agent/clawdbot.ts.
+// Package agent implements the GoBot OODA trading loop in Go.
+// Ported from src/agent/TradingAgent.ts and src/agent/gobot.ts.
 package agent
 
 import (
@@ -13,10 +13,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/config"
-	"github.com/8bitlabs/clawdbot/pkg/solana"
-	"github.com/8bitlabs/clawdbot/pkg/strategy"
-	"github.com/8bitlabs/clawdbot/pkg/trading"
+	"github.com/8bitlabs/gobot/pkg/config"
+	"github.com/8bitlabs/gobot/pkg/solana"
+	"github.com/8bitlabs/gobot/pkg/strategy"
+	"github.com/8bitlabs/gobot/pkg/trading"
 )
 
 // ── OODA Agent ───────────────────────────────────────────────────────
@@ -33,7 +33,7 @@ type OODAAgent struct {
 	aster   *solana.AsterClient
 
 	// Memory
-	vault *ClawVault
+	vault *GoVault
 
 	// Strategy
 	strategyParams strategy.StrategyParams
@@ -172,7 +172,7 @@ func NewOODAAgent(cfg *config.Config, hooks AgentHooks) *OODAAgent {
 	}
 
 	vaultPath := filepath.Join(config.DefaultWorkspacePath(), "vault")
-	agent.vault = NewClawVault(vaultPath)
+	agent.vault = NewGoVault(vaultPath)
 
 	return agent
 }
@@ -188,7 +188,7 @@ func (a *OODAAgent) Start() error {
 	a.running = true
 	a.mu.Unlock()
 
-	log.Printf("[OODA] 🦞 ClawdBot starting (mode=%s interval=%ds)",
+	log.Printf("[OODA] 🐹 GoBot starting (mode=%s interval=%ds)",
 		a.cfg.OODA.Mode, a.cfg.OODA.IntervalSeconds)
 	log.Printf("[OODA] Watchlist: %v", a.cfg.OODA.Watchlist)
 	log.Printf("[OODA] Strategy: RSI(%d/%d) EMA(%d/%d) SL=%.0f%% TP=%.0f%%",
@@ -394,7 +394,7 @@ func (a *OODAAgent) observe() *Observation {
 	return obs
 }
 
-// ── Signal generation via ClawdBot Strategy ──────────────────────────
+// ── Signal generation via GoBot Strategy ──────────────────────────
 
 func (a *OODAAgent) evaluateWatchlist(obs *Observation) {
 	for _, entry := range obs.WatchlistData {
@@ -503,7 +503,7 @@ func (a *OODAAgent) evaluateToken(entry WatchlistEntry) *Signal {
 					RiskDecision: string(risk.Decision),
 					RiskReasons:  risk.Reasons,
 					Reasoning:    fmt.Sprintf("%s | risk=%s/%d decision=%s", sig.Reasoning, risk.Grade, risk.Score, risk.Decision),
-					Sources:      []string{"birdeye_ohlcv", "clawdbot_strategy"},
+					Sources:      []string{"birdeye_ohlcv", "gobot_strategy"},
 				}
 			}
 
@@ -511,7 +511,7 @@ func (a *OODAAgent) evaluateToken(entry WatchlistEntry) *Signal {
 			base.RSI = sig.RSI
 			base.EMACross = sig.EMACross
 			base.ATR = sig.ATR
-			base.Sources = append(base.Sources, "clawdbot_strategy")
+			base.Sources = append(base.Sources, "gobot_strategy")
 			return base
 		}
 	}
@@ -792,9 +792,9 @@ func (a *OODAAgent) GetStats() map[string]interface{} {
 	}
 }
 
-// ── ClawVault ────────────────────────────────────────────────────────
+// ── GoVault ────────────────────────────────────────────────────────
 
-type ClawVault struct {
+type GoVault struct {
 	basePath string
 	mu       sync.Mutex
 }
@@ -808,11 +808,11 @@ type VaultEntry struct {
 	Tags      []string  `json:"tags"`
 }
 
-func NewClawVault(basePath string) *ClawVault {
-	return &ClawVault{basePath: basePath}
+func NewGoVault(basePath string) *GoVault {
+	return &GoVault{basePath: basePath}
 }
 
-func (v *ClawVault) Remember(content, category string, score float64) {
+func (v *GoVault) Remember(content, category string, score float64) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 	if category == "" {
@@ -834,7 +834,7 @@ func (v *ClawVault) Remember(content, category string, score float64) {
 	os.WriteFile(filepath.Join(dir, fname), data, 0o644)
 }
 
-func (v *ClawVault) Recall(query string) []VaultEntry {
+func (v *GoVault) Recall(query string) []VaultEntry {
 	v.mu.Lock()
 	defer v.mu.Unlock()
 	var results []VaultEntry

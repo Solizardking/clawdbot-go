@@ -4,8 +4,8 @@
 .cache/
 build/
 dist/
-/clawdbot
-/clawdbot-*
+/gobot
+/gobot-*
 node_modules/
 .DS_Store
 *.log

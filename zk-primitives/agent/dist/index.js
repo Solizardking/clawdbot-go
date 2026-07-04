@@ -1,7 +1,7 @@
 /**
- * @clawd/zk-shark-agent - public exports
+ * @gobot/zk-shark-agent - public exports
  *
- * The Shark of All Streets wrapper around `@clawd/zk-client`. Use this when you
+ * The Shark of All Streets wrapper around `@gobot/zk-client`. Use this when you
  * want your ZK Shark agent (or REPL, or MCP tool) to be able to say
  * "attest this model" / "commit this encrypted state" / "verify this
  * proof" without hand-rolling the underlying nullifier, Groth16, and
@@ -10,7 +10,7 @@
  * Quick start:
  *
  * ```ts
- * import { ZkSharkAgent } from "@clawd/zk-shark-agent";
+ * import { ZkSharkAgent } from "@gobot/zk-shark-agent";
  * import { createSolanaRpc } from "@solana/kit";
  *
  * const agent = await ZkSharkAgent.fromEnv();
@@ -27,12 +27,12 @@
  * that exposes the same operations as subcommands and as a
  * natural-language intent router.
  */
-export { ZkSharkAgent, ClawdZkAgent, } from "./agent.js";
+export { ZkSharkAgent, GoBotZkAgent, } from "./agent.js";
 export { routeIntent, KNOWN_INTENTS } from "./intents.js";
 export { loadAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 export { runCli } from "./cli.js";
 export { 
 // Re-export the lower-level SDK so callers can drop down when they
 // need to construct instructions by hand.
-computeNullifier, computeNullifierBatch, deriveNullifierAddress, buildPublishPublicInputs, buildCommitPublicInputs, buildConsumePublicInputs, packPublicInputs, serializeProof, verifyGroth16Offchain, } from "@clawd/zk-client";
+computeNullifier, computeNullifierBatch, deriveNullifierAddress, buildPublishPublicInputs, buildCommitPublicInputs, buildConsumePublicInputs, packPublicInputs, serializeProof, verifyGroth16Offchain, } from "@gobot/zk-client";
 //# sourceMappingURL=index.js.map

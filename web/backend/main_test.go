@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/8bitlabs/clawdbot/pkg/config"
+	"github.com/8bitlabs/gobot/pkg/config"
 )
 
 func TestRedactedConfigMasksSecrets(t *testing.T) {
@@ -70,7 +70,7 @@ func TestCorsAllowedOrigin(t *testing.T) {
 		t.Fatal("cross-origin request was allowed without explicit config")
 	}
 
-	t.Setenv("CLAWDBOT_CORS_ORIGINS", "https://console.example")
+	t.Setenv("GOBOT_CORS_ORIGINS", "https://console.example")
 	if !corsAllowedOrigin(req, "https://console.example") {
 		t.Fatal("configured origin was rejected")
 	}
@@ -88,7 +88,7 @@ func TestClientIPTrustsProxyHeadersOnlyWhenEnabled(t *testing.T) {
 		t.Fatalf("clientIP trusted proxy header by default: %q", got)
 	}
 
-	t.Setenv("CLAWDBOT_TRUST_PROXY_HEADERS", "1")
+	t.Setenv("GOBOT_TRUST_PROXY_HEADERS", "1")
 	if got := clientIP(req); got != "203.0.113.7" {
 		t.Fatalf("clientIP ignored trusted proxy header: %q", got)
 	}

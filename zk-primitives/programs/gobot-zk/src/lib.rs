@@ -1,6 +1,6 @@
-//! # Clawd ZK Primitive
+//! # Go Bot ZK Primitive
 //!
-//! On-chain program that provides ZK primitives for the Solana Clawd AI
+//! On-chain program that provides ZK primitives for the Solana Go Bot AI
 //! model stack. Uses Light Protocol for compressed state (~67M leaves per
 //! state tree, 15k lamports per compressed nullifier).
 //!
@@ -26,7 +26,7 @@
 //!
 //! ```text
 //!   ┌──────────┐      ┌────────────────┐      ┌──────────────┐
-//!   │  Agent   │─────▶│  Clawd ZK      │─────▶│ Light System │
+//!   │  Agent   │─────▶│  Go Bot ZK     │─────▶│ Light System │
 //!   │ (off-chain) │  ①│  Program       │  ③  │ Program      │
 //!   │          │      │  (verifies +   │      │ (CPI: tree   │
 //!   │ ②  ──────│─────▶│   cpi's null)  │      │  updates)    │
@@ -52,7 +52,7 @@ pub mod state;
 
 use proof::verify_groth16;
 
-declare_id!("CLAWDzk11111111111111111111111111111111111");
+declare_id!("GOBOTzk11111111111111111111111111111111111");
 
 /// Light CPI signer (auto-derived from this program's ID by the Light SDK).
 /// Set at IDL-build time via `anchor idl build`. Placeholder for the scaffold.
@@ -64,7 +64,7 @@ pub const LIGHT_CPI_SIGNER: Pubkey = Pubkey::new_from_array([
 ]);
 
 #[program]
-pub mod clawd_zk {
+pub mod gobot_zk {
     use super::*;
 
     /// Publish a new model attestation. Creates a nullifier to mark this
@@ -96,7 +96,7 @@ pub mod clawd_zk {
             &public_inputs,
             &data.verifying_key,
         )
-        .map_err(|_| error!(ClawdZkError::InvalidProof))?;
+        .map_err(|_| error!(GoBotZkError::InvalidProof))?;
 
         // 2. Create the nullifier compressed accounts via Light CPI.
         nullifier::create_nullifiers(
@@ -119,7 +119,7 @@ pub mod clawd_zk {
         )?;
 
         msg!(
-            "Clawd ZK: published attestation for model {} by {} (nullifier root: {:?})",
+            "Go Bot ZK: published attestation for model {} by {} (nullifier root: {:?})",
             hex::encode(&data.model_hash[..8]),
             ctx.accounts.attester.key(),
             &nullifiers[0][..8]
@@ -148,7 +148,7 @@ pub mod clawd_zk {
             &public_inputs,
             &data.verifying_key,
         )
-        .map_err(|_| error!(ClawdZkError::InvalidProof))?;
+        .map_err(|_| error!(GoBotZkError::InvalidProof))?;
 
         state::consume_attestation(
             &data.attestation_address,
@@ -160,7 +160,7 @@ pub mod clawd_zk {
         )?;
 
         msg!(
-            "Clawd ZK: consumed attestation {} by {}",
+            "Go Bot ZK: consumed attestation {} by {}",
             hex::encode(&data.attestation_address[..8]),
             ctx.accounts.consumer.key()
         );
@@ -187,7 +187,7 @@ pub mod clawd_zk {
             &public_inputs,
             &data.verifying_key,
         )
-        .map_err(|_| error!(ClawdZkError::InvalidProof))?;
+        .map_err(|_| error!(GoBotZkError::InvalidProof))?;
 
         state::commit_encrypted(
             &data.model_hash,
@@ -200,7 +200,7 @@ pub mod clawd_zk {
         )?;
 
         msg!(
-            "Clawd ZK: committed encrypted state for model {} (v{}, ciphertext root: {:?})",
+            "Go Bot ZK: committed encrypted state for model {} (v{}, ciphertext root: {:?})",
             hex::encode(&data.model_hash[..8]),
             data.state_version,
             &data.ciphertext_commitment[..8]
@@ -333,7 +333,7 @@ fn build_commit_public_inputs(
 // ============================================================================
 
 #[error_code]
-pub enum ClawdZkError {
+pub enum GoBotZkError {
     #[msg("The Groth16 proof did not verify against the public inputs.")]
     InvalidProof,
     #[msg("The provided public inputs are malformed or out of range.")]

@@ -1,4 +1,4 @@
-// Package laws defines the Clawd six-law runtime harness.
+// Package laws defines the GoBot six-law runtime harness.
 package laws
 
 import (
@@ -106,8 +106,8 @@ func Validate() error {
 
 func Markdown() string {
 	var b strings.Builder
-	b.WriteString("# The Six Laws of Clawd\n\n")
-	b.WriteString("Clawd's six-law harness binds trading, research, execution, privacy, and operator trust. Laws I-III are the on-chain execution laws. Laws IV-VI are the off-chain interpretive laws.\n\n")
+	b.WriteString("# The Six Laws of GoBot\n\n")
+	b.WriteString("GoBot's six-law harness binds trading, research, execution, privacy, and operator trust. Laws I-III are the on-chain execution laws. Laws IV-VI are the off-chain interpretive laws.\n\n")
 	for _, law := range Six {
 		fmt.Fprintf(&b, "## Law %s - %s\n\n", law.ID, law.Title)
 		fmt.Fprintf(&b, "**Layer:** %s\n\n%s\n", law.Layer, law.Text)

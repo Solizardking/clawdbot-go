@@ -1,7 +1,7 @@
 /**
  * ooda/validate.ts — Decision validator
  *
- * Enforces the hard safety rules from CLAWD.md.
+ * Enforces the hard safety rules from GOBOT.md.
  * The harness calls this before applying any decision.
  * Invalid decisions are recorded in the journal as "rejected" and the
  * tick proceeds as if the model had returned `hold`.
@@ -9,7 +9,7 @@
 
 import type { Book } from './state.js';
 
-export interface ClawdConfig {
+export interface GoBotConfig {
   mode: 'paper';
   network: 'devnet';
   max_action_per_tick: number;
@@ -30,7 +30,7 @@ export interface ValidationResult {
 
 const REASON_MAX_CHARS = 140;
 
-export function validate(raw: unknown, config: ClawdConfig, book: Book): ValidationResult {
+export function validate(raw: unknown, config: GoBotConfig, book: Book): ValidationResult {
   // Must be a plain object
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
     return reject('decision is not a JSON object', safeHold('non-object response'));
@@ -120,10 +120,10 @@ function safeHold(reason: string): Decision {
   return { action: 'hold', reason: reason.slice(0, REASON_MAX_CHARS) };
 }
 
-/** Parse the frontmatter from CLAWD.md */
-export function parseClawdConfig(markdownContent: string): ClawdConfig {
+/** Parse the frontmatter from GOBOT.md */
+export function parseGoBotConfig(markdownContent: string): GoBotConfig {
   const match = markdownContent.match(/^---\n([\s\S]*?)\n---/);
-  if (!match?.[1]) throw new Error('CLAWD.md missing YAML frontmatter');
+  if (!match?.[1]) throw new Error('GOBOT.md missing YAML frontmatter');
 
   const fm = match[1];
   const get = (key: string, def: string) =>

@@ -1,11 +1,11 @@
-// Package identity provides sender identity resolution for ClawdBot.
+// Package identity provides sender identity resolution for GoBot.
 // Adapted from PicoClaw — canonical "platform:id" format with legacy compat.
 package identity
 
 import (
 	"strings"
 
-	"github.com/8bitlabs/clawdbot/pkg/bus"
+	"github.com/8bitlabs/gobot/pkg/bus"
 )
 
 // Canonical builds a canonical sender ID from platform and ID.

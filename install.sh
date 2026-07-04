@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║  ClawdBot — One-Shot Installer                                               ║
+# ║  GoBot — One-Shot Installer                                               ║
 # ║  curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | bash
 # ║  Branded edge aliases can serve this script from onchainai.fund / x402.wtf. ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -10,29 +10,29 @@ set -euo pipefail
 REPO="https://github.com/Solizardking/clawdbot-go"
 HUB_REPO="https://github.com/solizardking/solana-clawd"
 TERMINAL_URL="https://cheshireterminal.ai"
-INSTALL_API="${CLAWDBOT_INSTALL_API:-https://zk.x402.wtf/api/install}"
+INSTALL_API="${GOBOT_INSTALL_API:-https://zk.x402.wtf/api/install}"
 ZKROUTER_BASE="https://clawdrouter-zk.fly.dev/v1"
 RPC_URL="https://zk.x402.wtf/api/solana/rpc-public"
-INSTALL_DIR="${CLAWDBOT_INSTALL_DIR:-$HOME/.clawdbot}"
-BIN_DIR="${CLAWDBOT_BIN_DIR:-$HOME/.local/bin}"
-SOURCE_MODE="${CLAWDBOT_SOURCE_MODE:-archive}"
-REF="${CLAWDBOT_REF:-main}"
-CORE_AI_REPO="${CLAWDBOT_CORE_AI_REPO:-https://github.com/Solizardking/core-ai}"
-CORE_AI_REF="${CLAWDBOT_CORE_AI_REF:-clawd-stack-integration}"
-CORE_AI_DIR="${CLAWDBOT_CORE_AI_DIR:-$INSTALL_DIR/core-ai}"
-CORE_AI_MCP_CONFIG="${CLAWDBOT_CORE_AI_MCP_CONFIG:-$INSTALL_DIR/core-ai.mcp.json}"
-INSTALL_COMPLETE="${CLAWDBOT_INSTALL_COMPLETE:-0}"
-INSTALL_CORE_AI="${CLAWDBOT_INSTALL_CORE_AI:-0}"
-INSTALL_VULCAN_EXPLICIT="${CLAWDBOT_INSTALL_VULCAN+x}"
-INSTALL_VULCAN="${CLAWDBOT_INSTALL_VULCAN:-1}"
-CLAWD_MINT="${CLAWDBOT_CLAWD_MINT:-8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump}"
-STARTUP_SOL_LAMPORTS="${CLAWDBOT_STARTUP_SOL_LAMPORTS:-69420000}"
-STARTUP_CLAWD_TOKENS="${CLAWDBOT_STARTUP_CLAWD_TOKENS:-1000}"
-AGENT_WALLET_PATH="${CLAWDBOT_AGENT_WALLET_PATH:-$INSTALL_DIR/workspace/agent-wallet.json}"
-INSTALL_TRACK_FILE="${CLAWDBOT_INSTALL_TRACK_FILE:-$INSTALL_DIR/install.json}"
-LOCAL_SKILLS_DIR="${CLAWDBOT_SKILLS_DIR:-$HOME/skills/skills}"
-LOCAL_AGENTS_DIR="${CLAWDBOT_AGENTS_DIR:-$HOME/agents/agents/src}"
-LOCAL_ZK_PRIMITIVES_DIR="${CLAWDBOT_ZK_PRIMITIVES_DIR:-$INSTALL_DIR/src/zk-primitives}"
+INSTALL_DIR="${GOBOT_INSTALL_DIR:-$HOME/.gobot}"
+BIN_DIR="${GOBOT_BIN_DIR:-$HOME/.local/bin}"
+SOURCE_MODE="${GOBOT_SOURCE_MODE:-archive}"
+REF="${GOBOT_REF:-main}"
+CORE_AI_REPO="${GOBOT_CORE_AI_REPO:-https://github.com/Solizardking/core-ai}"
+CORE_AI_REF="${GOBOT_CORE_AI_REF:-clawdbot-stack-integration}"
+CORE_AI_DIR="${GOBOT_CORE_AI_DIR:-$INSTALL_DIR/core-ai}"
+CORE_AI_MCP_CONFIG="${GOBOT_CORE_AI_MCP_CONFIG:-$INSTALL_DIR/core-ai.mcp.json}"
+INSTALL_COMPLETE="${GOBOT_INSTALL_COMPLETE:-0}"
+INSTALL_CORE_AI="${GOBOT_INSTALL_CORE_AI:-0}"
+INSTALL_VULCAN_EXPLICIT="${GOBOT_INSTALL_VULCAN+x}"
+INSTALL_VULCAN="${GOBOT_INSTALL_VULCAN:-1}"
+GOBOT_MINT="${GOBOT_MINT:-8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump}"
+STARTUP_SOL_LAMPORTS="${GOBOT_STARTUP_SOL_LAMPORTS:-69420000}"
+STARTUP_GOBOT_TOKENS="${GOBOT_STARTUP_TOKENS:-1000}"
+AGENT_WALLET_PATH="${GOBOT_AGENT_WALLET_PATH:-$INSTALL_DIR/workspace/agent-wallet.json}"
+INSTALL_TRACK_FILE="${GOBOT_INSTALL_TRACK_FILE:-$INSTALL_DIR/install.json}"
+LOCAL_SKILLS_DIR="${GOBOT_SKILLS_DIR:-$HOME/skills/skills}"
+LOCAL_AGENTS_DIR="${GOBOT_AGENTS_DIR:-$HOME/agents/agents/src}"
+LOCAL_ZK_PRIMITIVES_DIR="${GOBOT_ZK_PRIMITIVES_DIR:-$INSTALL_DIR/src/zk-primitives}"
 
 if [[ "$INSTALL_COMPLETE" == "1" ]]; then
   INSTALL_CORE_AI=1
@@ -61,7 +61,7 @@ cat << 'EOF'
     ╚═════╝╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝
 EOF
 echo -e "${RESET}"
-echo -e "${BOLD}  🦞 Sovereign Solana Trading Intelligence — Installer${RESET}"
+echo -e "${BOLD}  🐹 Sovereign Solana Trading Intelligence — Installer${RESET}"
 echo -e "  Free AI via zkrouter · SolanaTracker RPC included"
 echo
 
@@ -154,15 +154,15 @@ install_source_git() {
 }
 
 ensure_go_source() {
-  if [[ -f "$REPO_DIR/go.mod" && -d "$REPO_DIR/cmd/clawdbot" ]]; then
+  if [[ -f "$REPO_DIR/go.mod" && -d "$REPO_DIR/cmd/gobot" ]]; then
     return
   fi
 
   warn "Source archive is missing Go CLI sources; retrying with git checkout"
-  install_source_git "$REPO" "$REF" "$REPO_DIR" "clawdbot-go"
+  install_source_git "$REPO" "$REF" "$REPO_DIR" "gobot-go"
 
-  if [[ ! -f "$REPO_DIR/go.mod" || ! -d "$REPO_DIR/cmd/clawdbot" ]]; then
-    die "Downloaded source is incomplete: expected go.mod and cmd/clawdbot/"
+  if [[ ! -f "$REPO_DIR/go.mod" || ! -d "$REPO_DIR/cmd/gobot" ]]; then
+    die "Downloaded source is incomplete: expected go.mod and cmd/gobot/"
   fi
 }
 
@@ -238,7 +238,7 @@ install_core_ai() {
 
 install_vulcan() {
   if [[ "$INSTALL_VULCAN" == "0" ]]; then
-    warn "Skipping Vulcan install (CLAWDBOT_INSTALL_VULCAN=0)"
+    warn "Skipping Vulcan install (GOBOT_INSTALL_VULCAN=0)"
     return
   fi
   if check_cmd vulcan; then
@@ -250,7 +250,7 @@ install_vulcan() {
     return
   fi
   info "Installing Vulcan CLI for Phoenix paper/live perps..."
-  curl -fsSL https://github.com/Ellipsis-Labs/vulcan-cli/releases/latest/download/install.sh | sh || warn "Vulcan install failed; run clawdbot perps health after installing vulcan"
+  curl -fsSL https://github.com/Ellipsis-Labs/vulcan-cli/releases/latest/download/install.sh | sh || warn "Vulcan install failed; run gobot perps health after installing vulcan"
   if check_cmd vulcan; then
     success "Vulcan: $(command -v vulcan)"
   else
@@ -288,55 +288,55 @@ REPO_DIR="$INSTALL_DIR/src"
 mkdir -p "$INSTALL_DIR"
 
 if [[ "$SOURCE_MODE" == "archive" && ! -d "$REPO_DIR/.git" ]]; then
-  info "Downloading clawdbot-go source archive (${REF})..."
-  install_source_archive "$REPO" "$REF" "$REPO_DIR" "clawdbot-go"
+  info "Downloading gobot-go source archive (${REF})..."
+  install_source_archive "$REPO" "$REF" "$REPO_DIR" "gobot-go"
 elif [[ -d "$REPO_DIR/.git" ]]; then
   info "Updating existing repo..."
   git -C "$REPO_DIR" pull --ff-only --quiet
 else
-  info "Cloning clawdbot-go..."
-  install_source_git "$REPO" "$REF" "$REPO_DIR" "clawdbot-go"
+  info "Cloning gobot-go..."
+  install_source_git "$REPO" "$REF" "$REPO_DIR" "gobot-go"
 fi
 ensure_go_source
 success "Source ready at $REPO_DIR"
 
 # ── Build ──────────────────────────────────────────────────────────────────────
-info "Building clawdbot binary..."
+info "Building gobot binary..."
 mkdir -p "$INSTALL_DIR/bin"
 cd "$REPO_DIR"
 go mod download -x 2>/dev/null | tail -3 || true
-go build -buildvcs=false -trimpath -ldflags="-s -w" -o "$INSTALL_DIR/bin/clawdbot" ./cmd/clawdbot/
-success "Binary built: $INSTALL_DIR/bin/clawdbot"
+go build -buildvcs=false -trimpath -ldflags="-s -w" -o "$INSTALL_DIR/bin/gobot" ./cmd/gobot/
+success "Binary built: $INSTALL_DIR/bin/gobot"
 
 # ── Install to PATH ────────────────────────────────────────────────────────────
 mkdir -p "$BIN_DIR"
-cp "$INSTALL_DIR/bin/clawdbot" "$BIN_DIR/clawdbot"
-success "Installed to $BIN_DIR/clawdbot"
+cp "$INSTALL_DIR/bin/gobot" "$BIN_DIR/gobot"
+success "Installed to $BIN_DIR/gobot"
 
-if "$INSTALL_DIR/bin/clawdbot" dna --help >/dev/null 2>&1; then
+if "$INSTALL_DIR/bin/gobot" dna --help >/dev/null 2>&1; then
   info "Generating starter agent DNA..."
-  "$INSTALL_DIR/bin/clawdbot" dna generate \
+  "$INSTALL_DIR/bin/gobot" dna generate \
     --if-missing \
     --out "$INSTALL_DIR/workspace/agent-dna.json" \
-    --agent-name "ClawdBot" \
-    --role "sovereign Solana trading intelligence" || warn "Agent DNA generation failed; run: clawdbot dna generate"
+    --agent-name "GoBot" \
+    --role "sovereign Solana trading intelligence" || warn "Agent DNA generation failed; run: gobot dna generate"
 else
-  warn "Installed clawdbot binary does not expose dna; skipping starter DNA"
+  warn "Installed gobot binary does not expose dna; skipping starter DNA"
 fi
 
 # ── Agent wallet for startup funding ──────────────────────────────────────────
 AGENT_DNA_ID=""
-if "$INSTALL_DIR/bin/clawdbot" dna --help >/dev/null 2>&1; then
-  DNA_JSON="$(CLAWDBOT_HOME="$INSTALL_DIR" "$INSTALL_DIR/bin/clawdbot" dna show \
+if "$INSTALL_DIR/bin/gobot" dna --help >/dev/null 2>&1; then
+  DNA_JSON="$(GOBOT_HOME="$INSTALL_DIR" "$INSTALL_DIR/bin/gobot" dna show \
     --out "$INSTALL_DIR/workspace/agent-dna.json" \
     --json 2>/dev/null || echo '{}')"
   AGENT_DNA_ID="$(json_get "$DNA_JSON" "dnaId")"
 fi
 
 AGENT_WALLET_PUBKEY=""
-if "$INSTALL_DIR/bin/clawdbot" solana wallet init --help >/dev/null 2>&1; then
+if "$INSTALL_DIR/bin/gobot" solana wallet init --help >/dev/null 2>&1; then
   info "Initializing local agent wallet..."
-  WALLET_JSON="$(CLAWDBOT_HOME="$INSTALL_DIR" "$INSTALL_DIR/bin/clawdbot" solana wallet init \
+  WALLET_JSON="$(GOBOT_HOME="$INSTALL_DIR" "$INSTALL_DIR/bin/gobot" solana wallet init \
     --out "$AGENT_WALLET_PATH" \
     --json 2>/dev/null || echo '{}')"
   AGENT_WALLET_PUBKEY="$(json_get "$WALLET_JSON" "pubkey")"
@@ -346,7 +346,7 @@ if "$INSTALL_DIR/bin/clawdbot" solana wallet init --help >/dev/null 2>&1; then
     warn "Agent wallet initialization did not return a public key"
   fi
 else
-  warn "Installed clawdbot binary does not expose solana wallet init; startup funding will be skipped"
+  warn "Installed gobot binary does not expose solana wallet init; startup funding will be skipped"
 fi
 
 install_vulcan
@@ -365,17 +365,17 @@ if [[ ":$PATH:" != *":$BIN_DIR:"* ]]; then
 fi
 
 # ── Register install & get ID ─────────────────────────────────────────────────
-info "Registering install with clawdrouter..."
+info "Registering install with gobotrouter..."
 INSTALL_ID=""
 FUNDING_STATUS="requested"
 SOL_FUNDING_SIGNATURE=""
-CLAWD_FUNDING_SIGNATURE=""
+GOBOT_FUNDING_SIGNATURE=""
 ZKROUTER_KEY=""
 if check_cmd curl; then
   SOURCE_VERSION="$(cd "$REPO_DIR" && git rev-parse --short HEAD 2>/dev/null || echo "$REF")"
-  INSTALL_PAYLOAD="$(printf '{"os":"%s","arch":"%s","version":"%s","installComplete":"%s","coreAi":"%s","vulcan":"%s","agentWalletPubkey":"%s","agentDnaId":"%s","funding":{"solLamports":%s,"clawdTokens":%s,"clawdMint":"%s","createClawdAta":true}}' \
+  INSTALL_PAYLOAD="$(printf '{"os":"%s","arch":"%s","version":"%s","installComplete":"%s","coreAi":"%s","vulcan":"%s","agentWalletPubkey":"%s","agentDnaId":"%s","funding":{"solLamports":%s,"gobotTokens":%s,"gobotMint":"%s","createGoBotAta":true}}' \
     "$OS" "$ARCH" "$SOURCE_VERSION" "$INSTALL_COMPLETE" "$INSTALL_CORE_AI" "$INSTALL_VULCAN" \
-    "$AGENT_WALLET_PUBKEY" "$AGENT_DNA_ID" "$STARTUP_SOL_LAMPORTS" "$STARTUP_CLAWD_TOKENS" "$CLAWD_MINT")"
+    "$AGENT_WALLET_PUBKEY" "$AGENT_DNA_ID" "$STARTUP_SOL_LAMPORTS" "$STARTUP_GOBOT_TOKENS" "$GOBOT_MINT")"
   INSTALL_RESP="$(curl -sf -X POST "$INSTALL_API" \
     -H "Content-Type: application/json" \
     -d "$INSTALL_PAYLOAD" 2>/dev/null || echo '{}')"
@@ -385,7 +385,7 @@ if check_cmd curl; then
   RESP_RPC_URL="$(json_get "$INSTALL_RESP" "rpcUrl")"
   RESP_FUNDING_STATUS="$(json_get "$INSTALL_RESP" "fundingStatus")"
   SOL_FUNDING_SIGNATURE="$(json_get "$INSTALL_RESP" "solSignature")"
-  CLAWD_FUNDING_SIGNATURE="$(json_get "$INSTALL_RESP" "clawdSignature")"
+  GOBOT_FUNDING_SIGNATURE="$(json_get "$INSTALL_RESP" "gobotSignature")"
   if [[ -n "$RESP_ZKROUTER_BASE" ]]; then ZKROUTER_BASE="$RESP_ZKROUTER_BASE"; fi
   if [[ -n "$RESP_RPC_URL" ]]; then RPC_URL="$RESP_RPC_URL"; fi
   if [[ -n "$RESP_FUNDING_STATUS" ]]; then FUNDING_STATUS="$RESP_FUNDING_STATUS"; fi
@@ -397,30 +397,30 @@ if [[ -z "$INSTALL_ID" ]]; then
 fi
 
 success "Install ID: ${INSTALL_ID}"
-if [[ -n "$SOL_FUNDING_SIGNATURE" || -n "$CLAWD_FUNDING_SIGNATURE" ]]; then
+if [[ -n "$SOL_FUNDING_SIGNATURE" || -n "$GOBOT_FUNDING_SIGNATURE" ]]; then
   success "Startup funding receipts captured"
 elif [[ -n "$AGENT_WALLET_PUBKEY" ]]; then
   info "Startup funding status: ${FUNDING_STATUS}"
 fi
 
 # ── Optional local treasury funding ───────────────────────────────────────────
-if [[ -n "$AGENT_WALLET_PUBKEY" && "${CLAWDBOT_LOCAL_STARTUP_FUNDING:-0}" == "1" ]]; then
+if [[ -n "$AGENT_WALLET_PUBKEY" && "${GOBOT_LOCAL_STARTUP_FUNDING:-0}" == "1" ]]; then
   info "Running local treasury startup funding plan..."
   FUND_ARGS=(
     "solana" "fund-agent" "$AGENT_WALLET_PUBKEY"
     "--json"
     "--sol-lamports" "$STARTUP_SOL_LAMPORTS"
-    "--clawd" "$STARTUP_CLAWD_TOKENS"
-    "--clawd-mint" "$CLAWD_MINT"
+    "--gobot" "$STARTUP_GOBOT_TOKENS"
+    "--gobot-mint" "$GOBOT_MINT"
     "--ledger" "$INSTALL_DIR/workspace/install-funding.jsonl"
   )
-  if [[ "${CLAWDBOT_BIRTH_FUNDING_SEND:-0}" == "1" ]]; then
+  if [[ "${GOBOT_BIRTH_FUNDING_SEND:-0}" == "1" ]]; then
     FUND_ARGS+=("--send")
   fi
-  LOCAL_FUNDING_JSON="$(CLAWDBOT_HOME="$INSTALL_DIR" CLAWDBOT_INSTALL_ID="$INSTALL_ID" "$INSTALL_DIR/bin/clawdbot" "${FUND_ARGS[@]}" 2>/dev/null || echo '{}')"
+  LOCAL_FUNDING_JSON="$(GOBOT_HOME="$INSTALL_DIR" GOBOT_INSTALL_ID="$INSTALL_ID" "$INSTALL_DIR/bin/gobot" "${FUND_ARGS[@]}" 2>/dev/null || echo '{}')"
   LOCAL_FUNDING_STATUS="$(json_get "$LOCAL_FUNDING_JSON" "status")"
   LOCAL_SOL_SIGNATURE="$(json_get "$LOCAL_FUNDING_JSON" "solSignature")"
-  LOCAL_CLAWD_SIGNATURE="$(json_get "$LOCAL_FUNDING_JSON" "clawdSignature")"
+  LOCAL_GOBOT_SIGNATURE="$(json_get "$LOCAL_FUNDING_JSON" "gobotSignature")"
   if [[ -n "$LOCAL_FUNDING_STATUS" ]]; then
     FUNDING_STATUS="local_${LOCAL_FUNDING_STATUS}"
     info "Local startup funding status: ${FUNDING_STATUS}"
@@ -428,7 +428,7 @@ if [[ -n "$AGENT_WALLET_PUBKEY" && "${CLAWDBOT_LOCAL_STARTUP_FUNDING:-0}" == "1"
     warn "Local startup funding did not return a status"
   fi
   if [[ -n "$LOCAL_SOL_SIGNATURE" ]]; then SOL_FUNDING_SIGNATURE="$LOCAL_SOL_SIGNATURE"; fi
-  if [[ -n "$LOCAL_CLAWD_SIGNATURE" ]]; then CLAWD_FUNDING_SIGNATURE="$LOCAL_CLAWD_SIGNATURE"; fi
+  if [[ -n "$LOCAL_GOBOT_SIGNATURE" ]]; then GOBOT_FUNDING_SIGNATURE="$LOCAL_GOBOT_SIGNATURE"; fi
 fi
 
 # ── Local install receipt ─────────────────────────────────────────────────────
@@ -444,10 +444,10 @@ cat > "$INSTALL_TRACK_FILE" << JSONEOF
   "funding": {
     "status": "${FUNDING_STATUS}",
     "solLamports": ${STARTUP_SOL_LAMPORTS},
-    "clawdTokens": ${STARTUP_CLAWD_TOKENS},
-    "clawdMint": "${CLAWD_MINT}",
+    "gobotTokens": ${STARTUP_GOBOT_TOKENS},
+    "gobotMint": "${GOBOT_MINT}",
     "solSignature": "${SOL_FUNDING_SIGNATURE}",
-    "clawdSignature": "${CLAWD_FUNDING_SIGNATURE}"
+    "gobotSignature": "${GOBOT_FUNDING_SIGNATURE}"
   },
   "registeredAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
@@ -460,28 +460,28 @@ if [[ ! -f "$ENV_FILE" ]]; then
   info "Writing default .env..."
   cat > "$ENV_FILE" << ENVEOF
 # ════════════════════════════════════════════════════════════════════
-# ClawdBot Environment — generated by installer
+# GoBot Environment — generated by installer
 # Edit this file to add your own API keys
 # ════════════════════════════════════════════════════════════════════
 
 # ── Install identity ──────────────────────────────────────────────
-CLAWDBOT_INSTALL_ID=${INSTALL_ID}
-CLAWDBOT_AGENT_DNA_ID=${AGENT_DNA_ID}
-CLAWDBOT_INSTALL_RECEIPT=${INSTALL_TRACK_FILE}
+GOBOT_INSTALL_ID=${INSTALL_ID}
+GOBOT_AGENT_DNA_ID=${AGENT_DNA_ID}
+GOBOT_INSTALL_RECEIPT=${INSTALL_TRACK_FILE}
 
 # ── Free AI via zk.x402.wtf / zkrouter (no key needed) ───────────
-# Public gateway backed by the sovereign \$CLAWD router
+# Public gateway backed by the sovereign \$GOBOT router
 ZKROUTER_BASE_URL=${ZKROUTER_BASE}
-ZKROUTER_API_KEY=${ZKROUTER_KEY:-clawdbot-free}
+ZKROUTER_API_KEY=${ZKROUTER_KEY:-clawd-free}
 
 # ── Solana RPC (SolanaTracker-backed, no key needed) ─────────────
 SOLANA_RPC_URL=${RPC_URL}
 HELIUS_RPC_URL=${RPC_URL}
 
-# ── Local Clawd catalogs (instant read-only discovery) ───────────
-CLAWDBOT_SKILLS_DIR=${LOCAL_SKILLS_DIR}
-CLAWDBOT_AGENTS_DIR=${LOCAL_AGENTS_DIR}
-CLAWDBOT_ZK_PRIMITIVES_DIR=${LOCAL_ZK_PRIMITIVES_DIR}
+# ── Local GoBot catalogs (instant read-only discovery) ───────────
+GOBOT_SKILLS_DIR=${LOCAL_SKILLS_DIR}
+GOBOT_AGENTS_DIR=${LOCAL_AGENTS_DIR}
+GOBOT_ZK_PRIMITIVES_DIR=${LOCAL_ZK_PRIMITIVES_DIR}
 
 # ── Optional: bring your own keys for higher limits ──────────────
 # OPENROUTER_API_KEY=sk-or-...
@@ -496,73 +496,73 @@ SOLANA_WALLET_KEYPAIR=${AGENT_WALLET_PATH}
 # WALLET_PRIVATE_KEY=your-base58-private-key
 
 # ── Startup funding request / receipts ───────────────────────────
-CLAWD_TOKEN_MINT=${CLAWD_MINT}
-CLAWDBOT_STARTUP_SOL_LAMPORTS=${STARTUP_SOL_LAMPORTS}
-CLAWDBOT_STARTUP_CLAWD_TOKENS=${STARTUP_CLAWD_TOKENS}
-CLAWDBOT_INSTALL_FUNDING_STATUS=${FUNDING_STATUS}
-CLAWDBOT_SOL_FUNDING_SIGNATURE=${SOL_FUNDING_SIGNATURE}
-CLAWDBOT_CLAWD_FUNDING_SIGNATURE=${CLAWD_FUNDING_SIGNATURE}
-# CLAWDBOT_LOCAL_STARTUP_FUNDING=1
-# CLAWDBOT_BIRTH_FUNDING_SEND=1
-# CLAWDBOT_TREASURY_KEYPAIR=~/.config/solana/id.json
-# CLAWDBOT_TREASURY_PRIVATE_KEY=base58-secret-key
+GOBOT_TOKEN_MINT=${GOBOT_MINT}
+GOBOT_STARTUP_SOL_LAMPORTS=${STARTUP_SOL_LAMPORTS}
+GOBOT_STARTUP_TOKENS=${STARTUP_GOBOT_TOKENS}
+GOBOT_INSTALL_FUNDING_STATUS=${FUNDING_STATUS}
+GOBOT_SOL_FUNDING_SIGNATURE=${SOL_FUNDING_SIGNATURE}
+GOBOT_FUNDING_SIGNATURE=${GOBOT_FUNDING_SIGNATURE}
+# GOBOT_LOCAL_STARTUP_FUNDING=1
+# GOBOT_BIRTH_FUNDING_SEND=1
+# GOBOT_TREASURY_KEYPAIR=~/.config/solana/id.json
+# GOBOT_TREASURY_PRIVATE_KEY=base58-secret-key
 
 # ── Optional channels ─────────────────────────────────────────────
 # TELEGRAM_BOT_TOKEN=your-telegram-token
 
 # ── Optional core-ai sidecar ──────────────────────────────────────
-# Complete install: curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | CLAWDBOT_INSTALL_COMPLETE=1 bash
-# CLAWDBOT_INSTALL_CORE_AI=${INSTALL_CORE_AI}
-# CLAWDBOT_INSTALL_VULCAN=${INSTALL_VULCAN}
-# CLAWDBOT_CORE_AI_DIR=${CORE_AI_DIR}
-# CLAWDBOT_CORE_AI_REF=${CORE_AI_REF}
-# CLAWDBOT_CORE_AI_MCP_CONFIG=${CORE_AI_MCP_CONFIG}
+# Complete install: curl -fsSL https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh | GOBOT_INSTALL_COMPLETE=1 bash
+# GOBOT_INSTALL_CORE_AI=${INSTALL_CORE_AI}
+# GOBOT_INSTALL_VULCAN=${INSTALL_VULCAN}
+# GOBOT_CORE_AI_DIR=${CORE_AI_DIR}
+# GOBOT_CORE_AI_REF=${CORE_AI_REF}
+# GOBOT_CORE_AI_MCP_CONFIG=${CORE_AI_MCP_CONFIG}
 ENVEOF
   success ".env written to $ENV_FILE"
 else
   warn ".env already exists at $ENV_FILE — not overwriting"
 fi
 
-append_env_if_missing "CLAWDBOT_AGENT_DNA_ID" "$AGENT_DNA_ID"
-append_env_if_missing "CLAWDBOT_INSTALL_RECEIPT" "$INSTALL_TRACK_FILE"
+append_env_if_missing "GOBOT_AGENT_DNA_ID" "$AGENT_DNA_ID"
+append_env_if_missing "GOBOT_INSTALL_RECEIPT" "$INSTALL_TRACK_FILE"
 append_env_if_missing "AGENT_WALLET_PUBLIC_KEY" "$AGENT_WALLET_PUBKEY"
 append_env_if_missing "AGENT_WALLET_KEYPAIR" "$AGENT_WALLET_PATH"
 append_env_if_missing "SOLANA_WALLET_PUBKEY" "$AGENT_WALLET_PUBKEY"
 append_env_if_missing "SOLANA_WALLET_KEYPAIR" "$AGENT_WALLET_PATH"
-append_env_if_missing "CLAWDBOT_SKILLS_DIR" "$LOCAL_SKILLS_DIR"
-append_env_if_missing "CLAWDBOT_AGENTS_DIR" "$LOCAL_AGENTS_DIR"
-append_env_if_missing "CLAWDBOT_ZK_PRIMITIVES_DIR" "$LOCAL_ZK_PRIMITIVES_DIR"
-append_env_if_missing "CLAWD_TOKEN_MINT" "$CLAWD_MINT"
-append_env_if_missing "CLAWDBOT_STARTUP_SOL_LAMPORTS" "$STARTUP_SOL_LAMPORTS"
-append_env_if_missing "CLAWDBOT_STARTUP_CLAWD_TOKENS" "$STARTUP_CLAWD_TOKENS"
-append_env_if_missing "CLAWDBOT_INSTALL_FUNDING_STATUS" "$FUNDING_STATUS"
-append_env_if_missing "CLAWDBOT_SOL_FUNDING_SIGNATURE" "$SOL_FUNDING_SIGNATURE"
-append_env_if_missing "CLAWDBOT_CLAWD_FUNDING_SIGNATURE" "$CLAWD_FUNDING_SIGNATURE"
+append_env_if_missing "GOBOT_SKILLS_DIR" "$LOCAL_SKILLS_DIR"
+append_env_if_missing "GOBOT_AGENTS_DIR" "$LOCAL_AGENTS_DIR"
+append_env_if_missing "GOBOT_ZK_PRIMITIVES_DIR" "$LOCAL_ZK_PRIMITIVES_DIR"
+append_env_if_missing "GOBOT_TOKEN_MINT" "$GOBOT_MINT"
+append_env_if_missing "GOBOT_STARTUP_SOL_LAMPORTS" "$STARTUP_SOL_LAMPORTS"
+append_env_if_missing "GOBOT_STARTUP_TOKENS" "$STARTUP_GOBOT_TOKENS"
+append_env_if_missing "GOBOT_INSTALL_FUNDING_STATUS" "$FUNDING_STATUS"
+append_env_if_missing "GOBOT_SOL_FUNDING_SIGNATURE" "$SOL_FUNDING_SIGNATURE"
+append_env_if_missing "GOBOT_FUNDING_SIGNATURE" "$GOBOT_FUNDING_SIGNATURE"
 
 # Symlink config into home
-if [[ ! -L "$HOME/.clawdbot" && "$INSTALL_DIR" != "$HOME/.clawdbot" ]]; then
-  ln -sfn "$INSTALL_DIR" "$HOME/.clawdbot"
+if [[ ! -L "$HOME/.gobot" && "$INSTALL_DIR" != "$HOME/.gobot" ]]; then
+  ln -sfn "$INSTALL_DIR" "$HOME/.gobot"
 fi
 
 # ── Optional core-ai sidecar ─────────────────────────────────────────────────
 if [[ "$INSTALL_CORE_AI" == "1" ]]; then
   install_core_ai
-  if [[ -f "$ENV_FILE" ]] && ! grep -q '^CLAWDBOT_CORE_AI_DIR=' "$ENV_FILE"; then
+  if [[ -f "$ENV_FILE" ]] && ! grep -q '^GOBOT_CORE_AI_DIR=' "$ENV_FILE"; then
     cat >> "$ENV_FILE" << ENVEOF
 
 # ── core-ai sidecar ───────────────────────────────────────────────
-CLAWDBOT_INSTALL_COMPLETE=${INSTALL_COMPLETE}
-CLAWDBOT_INSTALL_CORE_AI=${INSTALL_CORE_AI}
-CLAWDBOT_INSTALL_VULCAN=${INSTALL_VULCAN}
-CLAWDBOT_CORE_AI_DIR=${CORE_AI_DIR}
-CLAWDBOT_CORE_AI_REF=${CORE_AI_REF}
-CLAWDBOT_CORE_AI_MCP_CONFIG=${CORE_AI_MCP_CONFIG}
+GOBOT_INSTALL_COMPLETE=${INSTALL_COMPLETE}
+GOBOT_INSTALL_CORE_AI=${INSTALL_CORE_AI}
+GOBOT_INSTALL_VULCAN=${INSTALL_VULCAN}
+GOBOT_CORE_AI_DIR=${CORE_AI_DIR}
+GOBOT_CORE_AI_REF=${CORE_AI_REF}
+GOBOT_CORE_AI_MCP_CONFIG=${CORE_AI_MCP_CONFIG}
 ENVEOF
   fi
 fi
 
 # ── Birth skill seed ──────────────────────────────────────────────────────────
-if [[ "${CLAWDBOT_SKIP_SKILL_SEED:-0}" != "1" ]]; then
+if [[ "${GOBOT_SKIP_SKILL_SEED:-0}" != "1" ]]; then
   if check_cmd npx; then
     info "Seeding birth skills from Solizardking/skills..."
     npx skills add https://github.com/Solizardking/skills --all || warn "Solizardking skill seed failed; run: npx skills add https://github.com/Solizardking/skills --all"
@@ -572,29 +572,29 @@ if [[ "${CLAWDBOT_SKIP_SKILL_SEED:-0}" != "1" ]]; then
     warn "npx not found; skipping birth skill seed"
   fi
 else
-  warn "Skipping birth skill seed (CLAWDBOT_SKIP_SKILL_SEED=1)"
+  warn "Skipping birth skill seed (GOBOT_SKIP_SKILL_SEED=1)"
 fi
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo
 echo -e "${GREEN}${BOLD}  ══════════════════════════════════════════${RESET}"
-echo -e "${GREEN}${BOLD}  🦞 ClawdBot installed successfully!${RESET}"
+echo -e "${GREEN}${BOLD}  🐹 GoBot installed successfully!${RESET}"
 echo -e "${GREEN}${BOLD}  ══════════════════════════════════════════${RESET}"
 echo
 echo -e "  ${BOLD}Get started:${RESET}"
 echo -e "  ${CYAN}source ${ENV_FILE}${RESET}          # load env vars"
-echo -e "  ${CYAN}clawdbot version${RESET}             # verify install"
-if "$INSTALL_DIR/bin/clawdbot" dna --help >/dev/null 2>&1; then
-echo -e "  ${CYAN}clawdbot dna show${RESET}           # inspect starter agent DNA"
+echo -e "  ${CYAN}gobot version${RESET}             # verify install"
+if "$INSTALL_DIR/bin/gobot" dna --help >/dev/null 2>&1; then
+echo -e "  ${CYAN}gobot dna show${RESET}           # inspect starter agent DNA"
 fi
-echo -e "  ${CYAN}clawdbot agent${RESET}               # start AI REPL (free via zkrouter)"
-echo -e "  ${CYAN}clawdbot ooda --sim${RESET}          # paper trading mode"
-echo -e "  ${CYAN}clawdbot skills birth --install${RESET} # reseed birth skills"
-echo -e "  ${CYAN}clawdbot solana trending${RESET}     # top Solana tokens"
+echo -e "  ${CYAN}gobot agent${RESET}               # start AI REPL (free via zkrouter)"
+echo -e "  ${CYAN}gobot ooda --sim${RESET}          # paper trading mode"
+echo -e "  ${CYAN}gobot skills birth --install${RESET} # reseed birth skills"
+echo -e "  ${CYAN}gobot solana trending${RESET}     # top Solana tokens"
 if [[ "$INSTALL_CORE_AI" == "1" ]]; then
 echo -e "  ${CYAN}${CORE_AI_MCP_CONFIG}${RESET}  # core-ai MCP config"
 else
-echo -e "  ${CYAN}CLAWDBOT_INSTALL_CORE_AI=1 ...${RESET} # optional core-ai MCP sidecar"
+echo -e "  ${CYAN}GOBOT_INSTALL_CORE_AI=1 ...${RESET} # optional core-ai MCP sidecar"
 fi
 echo
 echo -e "  ${BOLD}Edit your config:${RESET}  ${CYAN}nano ${ENV_FILE}${RESET}"
@@ -608,5 +608,5 @@ echo -e "  ${BOLD}Ecosystem hub:${RESET}    ${CYAN}${HUB_REPO}${RESET}"
 echo -e "  ${BOLD}Gateway:${RESET}          ${CYAN}https://zk.x402.wtf${RESET}"
 echo -e "  ${BOLD}Terminal:${RESET}         ${CYAN}${TERMINAL_URL}${RESET}"
 echo
-echo -e "  🦞 \$CLAWD :: Droids Lead The Way"
+echo -e "  🐹 \$GOBOT :: Droids Lead The Way"
 echo

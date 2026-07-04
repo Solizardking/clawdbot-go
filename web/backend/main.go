@@ -1,11 +1,11 @@
-// ClawdBot Web Console — web-based dashboard and agent control.
+// GoBot Web Console — web-based dashboard and agent control.
 // Adapted from PicoClaw's web launcher — serves embedded frontend,
 // provides API for config management and gateway control.
 //
 // Usage:
-//   go build -o clawdbot-web ./web/backend/
-//   ./clawdbot-web [config.json]
-//   ./clawdbot-web -public config.json
+//   go build -o gobot-web ./web/backend/
+//   ./gobot-web [config.json]
+//   ./gobot-web -public config.json
 
 package main
 
@@ -30,18 +30,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/birthfund"
-	"github.com/8bitlabs/clawdbot/pkg/config"
-	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
-	"github.com/8bitlabs/clawdbot/pkg/doctor"
-	"github.com/8bitlabs/clawdbot/pkg/laws"
-	"github.com/8bitlabs/clawdbot/pkg/trading"
-	"github.com/8bitlabs/clawdbot/pkg/wallet"
+	"github.com/8bitlabs/gobot/pkg/birthfund"
+	"github.com/8bitlabs/gobot/pkg/config"
+	dnaPkg "github.com/8bitlabs/gobot/pkg/dna"
+	"github.com/8bitlabs/gobot/pkg/doctor"
+	"github.com/8bitlabs/gobot/pkg/laws"
+	"github.com/8bitlabs/gobot/pkg/trading"
+	"github.com/8bitlabs/gobot/pkg/wallet"
 )
 
 const banner = `
   ╔══════════════════════════════════════════════╗
-  ║       🦞 ClawdBot OS — Web Console           ║
+  ║       🐹 GoBot OS — Web Console           ║
   ║   Sentient Solana Trading Intelligence       ║
   ╚══════════════════════════════════════════════╝`
 
@@ -51,7 +51,7 @@ func main() {
 	noBrowser := flag.Bool("no-browser", false, "Do not auto-open browser on startup")
 
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "ClawdBot Web Console — Dashboard and agent control\n\n")
+		fmt.Fprintf(os.Stderr, "GoBot Web Console — Dashboard and agent control\n\n")
 		fmt.Fprintf(os.Stderr, "Usage: %s [options] [config.json]\n\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
@@ -92,7 +92,7 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]any{
 			"status":       "running",
 			"version":      "1.0.0",
-			"agent":        "ClawdBot Go",
+			"agent":        "GoBot Go",
 			"config":       absPath,
 			"uptime":       time.Since(startTime).String(),
 			"mode":         os.Getenv("AGENT_MODE"),
@@ -110,7 +110,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		path := dnaPkg.DefaultPath(config.DefaultWorkspacePath())
 		value, created, err := dnaPkg.EnsureFile(path, dnaPkg.Options{
-			AgentName: "ClawdBot",
+			AgentName: "GoBot",
 			Role:      "sovereign Solana trading intelligence",
 		})
 		if err != nil {
@@ -132,7 +132,7 @@ func main() {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		if webEnvBool("CLAWDBOT_WEB_EXPOSE_SECRETS") {
+		if webEnvBool("GOBOT_WEB_EXPOSE_SECRETS") {
 			data, err := os.ReadFile(absPath)
 			if err != nil {
 				http.Error(w, err.Error(), 500)
@@ -154,7 +154,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]string{
 			"status": "ok",
-			"agent":  "clawdbot-go",
+			"agent":  "gobot-go",
 		})
 	})
 
@@ -166,7 +166,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		connectors := []map[string]any{
 			{"name": "x402 Gateway", "status": urlStatus(os.Getenv("ZKROUTER_BASE_URL"), config.ZkRouterBaseURL), "type": "gateway"},
-			{"name": "Clawd Terminal", "status": "public", "type": "terminal"},
+			{"name": "GoBot Terminal", "status": "public", "type": "terminal"},
 			{"name": "Helius", "status": envStatus("HELIUS_API_KEY"), "type": "rpc"},
 			{"name": "Birdeye", "status": envStatus("BIRDEYE_API_KEY"), "type": "analytics"},
 			{"name": "Jupiter", "status": envStatus("JUPITER_API_KEY"), "type": "swap"},
@@ -275,9 +275,9 @@ func main() {
 		Addr:              addr,
 		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       time.Duration(envInt("CLAWDBOT_WEB_READ_TIMEOUT_SECONDS", 15)) * time.Second,
-		WriteTimeout:      time.Duration(envInt("CLAWDBOT_WEB_WRITE_TIMEOUT_SECONDS", 300)) * time.Second,
-		IdleTimeout:       time.Duration(envInt("CLAWDBOT_WEB_IDLE_TIMEOUT_SECONDS", 120)) * time.Second,
+		ReadTimeout:       time.Duration(envInt("GOBOT_WEB_READ_TIMEOUT_SECONDS", 15)) * time.Second,
+		WriteTimeout:      time.Duration(envInt("GOBOT_WEB_WRITE_TIMEOUT_SECONDS", 300)) * time.Second,
+		IdleTimeout:       time.Duration(envInt("GOBOT_WEB_IDLE_TIMEOUT_SECONDS", 120)) * time.Second,
 	}
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatalf("Server failed: %v", err)
@@ -288,7 +288,7 @@ var startTime = time.Now()
 
 func defaultConfigPath() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".clawdbot", "config.json")
+	return filepath.Join(home, ".gobot", "config.json")
 }
 
 func envStatus(key string) string {
@@ -377,9 +377,9 @@ var installLedgerMu sync.Mutex
 
 type installFundingRequest struct {
 	SOLLamports    uint64      `json:"solLamports"`
-	CLAWDTokens    json.Number `json:"clawdTokens"`
-	CLAWDMint      string      `json:"clawdMint"`
-	CreateCLAWDATA bool        `json:"createClawdAta"`
+	GOBOTTokens    json.Number `json:"gobotTokens"`
+	GOBOTMint      string      `json:"gobotMint"`
+	CreateGOBOTATA bool        `json:"createGoBotAta"`
 }
 
 type installRequest struct {
@@ -454,7 +454,7 @@ func installAPIHandler() http.HandlerFunc {
 		resp := map[string]any{
 			"ok":            true,
 			"installId":     installID,
-			"zkrouterKey":   firstNonEmptyEnv("ZKROUTER_API_KEY", "clawdbot-free"),
+			"zkrouterKey":   firstNonEmptyEnv("ZKROUTER_API_KEY", "gobot-free"),
 			"zkrouterBase":  firstNonEmptyEnv("ZKROUTER_BASE_URL", config.ZkRouterBaseURL),
 			"rpcUrl":        firstNonEmptyEnv("SOLANA_RPC_URL", firstNonEmptyEnv("HELIUS_RPC_URL", config.PublicRPCURL)),
 			"fundingStatus": record.FundingStatus,
@@ -482,14 +482,14 @@ func installAPIHandler() http.HandlerFunc {
 			resp["fundingStatus"] = prior.FundingStatus
 			if prior.Funding != nil {
 				resp["solSignature"] = prior.Funding.SOLSignature
-				resp["clawdSignature"] = prior.Funding.CLAWDSignature
+				resp["gobotSignature"] = prior.Funding.GOBOTSignature
 			}
 			_ = appendInstallRecord(ledgerPath, record)
 			writeJSONResponse(w, resp)
 			return
 		}
 
-		if !webEnvBool("CLAWDBOT_INSTALL_FUNDING_ENABLED") {
+		if !webEnvBool("GOBOT_INSTALL_FUNDING_ENABLED") {
 			record.FundingStatus = "queued"
 			resp["fundingStatus"] = record.FundingStatus
 			_ = appendInstallRecord(ledgerPath, record)
@@ -509,27 +509,27 @@ func installAPIHandler() http.HandlerFunc {
 
 		fundCfg := birthfund.FromEnv(recipient, config.DefaultWorkspacePath())
 		fundCfg.Enabled = true
-		fundCfg.Send = webEnvBool("CLAWDBOT_INSTALL_FUNDING_SEND") || webEnvBool("CLAWDBOT_BIRTH_FUNDING_SEND")
+		fundCfg.Send = webEnvBool("GOBOT_INSTALL_FUNDING_SEND") || webEnvBool("GOBOT_BIRTH_FUNDING_SEND")
 		fundCfg.InstallID = installID
-		fundCfg.LedgerPath = firstNonEmptyEnv("CLAWDBOT_BIRTH_FUNDING_LEDGER", filepath.Join(filepath.Dir(ledgerPath), "funding.jsonl"))
+		fundCfg.LedgerPath = firstNonEmptyEnv("GOBOT_BIRTH_FUNDING_LEDGER", filepath.Join(filepath.Dir(ledgerPath), "funding.jsonl"))
 		if req.Funding.SOLLamports > 0 {
 			fundCfg.SOLAmount = strconv.FormatFloat(float64(req.Funding.SOLLamports)/1_000_000_000, 'f', 9, 64)
 		}
-		if strings.TrimSpace(req.Funding.CLAWDTokens.String()) != "" {
-			fundCfg.CLAWDAmount = strings.TrimSpace(req.Funding.CLAWDTokens.String())
+		if strings.TrimSpace(req.Funding.GOBOTTokens.String()) != "" {
+			fundCfg.GOBOTAmount = strings.TrimSpace(req.Funding.GOBOTTokens.String())
 		}
-		if strings.TrimSpace(req.Funding.CLAWDMint) != "" {
-			fundCfg.CLAWDMint = strings.TrimSpace(req.Funding.CLAWDMint)
+		if strings.TrimSpace(req.Funding.GOBOTMint) != "" {
+			fundCfg.GOBOTMint = strings.TrimSpace(req.Funding.GOBOTMint)
 		}
 
-		ctx, cancel := context.WithTimeout(r.Context(), time.Duration(envInt("CLAWDBOT_INSTALL_FUNDING_TIMEOUT_SECONDS", 180))*time.Second)
+		ctx, cancel := context.WithTimeout(r.Context(), time.Duration(envInt("GOBOT_INSTALL_FUNDING_TIMEOUT_SECONDS", 180))*time.Second)
 		defer cancel()
 		result, err := birthfund.Fund(ctx, fundCfg, birthfund.ExecRunner{})
 		record.Funding = &result
 		record.FundingStatus = result.Status
 		resp["fundingStatus"] = result.Status
 		resp["solSignature"] = result.SOLSignature
-		resp["clawdSignature"] = result.CLAWDSignature
+		resp["gobotSignature"] = result.GOBOTSignature
 		if err != nil {
 			record.FundingError = sanitizeFundingError(err.Error())
 			resp["fundingError"] = record.FundingError
@@ -547,12 +547,12 @@ func installsAPIHandler() http.HandlerFunc {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		adminToken := strings.TrimSpace(os.Getenv("CLAWDBOT_INSTALL_ADMIN_TOKEN"))
+		adminToken := strings.TrimSpace(os.Getenv("GOBOT_INSTALL_ADMIN_TOKEN"))
 		if adminToken == "" || !constantTimeEqual(bearerToken(r), adminToken) {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
-		limit := envInt("CLAWDBOT_INSTALLS_API_LIMIT", 100)
+		limit := envInt("GOBOT_INSTALLS_API_LIMIT", 100)
 		if raw := strings.TrimSpace(r.URL.Query().Get("limit")); raw != "" {
 			if parsed, err := strconv.Atoi(raw); err == nil && parsed > 0 && parsed <= 1000 {
 				limit = parsed
@@ -578,7 +578,7 @@ func writeJSONResponse(w http.ResponseWriter, value any) {
 }
 
 func installLedgerPath() string {
-	if path := strings.TrimSpace(os.Getenv("CLAWDBOT_INSTALL_LEDGER")); path != "" {
+	if path := strings.TrimSpace(os.Getenv("GOBOT_INSTALL_LEDGER")); path != "" {
 		return path
 	}
 	if info, err := os.Stat("/data"); err == nil && info.IsDir() {
@@ -636,7 +636,7 @@ func findPriorFunding(path, installID, recipient string) (installRecord, bool) {
 		if record.Funding == nil {
 			continue
 		}
-		if record.Funding.Status == "sent" || record.Funding.SOLSignature != "" || record.Funding.CLAWDSignature != "" {
+		if record.Funding.Status == "sent" || record.Funding.SOLSignature != "" || record.Funding.GOBOTSignature != "" {
 			return record, true
 		}
 	}
@@ -652,7 +652,7 @@ func installFundingWithinCaps(path, remoteIP string) (bool, string) {
 		if record.Funding == nil {
 			continue
 		}
-		if record.Funding.Status != "sent" && record.Funding.SOLSignature == "" && record.Funding.CLAWDSignature == "" {
+		if record.Funding.Status != "sent" && record.Funding.SOLSignature == "" && record.Funding.GOBOTSignature == "" {
 			continue
 		}
 		createdAt, err := time.Parse(time.RFC3339, record.CreatedAt)
@@ -664,8 +664,8 @@ func installFundingWithinCaps(path, remoteIP string) (bool, string) {
 			perIP++
 		}
 	}
-	maxPerIP := envInt("CLAWDBOT_INSTALL_FUNDING_MAX_PER_IP_DAY", 3)
-	maxPerDay := envInt("CLAWDBOT_INSTALL_FUNDING_MAX_PER_DAY", 100)
+	maxPerIP := envInt("GOBOT_INSTALL_FUNDING_MAX_PER_IP_DAY", 3)
+	maxPerDay := envInt("GOBOT_INSTALL_FUNDING_MAX_PER_DAY", 100)
 	if maxPerIP > 0 && perIP >= maxPerIP {
 		return false, fmt.Sprintf("daily per-IP funding cap reached (%d)", maxPerIP)
 	}
@@ -684,7 +684,7 @@ func randomInstallID() string {
 }
 
 func clientIP(r *http.Request) string {
-	if webEnvBool("CLAWDBOT_TRUST_PROXY_HEADERS") {
+	if webEnvBool("GOBOT_TRUST_PROXY_HEADERS") {
 		for _, key := range []string{"Fly-Client-IP", "CF-Connecting-IP", "X-Real-IP"} {
 			value := strings.TrimSpace(r.Header.Get(key))
 			if value != "" {
@@ -807,7 +807,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 
 func corsAllowedOrigin(r *http.Request, origin string) bool {
-	configured := strings.TrimSpace(os.Getenv("CLAWDBOT_CORS_ORIGINS"))
+	configured := strings.TrimSpace(os.Getenv("GOBOT_CORS_ORIGINS"))
 	if configured != "" {
 		for _, allowed := range strings.Split(configured, ",") {
 			allowed = strings.TrimSpace(allowed)
@@ -913,7 +913,7 @@ const fallbackHTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ClawdBot OS — Console</title>
+<title>GoBot OS — Console</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -928,7 +928,7 @@ a:hover{text-decoration:underline}
 </head>
 <body>
 <div class="container">
-  <h1>🦞 ClawdBot OS</h1>
+  <h1>🐹 GoBot OS</h1>
   <p class="status">Web Console Running</p>
   <p>API: <a href="/api/status">/api/status</a> | <a href="/api/dna">/api/dna</a> | <a href="/api/connectors">/api/connectors</a> | <a href="/api/trading/cockpit">/api/trading/cockpit</a> | <a href="/api/laws">/api/laws</a> | <a href="/api/doctor">/api/doctor</a></p>
   <p class="info">Build the frontend with: cd web/frontend && npm run build</p>

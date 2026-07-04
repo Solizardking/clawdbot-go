@@ -1,4 +1,4 @@
-name = "clawdbot-install"
+name = "gobot-install"
 main = "cloudflare/install-worker.js"
 compatibility_date = "2025-01-01"
 workers_dev = true
@@ -18,9 +18,9 @@ pattern = "install.x402.wtf"
 custom_domain = true
 
 [[routes]]
-pattern = "x402.wtf/clawdbot*"
+pattern = "x402.wtf/gobot*"
 zone_name = "x402.wtf"
 
 [[routes]]
-pattern = "zk.x402.wtf/clawdbot*"
+pattern = "zk.x402.wtf/gobot*"
 zone_name = "x402.wtf"

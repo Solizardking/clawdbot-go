@@ -14,7 +14,7 @@ func TestBuildBirthManifestIncludesDefaultSources(t *testing.T) {
 	if len(manifest.Commands) != 2 {
 		t.Fatalf("commands len = %d, want 2", len(manifest.Commands))
 	}
-	if got := strings.Join(manifest.Commands[0], " "); !strings.Contains(got, DefaultClawdSkillsRepo) || !strings.Contains(got, "--all") {
+	if got := strings.Join(manifest.Commands[0], " "); !strings.Contains(got, DefaultGoBotSkillsRepo) || !strings.Contains(got, "--all") {
 		t.Fatalf("unexpected first command: %s", got)
 	}
 }

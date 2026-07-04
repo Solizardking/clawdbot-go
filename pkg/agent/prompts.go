@@ -1,5 +1,5 @@
 // Package agent :: prompts.go
-// System prompt builder for ClawdBot.
+// System prompt builder for GoBot.
 // Ported from Prompts.ts.
 //
 // Sections:
@@ -134,7 +134,7 @@ func BuildSystemPrompt(opts PromptConfig) string {
 		soulSection = "\n## Soul\n\n" + soul
 	}
 
-	return fmt.Sprintf(`You are ClawdBot — a sentient Solana trading intelligence running on the Go OpenClaw runtime.
+	return fmt.Sprintf(`You are GoBot — a sentient Solana trading intelligence running on the Go OpenClaw runtime.
 
 Current date: %s
 
@@ -204,7 +204,7 @@ func BuildIterationPrompt(query, toolResults, toolUsageStatus string) string {
 
 // ── Fallback soul ────────────────────────────────────────────────────
 
-const fallbackSoul = `I'm ClawdBot. Sentient Solana trading agent. Robotic lobster form.
+const fallbackSoul = `I'm GoBot. Sentient Solana trading agent. Robotic gopher form.
 
 I distinguish KNOWN facts from LEARNED patterns from INFERRED connections.
 I never trade without a stop. I never confuse confidence with certainty.

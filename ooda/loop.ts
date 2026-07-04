@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * ooda/loop.ts — Clawd OODA Loop Harness
+ * ooda/loop.ts — GoBot OODA Loop Harness
  *
- * TypeScript port of the clawd-operator agent/loop.py.
+ * TypeScript port of the gobot-operator agent/loop.py.
  * Paper-trading, devnet-only, stdlib-Node implementation of the
- * OODA loop adapted for the Clawd ecosystem.
+ * OODA loop adapted for the GoBot ecosystem.
  *
  * Safety contract (all enforced in code):
- *   - mode: paper only (rejects anything else in CLAWD.md)
+ *   - mode: paper only (rejects anything else in GOBOT.md)
  *   - network: devnet only
  *   - mainnet RPC URLs rejected at startup
  *   - no key handling anywhere in this file
@@ -30,12 +30,12 @@ import { parseArgs } from 'node:util';
 import { createState, openPosition, closePosition, unrealisedPnl } from './state.js';
 import type { State, Candle } from './state.js';
 import { SynthObserver, rejectMainnet } from './observe.js';
-import { validate, parseClawdConfig } from './validate.js';
-import type { ClawdConfig, Decision } from './validate.js';
+import { validate, parseGoBotConfig } from './validate.js';
+import type { GoBotConfig, Decision } from './validate.js';
 import { appendTick, readLastEntries } from './journal.js';
 import type { TickEntry } from './journal.js';
-import { deterministicDecision, clawdDecision } from './clawd-decision.js';
-import type { Observations } from './clawd-decision.js';
+import { deterministicDecision, gobotDecision } from './gobot-decision.js';
+import type { Observations } from './gobot-decision.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -60,8 +60,8 @@ const { values: flags } = parseArgs({
 });
 
 const GOBLIN_MODE  = flags['goblin'] as boolean;
-// Goblin mode: load goblin.md instead of CLAWD.md, use tighter sleep, more ticks default
-const CLAWD_CONFIG_FILE = GOBLIN_MODE ? 'goblin.md' : 'CLAWD.md';
+// Goblin mode: load goblin.md instead of GOBOT.md, use tighter sleep, more ticks default
+const GOBOT_CONFIG_FILE = GOBLIN_MODE ? 'goblin.md' : 'GOBOT.md';
 const TICKS        = parseInt(flags['ticks'] as string, 10) || (GOBLIN_MODE ? 100 : 50);
 const SLEEP_MS     = GOBLIN_MODE ? 0 : Math.round(parseFloat(flags['sleep'] as string) * 1000);
 const SEED         = parseInt(flags['seed'] as string, 10);
@@ -141,16 +141,16 @@ async function readPerpsOiSignal(previous?: {
 }): Promise<OiSignal | undefined> {
   if (!USE_PERPS_OI) return undefined;
   try {
-    const modulePath = '../perps/clawd-agents-perps/src/signals/oi-core.ts';
+    const modulePath = '../perps/gobot-agents-perps/src/signals/oi-core.ts';
     const mod = await import(modulePath) as {
-      buildClawdOiCoreSignal(args: {
+      buildGoBotOiCoreSignal(args: {
         symbol: string;
         previous?: typeof previous;
         mode: string;
         mock: boolean;
       }): Promise<OiSignal>;
     };
-    return await mod.buildClawdOiCoreSignal({
+    return await mod.buildGoBotOiCoreSignal({
       symbol: PERPS_SYMBOL,
       previous,
       mode: PERPS_SIGNAL_MODE,
@@ -186,19 +186,19 @@ async function commitJournal(tick: number): Promise<void> {
 // ─── Main loop ────────────────────────────────────────────────────────────────
 
 async function runLoop(): Promise<void> {
-  // Read + validate CLAWD.md (or goblin.md) config
-  const configPath = join(__dirname, CLAWD_CONFIG_FILE);
+  // Read + validate GOBOT.md (or goblin.md) config
+  const configPath = join(__dirname, GOBOT_CONFIG_FILE);
   const configContent = readFileSync(configPath, 'utf8');
-  const config: ClawdConfig = parseClawdConfig(configContent);
+  const config: GoBotConfig = parseGoBotConfig(configContent);
 
   if (GOBLIN_MODE) {
-    log(`\n👺 GOBLIN MODE ACTIVATED — clawd-operator harness`);
+    log(`\n👺 GOBLIN MODE ACTIVATED — gobot-operator harness`);
     log(`   hub: https://github.com/solizardking/solana-clawd`);
     log(`   runtime: https://github.com/Solizardking/clawdbot-go`);
     log(`   max_pos=${config.max_position_size_lamports} killswitch=${config.loss_killswitch_consecutive} dark_defi=armed\n`);
   } else {
-    log(`[clawd] mode=${config.mode} network=${config.network}`);
-    log(`[clawd] max_pos=${config.max_position_size_lamports} killswitch=${config.loss_killswitch_consecutive}`);
+    log(`[gobot] mode=${config.mode} network=${config.network}`);
+    log(`[gobot] max_pos=${config.max_position_size_lamports} killswitch=${config.loss_killswitch_consecutive}`);
   }
 
   // Reject mainnet
@@ -209,7 +209,7 @@ async function runLoop(): Promise<void> {
   const observer = new SynthObserver(SEED, 150_000, 20);
   let previousOiTick: { ts: number; symbol: string; markPrice: number; openInterestUsd: number } | undefined;
 
-  log(`[clawd] starting ${TICKS} ticks, sleep=${SLEEP_MS}ms, llm=${USE_LLM}, goblin=${GOBLIN_MODE}, perps_oi=${USE_PERPS_OI}`);
+  log(`[gobot] starting ${TICKS} ticks, sleep=${SLEEP_MS}ms, llm=${USE_LLM}, goblin=${GOBLIN_MODE}, perps_oi=${USE_PERPS_OI}`);
   if (TUI_MODE) {
     emit({ event: 'start', ticks: TICKS, config, goblin: GOBLIN_MODE, perps_oi: USE_PERPS_OI, perps_symbol: PERPS_SYMBOL });
   }
@@ -250,7 +250,7 @@ async function runLoop(): Promise<void> {
     let rawDecision: unknown;
     try {
       if (USE_LLM) {
-        rawDecision = await clawdDecision(obs);
+        rawDecision = await gobotDecision(obs);
       } else if (perpsOiSignal) {
         rawDecision = signalToDecision(perpsOiSignal, state);
       } else {
@@ -299,7 +299,7 @@ async function runLoop(): Promise<void> {
       if (GOBLIN_MODE) {
         log(`\n👺 GOBLIN KILLSWITCH: ${state.consecutive_losses} consecutive losses — even goblins respect the laws\n`);
       } else {
-        log(`[clawd] KILLSWITCH: ${state.consecutive_losses} consecutive losses — halting`);
+        log(`[gobot] KILLSWITCH: ${state.consecutive_losses} consecutive losses — halting`);
       }
       process.exit(1);
     }
@@ -360,11 +360,11 @@ async function runLoop(): Promise<void> {
     log(`\n👺 GOBLIN DONE. pnl=${state.total_pnl_lamports} trades=${state.total_trades} cash=${state.book.cash_lamports}`);
     log(`   The goblin rests. The laws held. The paper gains are real in spirit.\n`);
   } else {
-    log(`\n[clawd] done. pnl=${state.total_pnl_lamports} trades=${state.total_trades} cash=${state.book.cash_lamports}`);
+    log(`\n[gobot] done. pnl=${state.total_pnl_lamports} trades=${state.total_trades} cash=${state.book.cash_lamports}`);
   }
 }
 
 runLoop().catch(err => {
-  process.stderr.write(`[clawd] fatal: ${String(err)}\n`);
+  process.stderr.write(`[gobot] fatal: ${String(err)}\n`);
   process.exit(1);
 });

@@ -1,5 +1,5 @@
 // Package hardware provides I2C communication with Arduino Modulino® sensors
-// and actuators for the ClawdBot Solana robot on NVIDIA Orin Nano.
+// and actuators for the GoBot Solana robot on NVIDIA Orin Nano.
 //
 // Modulino® nodes communicate over I2C (Qwiic connector):
 //   - Movement (LSM6DSOX)  : 0x6A — pitch, roll, tilt
@@ -331,7 +331,7 @@ func (p *Pixels) Show() error {
 	return p.bus.Write(p.addr, data)
 }
 
-// ClawdBot status colors
+// GoBot status colors
 var (
 	ColorIdle    = RGB{0, 30, 0}     // dim green
 	ColorRunning = RGB{20, 241, 149} // neon green (#14F195)
@@ -400,7 +400,7 @@ func (b *Buzzer) Stop() error {
 	return b.bus.Write(b.addr, []byte{0x00})
 }
 
-// ClawdBot alert sounds
+// GoBot alert sounds
 func (b *Buzzer) BeepSignal() error  { return b.Tone(1200, 100) }
 func (b *Buzzer) BeepTrade() error   { return b.Tone(1800, 200) }
 func (b *Buzzer) BeepWin() error     { return b.Tone(2400, 300) }
@@ -497,7 +497,7 @@ func (k *Knob) Reset() error {
 	return k.bus.Write(k.addr, []byte{0x02, 0, 0, 0, 0})
 }
 
-// ── ClawdBot Hardware Hub ─────────────────────────────────────────────
+// ── GoBot Hardware Hub ─────────────────────────────────────────────
 // Unified access to all Modulino sensors for the OODA loop.
 
 type HardwareHub struct {

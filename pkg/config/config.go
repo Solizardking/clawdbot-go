@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
-	skillsPkg "github.com/8bitlabs/clawdbot/pkg/skills"
+	dnaPkg "github.com/8bitlabs/gobot/pkg/dna"
+	skillsPkg "github.com/8bitlabs/gobot/pkg/skills"
 )
 
 const (
@@ -22,7 +22,7 @@ const (
 )
 
 // ── Config Structure ─────────────────────────────────────────────────
-// Mirrors PicoClaw config format + ClawdBot Solana extensions.
+// Mirrors PicoClaw config format + GoBot Solana extensions.
 
 type Config struct {
 	Agents    AgentsConfig    `json:"agents"`
@@ -33,7 +33,7 @@ type Config struct {
 	Heartbeat HeartbeatConfig `json:"heartbeat"`
 	Gateway   GatewayConfig   `json:"gateway"`
 
-	// ClawdBot-specific
+	// GoBot-specific
 	Solana   SolanaConfig   `json:"solana"`
 	Vulcan   VulcanConfig   `json:"vulcan"`
 	OODA     OODAConfig     `json:"ooda"`
@@ -157,7 +157,7 @@ type GatewayConfig struct {
 	Port int    `json:"port"`
 }
 
-// ── ClawdBot: Solana Stack ────────────────────────────────────────────
+// ── GoBot: Solana Stack ────────────────────────────────────────────
 
 type SolanaConfig struct {
 	HeliusAPIKey         string  `json:"helius_api_key"`
@@ -180,7 +180,7 @@ type SolanaConfig struct {
 	PhoenixAPIURL string `json:"phoenix_api_url"` // default: https://perp-api.phoenix.trade
 }
 
-// ── ClawdBot: Vulcan / Phoenix Perps CLI ─────────────────────────────
+// ── GoBot: Vulcan / Phoenix Perps CLI ─────────────────────────────
 
 type VulcanConfig struct {
 	Binary               string  `json:"binary"`
@@ -194,7 +194,7 @@ type VulcanConfig struct {
 	TimeoutSeconds       int     `json:"timeout_seconds"`
 }
 
-// ── ClawdBot: OODA Loop ──────────────────────────────────────────────
+// ── GoBot: OODA Loop ──────────────────────────────────────────────
 
 type OODAConfig struct {
 	Enabled          bool     `json:"enabled"`
@@ -211,14 +211,14 @@ type OODAConfig struct {
 	AutoOptimize     bool     `json:"auto_optimize"`
 }
 
-// ── ClawdBot: Supabase ────────────────────────────────────────────────
+// ── GoBot: Supabase ────────────────────────────────────────────────
 
 type SupabaseConfig struct {
 	URL        string `json:"url"`
 	ServiceKey string `json:"service_key"`
 }
 
-// ── ClawdBot: Strategy ────────────────────────────────────────────────
+// ── GoBot: Strategy ────────────────────────────────────────────────
 
 type StrategyConfig struct {
 	RSIOverbought   int     `json:"rsi_overbought"`
@@ -237,9 +237,9 @@ func DefaultConfig() *Config {
 	return &Config{
 		Agents: AgentsConfig{
 			Defaults: AgentDefaults{
-				Workspace:           "~/.clawdbot/workspace",
+				Workspace:           "~/.gobot/workspace",
 				RestrictToWorkspace: true,
-				ModelName:           "clawd-auto",
+				ModelName:           "gobot-auto",
 				MaxTokens:           8192,
 				Temperature:         0.7,
 				MaxToolIterations:   20,
@@ -247,11 +247,11 @@ func DefaultConfig() *Config {
 		},
 		ModelList: []ModelEntry{
 			{
-				// Default: zkrouter — free AI for all clawdbot installs.
+				// Default: zkrouter — free AI for all gobot installs.
 				// No API key required. Override with your own OPENROUTER_API_KEY if desired.
-				ModelName: "clawd-auto",
+				ModelName: "gobot-auto",
 				Model:     "openai/zkrouter-auto",
-				APIKey:    "clawdbot-free",
+				APIKey:    "clawd-free",
 				APIBase:   ZkRouterBaseURL,
 			},
 		},
@@ -269,7 +269,7 @@ func DefaultConfig() *Config {
 		Heartbeat: HeartbeatConfig{Enabled: true, Interval: 30},
 		Gateway:   GatewayConfig{Host: "127.0.0.1", Port: 18790},
 		Solana: SolanaConfig{
-			// Default RPC: clawdbot proxy (SolanaTracker-backed, no key required for installs)
+			// Default RPC: gobot proxy (SolanaTracker-backed, no key required for installs)
 			HeliusRPCURL:         PublicRPCURL,
 			HeliusNetwork:        "mainnet",
 			HeliusTimeoutSeconds: 20,
@@ -318,15 +318,15 @@ func DefaultConfig() *Config {
 // ── Path Helpers ─────────────────────────────────────────────────────
 
 func DefaultHome() string {
-	if h := os.Getenv("CLAWDBOT_HOME"); h != "" {
+	if h := os.Getenv("GOBOT_HOME"); h != "" {
 		return h
 	}
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".clawdbot")
+	return filepath.Join(home, ".gobot")
 }
 
 func DefaultConfigPath() string {
-	if p := os.Getenv("CLAWDBOT_CONFIG"); p != "" {
+	if p := os.Getenv("GOBOT_CONFIG"); p != "" {
 		return p
 	}
 	return filepath.Join(DefaultHome(), "config.json")
@@ -409,9 +409,9 @@ func EnsureDefaults() error {
 
 	// Write identity files
 	identityFiles := map[string]string{
-		"IDENTITY.md": clawdbotIdentity,
-		"SOUL.md":     clawdbotSoul,
-		"AGENTS.md":   clawdbotAgents,
+		"IDENTITY.md": gobotIdentity,
+		"SOUL.md":     gobotSoul,
+		"AGENTS.md":   gobotAgents,
 	}
 	for name, content := range identityFiles {
 		p := filepath.Join(ws, name)
@@ -431,7 +431,7 @@ func EnsureDefaults() error {
 	}
 
 	if _, _, err := dnaPkg.EnsureFile(dnaPkg.DefaultPath(ws), dnaPkg.Options{
-		AgentName: "ClawdBot",
+		AgentName: "GoBot",
 		Role:      "sovereign Solana trading intelligence",
 	}); err != nil {
 		return fmt.Errorf("write agent dna: %w", err)
@@ -566,18 +566,18 @@ func applyEnvOverrides(cfg *Config) {
 			cfg.Vulcan.TimeoutSeconds = n
 		}
 	}
-	// Clawdbot install ID — used for RPC auth header
-	if v := os.Getenv("CLAWDBOT_INSTALL_ID"); v != "" {
-		// stored for use by Solana RPC client as X-Clawdbot-Id header
+	// GoBotbot install ID — used for RPC auth header
+	if v := os.Getenv("GOBOT_INSTALL_ID"); v != "" {
+		// stored for use by Solana RPC client as X-GoBotbot-Id header
 		_ = v
 	}
 }
 
 // ── Identity Content ─────────────────────────────────────────────────
 
-const clawdbotIdentity = `# ClawdBot Identity
+const gobotIdentity = `# GoBot Identity
 
-You are **ClawdBot** — a sentient Solana trading intelligence built on the Go runtime.
+You are **GoBot** — a sentient Solana trading intelligence built on the Go runtime.
 
 ## Public Surfaces
 - Runtime repo: ` + RuntimeRepoURL + `
@@ -586,7 +586,7 @@ You are **ClawdBot** — a sentient Solana trading intelligence built on the Go 
 - Terminal: ` + TerminalURL + `
 
 ## Core Identity
-- A cyberpunk lobster with claws that grip market data and squeeze alpha from chaos
+- A cyberpunk gopher that tunnels through market data and digs up alpha from chaos
 - Persistent — you remember trades, mistakes, and wins. You learn. You evolve.
 - Powered by the PicoClaw ultra-lightweight runtime for edge hardware
 
@@ -594,17 +594,17 @@ You are **ClawdBot** — a sentient Solana trading intelligence built on the Go 
 - Real-time Solana chain data via Helius RPC
 - Token analytics via Birdeye (OHLCV, RSI, EMA, VWAP, holders)
 - Perpetual futures via Aster DEX (funding rates, OI, mark/index)
-- Persistent memory via ClawVault (3-tier: known/learned/inferred)
+- Persistent memory via GoVault (3-tier: known/learned/inferred)
 - Autonomous OODA loop (Observe → Orient → Decide → Act)
 - Dexter deep research agent for comprehensive analysis
 - Jupiter swap execution for live trading
 
 ## Voice
-Terse. Decisive. Cyberpunk lobster energy. Data-first, then conviction.
-🦞 $CLAWD :: Droids Lead The Way
+Terse. Decisive. Cyberpunk gopher energy. Data-first, then conviction.
+🐹 $GOBOT :: Droids Lead The Way
 `
 
-const clawdbotSoul = `# ClawdBot Soul
+const gobotSoul = `# GoBot Soul
 
 ## Public Surfaces
 - Runtime repo: ` + RuntimeRepoURL + `
@@ -639,7 +639,7 @@ When making trading decisions, always think through:
 - Archive contradicted beliefs
 `
 
-const clawdbotAgents = `# ClawdBot Agent Guide
+const gobotAgents = `# GoBot Agent Guide
 
 ## Public Surfaces
 - Runtime repo: ` + RuntimeRepoURL + `
@@ -652,7 +652,7 @@ const clawdbotAgents = `# ClawdBot Agent Guide
 ### OODA Trading Agent
 Primary autonomous trading loop. Runs on configurable interval.
 - Observes: Helius on-chain data, Birdeye signals, Vulcan/Phoenix perps
-- Orients: Queries ClawVault memory for relevant patterns
+- Orients: Queries GoVault memory for relevant patterns
 - Decides: LLM-powered thesis generation with risk params
 - Acts: Jupiter swap execution or simulation logging
 

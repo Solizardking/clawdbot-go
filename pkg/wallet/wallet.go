@@ -1,4 +1,4 @@
-// Package wallet provides local Solana keypair helpers for ClawdBot agents.
+// Package wallet provides local Solana keypair helpers for GoBot agents.
 package wallet
 
 import (

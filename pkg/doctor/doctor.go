@@ -1,4 +1,4 @@
-// Package doctor provides local runtime diagnostics for ClawdBot.
+// Package doctor provides local runtime diagnostics for GoBot.
 package doctor
 
 import (
@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/config"
-	dnaPkg "github.com/8bitlabs/clawdbot/pkg/dna"
-	"github.com/8bitlabs/clawdbot/pkg/laws"
-	"github.com/8bitlabs/clawdbot/pkg/trading"
+	"github.com/8bitlabs/gobot/pkg/config"
+	dnaPkg "github.com/8bitlabs/gobot/pkg/dna"
+	"github.com/8bitlabs/gobot/pkg/laws"
+	"github.com/8bitlabs/gobot/pkg/trading"
 )
 
 type Status string
@@ -83,7 +83,7 @@ func Run(options Options) Report {
 
 func Format(report Report) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "ClawdBot doctor report (%s)\n", report.GeneratedAt)
+	fmt.Fprintf(&b, "GoBot doctor report (%s)\n", report.GeneratedAt)
 	if report.OK {
 		b.WriteString("overall: pass\n")
 	} else {
@@ -136,7 +136,7 @@ func workspaceCheck(path string) Check {
 	}
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
-			return Check{ID: "workspace", Label: "Workspace", Status: StatusWarn, Message: "workspace missing; run `clawdbot onboard` to create it", Details: map[string]any{"path": path}}
+			return Check{ID: "workspace", Label: "Workspace", Status: StatusWarn, Message: "workspace missing; run `gobot onboard` to create it", Details: map[string]any{"path": path}}
 		}
 		return Check{ID: "workspace", Label: "Workspace", Status: StatusFail, Message: err.Error(), Details: map[string]any{"path": path}}
 	}
@@ -151,7 +151,7 @@ func dnaCheck(workspacePath string) Check {
 	value, err := dnaPkg.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return Check{ID: "agent.dna", Label: "Agent DNA", Status: StatusWarn, Message: "agent DNA missing; run `clawdbot dna generate`", Details: map[string]any{"path": path}}
+			return Check{ID: "agent.dna", Label: "Agent DNA", Status: StatusWarn, Message: "agent DNA missing; run `gobot dna generate`", Details: map[string]any{"path": path}}
 		}
 		return Check{ID: "agent.dna", Label: "Agent DNA", Status: StatusFail, Message: err.Error(), Details: map[string]any{"path": path}}
 	}

@@ -1,4 +1,4 @@
-// Package skills provides skill discovery and installation for ClawdBot.
+// Package skills provides skill discovery and installation for GoBot.
 // Adapted from PicoClaw — registry-based skill search and install.
 package skills
 
@@ -97,7 +97,7 @@ func NewRegistryManager(cfg RegistryConfig) *RegistryManager {
 }
 
 func (rm *RegistryManager) Search(ctx context.Context, query string) ([]Skill, error) {
-	// Placeholder: in production, search ClawdBot skill registry
+	// Placeholder: in production, search GoBot skill registry
 	return nil, nil
 }
 

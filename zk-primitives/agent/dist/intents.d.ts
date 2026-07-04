@@ -4,7 +4,7 @@
  * Maps a free-form text input (e.g. "attest this model with hash 0xab12…")
  * to one of the agent's typed methods. Used by:
  *   - the `zk-shark-agent` CLI (`zk-shark-agent ask "..."`)
- *   - the Clawd REPL bridge (`clawd-code code "use the zk shark agent to attest..."`)
+ *   - the Go Bot REPL bridge (`gobot-code code "use the zk shark agent to attest..."`)
  *   - any external LLM that wants to drive the agent
  *
  * The router is deliberately deterministic and rule-based — no model

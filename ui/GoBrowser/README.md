@@ -1,4 +1,4 @@
-# ClawdBrowser
+# GoBrowser
 
 A Solana-trading-aware Browser Use chat UI. Built on Next.js 15, the
 [Browser Use Cloud SDK](https://docs.browser-use.com/cloud/introduction),

@@ -116,7 +116,7 @@ export default function App() {
   const [dnaInfo, setDNAInfo] = useState<DNAInfo | null>(null)
   const [configText, setConfigText] = useState<string>('')
   const [showConfig, setShowConfig] = useState(false)
-  const [logs, setLogs] = useState<string[]>(['🦞 ClawdBot Console ready.'])
+  const [logs, setLogs] = useState<string[]>(['🐹 GoBot Console ready.'])
   const logRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>🦞 CLAWDBOT OS</h1>
+        <h1>🐹 GOBOT OS</h1>
         <div className="header-right">
           <span className={`health-dot ${health?.status === 'ok' ? 'ok' : 'err'}`}>●</span>
           <span className="status">{status?.status ?? 'connecting...'}</span>

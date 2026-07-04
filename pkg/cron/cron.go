@@ -1,4 +1,4 @@
-// Package cron provides scheduled task execution for ClawdBot.
+// Package cron provides scheduled task execution for GoBot.
 // Adapted from PicoClaw — configurable cron jobs for OODA, research, heartbeat.
 package cron
 
@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/logger"
+	"github.com/8bitlabs/gobot/pkg/logger"
 )
 
 type Job struct {

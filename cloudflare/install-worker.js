@@ -1,7 +1,7 @@
 const DEFAULT_UPSTREAM =
   "https://raw.githubusercontent.com/Solizardking/clawdbot-go/main/install.sh";
 
-const BASE_PREFIXES = ["/clawdbot"];
+const BASE_PREFIXES = ["/gobot"];
 
 function stripBasePath(pathname) {
   for (const prefix of BASE_PREFIXES) {
@@ -23,22 +23,22 @@ function scriptHeaders(upstream) {
   return {
     "content-type": "text/x-shellscript; charset=utf-8",
     "cache-control": "public, max-age=60",
-    "x-clawdbot-upstream": upstream,
+    "x-gobot-upstream": upstream,
   };
 }
 
 function metadata(url, env) {
   const origin = `${url.protocol}//${url.host}`;
   return {
-    name: "clawdbot-go",
+    name: "gobot",
     repo: env.PROJECT_REPO || "https://github.com/Solizardking/clawdbot-go",
     ecosystemHub:
       env.ECOSYSTEM_HUB || "https://github.com/solizardking/solana-clawd",
     upstreamInstall: env.UPSTREAM_INSTALL_URL || DEFAULT_UPSTREAM,
     commands: {
-      complete: `curl -fsSL ${origin}${url.pathname.includes("/clawdbot") ? "/clawdbot" : ""} | bash`,
-      raw: `curl -fsSL ${origin}${url.pathname.includes("/clawdbot") ? "/clawdbot" : ""}/install.sh | bash`,
-      coreAI: `curl -fsSL ${origin}${url.pathname.includes("/clawdbot") ? "/clawdbot" : ""}/core-ai | bash`,
+      complete: `curl -fsSL ${origin}${url.pathname.includes("/gobot") ? "/gobot" : ""} | bash`,
+      raw: `curl -fsSL ${origin}${url.pathname.includes("/gobot") ? "/gobot" : ""}/install.sh | bash`,
+      coreAI: `curl -fsSL ${origin}${url.pathname.includes("/gobot") ? "/gobot" : ""}/core-ai | bash`,
     },
   };
 }
@@ -49,10 +49,10 @@ function wrapperScript(env, options = {}) {
   const coreAI = options.coreAI ? "1" : "";
   const exports = [
     complete
-      ? `: "\${CLAWDBOT_INSTALL_COMPLETE:=${complete}}"\nexport CLAWDBOT_INSTALL_COMPLETE`
+      ? `: "\${GOBOT_INSTALL_COMPLETE:=${complete}}"\nexport GOBOT_INSTALL_COMPLETE`
       : "",
     coreAI
-      ? `: "\${CLAWDBOT_INSTALL_CORE_AI:=${coreAI}}"\nexport CLAWDBOT_INSTALL_CORE_AI`
+      ? `: "\${GOBOT_INSTALL_CORE_AI:=${coreAI}}"\nexport GOBOT_INSTALL_CORE_AI`
       : "",
   ]
     .filter(Boolean)
@@ -97,7 +97,7 @@ export default {
       });
     }
 
-    if (path === "/.well-known/clawdbot-install.json") {
+    if (path === "/.well-known/gobot-install.json") {
       return Response.json(metadata(url, env), {
         headers: { "cache-control": "public, max-age=60" },
       });

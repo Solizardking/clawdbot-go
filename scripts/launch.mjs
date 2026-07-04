@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ─────────────────────────────────────────────────────────────────────
-// ClawdBot Go :: Animated Launcher
+// GoBot Go :: Animated Launcher
 // One-shot install, build, and launch with unicode-animations spinners
 // ─────────────────────────────────────────────────────────────────────
 import spinners from 'unicode-animations';
@@ -55,7 +55,7 @@ const LOBSTER = `${C.red}
              /    \ \_____/ /    \
             /  /\  \     /  /\   \
            |  / /  /     \  \ \   |
-           | / /  | 🦞   \  \ \  |
+           | / /  | 🐹   \  \ \  |
            |/ /  /|       |\  \ \ |
             ,/  / |       | \  \,
                 | |       | |
@@ -158,10 +158,10 @@ function animatedBoot() {
   return new Promise((resolve) => {
     const { frames, interval } = spinners.cascade;
     const bootLines = [
-      `${C.dim}    │${C.teal}  🦞 Sentient Solana Trading Intelligence${C.dim}                     │${C.reset}`,
-      `${C.dim}    │${C.amber}  OODA Loop · ClawVault Memory · Birdeye Analytics${C.dim}            │${C.reset}`,
+      `${C.dim}    │${C.teal}  🐹 Sentient Solana Trading Intelligence${C.dim}                     │${C.reset}`,
+      `${C.dim}    │${C.amber}  OODA Loop · GoVault Memory · Birdeye Analytics${C.dim}            │${C.reset}`,
       `${C.dim}    │${C.purple}  Vulcan Phoenix Perps · Jupiter Swaps · Helius RPC${C.dim}            │${C.reset}`,
-      `${C.dim}    │${C.green}  $CLAWD :: Droids Lead The Way${C.dim}                                 │${C.reset}`,
+      `${C.dim}    │${C.green}  $GOBOT :: Droids Lead The Way${C.dim}                                 │${C.reset}`,
     ];
     
     let lineIdx = 0;
@@ -291,18 +291,18 @@ async function main() {
     if (!r.ok) throw new Error(r.output);
   }, 'helix');
 
-  await withSpinner('Compiling cmd/clawdbot (CLI)...', async () => {
-    const r = run('go build -o build/clawdbot ./cmd/clawdbot', { cwd: ROOT });
+  await withSpinner('Compiling cmd/gobot (CLI)...', async () => {
+    const r = run('go build -o build/gobot ./cmd/gobot', { cwd: ROOT });
     if (!r.ok) throw new Error(r.output);
   }, 'dna');
 
-  await withSpinner('Compiling cmd/clawdbot-tui (TUI)...', async () => {
-    const r = run('go build -o build/clawdbot-tui ./cmd/clawdbot-tui', { cwd: ROOT });
+  await withSpinner('Compiling cmd/gobot-tui (TUI)...', async () => {
+    const r = run('go build -o build/gobot-tui ./cmd/gobot-tui', { cwd: ROOT });
     if (!r.ok) throw new Error(r.output);
   }, 'orbit');
 
   await withSpinner('Compiling web/backend (Web Console)...', async () => {
-    const r = run('go build -o build/clawdbot-web ./web/backend', { cwd: ROOT });
+    const r = run('go build -o build/gobot-web ./web/backend', { cwd: ROOT });
     if (!r.ok) throw new Error(r.output);
   }, 'scan');
 
@@ -334,9 +334,9 @@ async function main() {
   console.log(`${C.amber}  ── PHASE 6: Verification ──${C.reset}\n`);
 
   const binaries = [
-    { name: 'clawdbot',     path: 'build/clawdbot' },
-    { name: 'clawdbot-tui', path: 'build/clawdbot-tui' },
-    { name: 'clawdbot-web', path: 'build/clawdbot-web' },
+    { name: 'gobot',     path: 'build/gobot' },
+    { name: 'gobot-tui', path: 'build/gobot-tui' },
+    { name: 'gobot-web', path: 'build/gobot-web' },
   ];
 
   for (const bin of binaries) {
@@ -352,8 +352,8 @@ async function main() {
   }
 
   // Quick smoke test: version command
-  await withSpinner('Running smoke test (clawdbot version)...', async () => {
-    const r = run('./build/clawdbot version', { cwd: ROOT });
+  await withSpinner('Running smoke test (gobot version)...', async () => {
+    const r = run('./build/gobot version', { cwd: ROOT });
     if (!r.ok) throw new Error(r.output);
     return r.output;
   }, 'sparkle');
@@ -361,7 +361,7 @@ async function main() {
   console.log();
 
   // ── Step 6b: Birth Skill Seed ───────────────────────────────────
-  if (process.env.CLAWDBOT_SKIP_SKILL_SEED !== '1') {
+  if (process.env.GOBOT_SKIP_SKILL_SEED !== '1') {
     console.log(`${C.amber}  ── PHASE 6B: Birth Skills ──${C.reset}\n`);
     const npx = run('command -v npx');
     if (npx.ok) {
@@ -372,7 +372,7 @@ async function main() {
         }, 'orbit');
       }
     } else {
-      console.log(`    ${C.amber}!${C.reset} npx not found; run ${C.teal}clawdbot skills birth --install${C.reset} later`);
+      console.log(`    ${C.amber}!${C.reset} npx not found; run ${C.teal}gobot skills birth --install${C.reset} later`);
     }
     console.log();
   }
@@ -425,24 +425,24 @@ async function main() {
 
   console.log(DIVIDER);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
-  console.log(`${C.dim}    │${C.green}  ✔  ClawdBot Go — Installation Complete${C.dim}                        │${C.reset}`);
+  console.log(`${C.dim}    │${C.green}  ✔  GoBot Go — Installation Complete${C.dim}                        │${C.reset}`);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.teal}  Time: ${elapsed}s${C.dim}                                                 │${C.reset}`);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.amber}  Quick Start:${C.dim}                                                 │${C.reset}`);
-  console.log(`${C.dim}    │${C.white}    ./build/clawdbot agent -m "What is SOL price?"${C.dim}              │${C.reset}`);
-  console.log(`${C.dim}    │${C.white}    ./build/clawdbot solana trending${C.dim}                             │${C.reset}`);
-  console.log(`${C.dim}    │${C.white}    ./build/clawdbot solana search BONK${C.dim}                          │${C.reset}`);
-  console.log(`${C.dim}    │${C.white}    ./build/clawdbot solana research <mint>${C.dim}                      │${C.reset}`);
-  console.log(`${C.dim}    │${C.white}    ./build/clawdbot ooda --interval 60${C.dim}                          │${C.reset}`);
-  console.log(`${C.dim}    │${C.white}    ./build/clawdbot-web${C.dim}                                        │${C.reset}`);
+  console.log(`${C.dim}    │${C.white}    ./build/gobot agent -m "What is SOL price?"${C.dim}              │${C.reset}`);
+  console.log(`${C.dim}    │${C.white}    ./build/gobot solana trending${C.dim}                             │${C.reset}`);
+  console.log(`${C.dim}    │${C.white}    ./build/gobot solana search BONK${C.dim}                          │${C.reset}`);
+  console.log(`${C.dim}    │${C.white}    ./build/gobot solana research <mint>${C.dim}                      │${C.reset}`);
+  console.log(`${C.dim}    │${C.white}    ./build/gobot ooda --interval 60${C.dim}                          │${C.reset}`);
+  console.log(`${C.dim}    │${C.white}    ./build/gobot-web${C.dim}                                        │${C.reset}`);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.teal}  Runtime:${C.dim} ${RUNTIME_REPO.padEnd(48)}${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.teal}  Hub:${C.dim}     ${HUB_REPO.padEnd(48)}${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.teal}  Gateway:${C.dim} ${GATEWAY_URL.padEnd(48)}${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.teal}  Terminal:${C.dim}${TERMINAL_URL.padEnd(48)}${C.dim}│${C.reset}`);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
-  console.log(`${C.dim}    │${C.purple}  🦞 $CLAWD :: Droids Lead The Way${C.dim}                              │${C.reset}`);
+  console.log(`${C.dim}    │${C.purple}  🐹 $GOBOT :: Droids Lead The Way${C.dim}                              │${C.reset}`);
   console.log(`${C.dim}    │${C.reset}                                                              ${C.dim}│${C.reset}`);
   console.log(DIVIDER_END);
   console.log();

@@ -15,7 +15,7 @@
  *   ZK_SHARK_KEYPAIR        - Path to a Solana CLI keypair JSON for signing
  *   ZK_SHARK_NETWORK        - "mainnet" | "devnet" | "localnet" (for intent hints)
  *
- * Legacy CLAWD_ZK_* variables are still accepted as fallbacks.
+ * Legacy GOBOT_ZK_* variables are still accepted as fallbacks.
  */
 import { PublicKey } from "@solana/web3.js";
 /**
@@ -45,7 +45,7 @@ export type ZkAgentConfig = ZkSharkAgentConfig;
 /**
  * Load ZK Shark agent config from the current `process.env`.
  *
- * Throws if neither `ZK_SHARK_RPC_URL` nor legacy `CLAWD_ZK_RPC_URL` is set.
+ * Throws if neither `ZK_SHARK_RPC_URL` nor legacy `GOBOT_ZK_RPC_URL` is set.
  */
 export declare function loadAgentConfig(env?: Record<string, string | undefined>): ZkSharkAgentConfig;
 //# sourceMappingURL=config.d.ts.map

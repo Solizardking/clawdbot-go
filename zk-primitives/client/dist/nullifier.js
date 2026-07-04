@@ -58,7 +58,7 @@ function u64ToBytes(n) {
     return b;
 }
 /** Re-export the on-chain address derivation so the client and program agree. */
-export const NULLIFIER_PREFIX = new TextEncoder().encode("clawd-zk-nullifier");
+export const NULLIFIER_PREFIX = new TextEncoder().encode("gobot-zk-nullifier");
 /**
  * Derive the compressed-account address for a given nullifier and
  * address tree. The address is what the Light Protocol address tree

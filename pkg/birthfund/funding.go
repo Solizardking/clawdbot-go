@@ -13,22 +13,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/config"
-	"github.com/8bitlabs/clawdbot/pkg/wallet"
+	"github.com/8bitlabs/gobot/pkg/config"
+	"github.com/8bitlabs/gobot/pkg/wallet"
 )
 
 const (
 	DefaultSOLAmount   = "0.069420"
-	DefaultCLAWDAmount = "1000"
-	DefaultCLAWDMint   = "8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump"
+	DefaultGOBOTAmount = "1000"
+	DefaultGOBOTMint   = "8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump"
 )
 
 type Config struct {
 	Recipient          string
 	RPCURL             string
 	SOLAmount          string
-	CLAWDAmount        string
-	CLAWDMint          string
+	GOBOTAmount        string
+	GOBOTMint          string
 	TreasuryKeypair    string
 	TreasuryPrivateKey string
 	Enabled            bool
@@ -44,13 +44,13 @@ type Result struct {
 	RPCURL         string   `json:"rpcUrl"`
 	SOLAmount      string   `json:"solAmount"`
 	SOLLamports    uint64   `json:"solLamports"`
-	CLAWDAmount    string   `json:"clawdAmount"`
-	CLAWDMint      string   `json:"clawdMint"`
+	GOBOTAmount    string   `json:"gobotAmount"`
+	GOBOTMint      string   `json:"gobotMint"`
 	TreasurySource string   `json:"treasurySource,omitempty"`
 	SOLCommand     []string `json:"solCommand,omitempty"`
-	CLAWDCommand   []string `json:"clawdCommand,omitempty"`
+	GOBOTCommand   []string `json:"gobotCommand,omitempty"`
 	SOLSignature   string   `json:"solSignature,omitempty"`
-	CLAWDSignature string   `json:"clawdSignature,omitempty"`
+	GOBOTSignature string   `json:"gobotSignature,omitempty"`
 	Warnings       []string `json:"warnings,omitempty"`
 	InstallID      string   `json:"installId,omitempty"`
 	RecordedAt     string   `json:"recordedAt"`
@@ -69,8 +69,8 @@ func (ExecRunner) Run(ctx context.Context, name string, args ...string) (string,
 }
 
 func FromEnv(recipient, workspace string) Config {
-	solAmount := firstNonEmpty(os.Getenv("CLAWDBOT_STARTUP_SOL_AMOUNT"), lamportsEnvToSOL(os.Getenv("CLAWDBOT_STARTUP_SOL_LAMPORTS")), DefaultSOLAmount)
-	ledgerPath := os.Getenv("CLAWDBOT_BIRTH_FUNDING_LEDGER")
+	solAmount := firstNonEmpty(os.Getenv("GOBOT_STARTUP_SOL_AMOUNT"), lamportsEnvToSOL(os.Getenv("GOBOT_STARTUP_SOL_LAMPORTS")), DefaultSOLAmount)
+	ledgerPath := os.Getenv("GOBOT_BIRTH_FUNDING_LEDGER")
 	if strings.TrimSpace(ledgerPath) == "" && strings.TrimSpace(workspace) != "" {
 		ledgerPath = filepath.Join(workspace, "install-funding.jsonl")
 	}
@@ -78,13 +78,13 @@ func FromEnv(recipient, workspace string) Config {
 		Recipient:          recipient,
 		RPCURL:             firstNonEmpty(os.Getenv("SOLANA_RPC_URL"), os.Getenv("HELIUS_RPC_URL"), config.PublicRPCURL),
 		SOLAmount:          solAmount,
-		CLAWDAmount:        firstNonEmpty(os.Getenv("CLAWDBOT_STARTUP_CLAWD_TOKENS"), os.Getenv("CLAWDBOT_BIRTH_CLAWD_AMOUNT"), DefaultCLAWDAmount),
-		CLAWDMint:          firstNonEmpty(os.Getenv("CLAWD_TOKEN_MINT"), os.Getenv("CLAWDBOT_CLAWD_MINT"), os.Getenv("CLAWDBOT_CLAWD_TOKEN_MINT"), DefaultCLAWDMint),
-		TreasuryKeypair:    os.Getenv("CLAWDBOT_TREASURY_KEYPAIR"),
-		TreasuryPrivateKey: os.Getenv("CLAWDBOT_TREASURY_PRIVATE_KEY"),
-		Enabled:            envBool("CLAWDBOT_LOCAL_STARTUP_FUNDING") || envBool("CLAWDBOT_BIRTH_FUNDING_ENABLED"),
-		Send:               envBool("CLAWDBOT_BIRTH_FUNDING_SEND"),
-		InstallID:          os.Getenv("CLAWDBOT_INSTALL_ID"),
+		GOBOTAmount:        firstNonEmpty(os.Getenv("GOBOT_STARTUP_TOKENS"), os.Getenv("GOBOT_BIRTH_AMOUNT"), DefaultGOBOTAmount),
+		GOBOTMint:          firstNonEmpty(os.Getenv("GOBOT_TOKEN_MINT"), os.Getenv("GOBOT_MINT"), os.Getenv("GOBOT_TOKEN_MINT_ALT"), DefaultGOBOTMint),
+		TreasuryKeypair:    os.Getenv("GOBOT_TREASURY_KEYPAIR"),
+		TreasuryPrivateKey: os.Getenv("GOBOT_TREASURY_PRIVATE_KEY"),
+		Enabled:            envBool("GOBOT_LOCAL_STARTUP_FUNDING") || envBool("GOBOT_BIRTH_FUNDING_ENABLED"),
+		Send:               envBool("GOBOT_BIRTH_FUNDING_SEND"),
+		InstallID:          os.Getenv("GOBOT_INSTALL_ID"),
 		LedgerPath:         ledgerPath,
 	}
 }
@@ -99,11 +99,11 @@ func Fund(ctx context.Context, cfg Config, runner Runner) (Result, error) {
 		Recipient: strings.TrimSpace(cfg.Recipient),
 		RPCURL:    firstNonEmpty(strings.TrimSpace(cfg.RPCURL), config.PublicRPCURL),
 		SOLAmount: firstNonEmpty(strings.TrimSpace(cfg.SOLAmount), DefaultSOLAmount),
-		CLAWDAmount: firstNonEmpty(
-			strings.TrimSpace(cfg.CLAWDAmount),
-			DefaultCLAWDAmount,
+		GOBOTAmount: firstNonEmpty(
+			strings.TrimSpace(cfg.GOBOTAmount),
+			DefaultGOBOTAmount,
 		),
-		CLAWDMint:  strings.TrimSpace(cfg.CLAWDMint),
+		GOBOTMint:  strings.TrimSpace(cfg.GOBOTMint),
 		InstallID:  strings.TrimSpace(cfg.InstallID),
 		RecordedAt: time.Now().UTC().Format(time.RFC3339),
 	}
@@ -115,7 +115,7 @@ func Fund(ctx context.Context, cfg Config, runner Runner) (Result, error) {
 	result.SOLLamports = lamports
 
 	if !cfg.Enabled && !cfg.Send {
-		result.Warnings = append(result.Warnings, "funding disabled; set CLAWDBOT_LOCAL_STARTUP_FUNDING=1 for dry-run planning or CLAWDBOT_BIRTH_FUNDING_SEND=1 to send")
+		result.Warnings = append(result.Warnings, "funding disabled; set GOBOT_LOCAL_STARTUP_FUNDING=1 for dry-run planning or GOBOT_BIRTH_FUNDING_SEND=1 to send")
 		_ = appendLedger(cfg.LedgerPath, result)
 		return result, nil
 	}
@@ -138,16 +138,16 @@ func Fund(ctx context.Context, cfg Config, runner Runner) (Result, error) {
 	result.TreasurySource = treasurySource
 
 	actualSOL := []string{"transfer", result.Recipient, result.SOLAmount, "--url", result.RPCURL, "--allow-unfunded-recipient", "--from", treasuryPath}
-	actualCLAWD := []string{"transfer", result.CLAWDMint, result.CLAWDAmount, result.Recipient, "--url", result.RPCURL, "--fund-recipient", "--owner", treasuryPath, "--fee-payer", treasuryPath}
+	actualGOBOT := []string{"transfer", result.GOBOTMint, result.GOBOTAmount, result.Recipient, "--url", result.RPCURL, "--fund-recipient", "--owner", treasuryPath, "--fee-payer", treasuryPath}
 	result.SOLCommand = sanitizeCommand("solana", actualSOL)
-	result.CLAWDCommand = sanitizeCommand("spl-token", actualCLAWD)
+	result.GOBOTCommand = sanitizeCommand("spl-token", actualGOBOT)
 
-	if strings.TrimSpace(result.CLAWDMint) == "" {
+	if strings.TrimSpace(result.GOBOTMint) == "" {
 		if cfg.Send {
-			return result, fmt.Errorf("CLAWD token mint is required before sending token funding")
+			return result, fmt.Errorf("GOBOT token mint is required before sending token funding")
 		}
-		result.Warnings = append(result.Warnings, "CLAWD token transfer needs CLAWD_TOKEN_MINT or CLAWDBOT_CLAWD_MINT")
-		result.CLAWDCommand = nil
+		result.Warnings = append(result.Warnings, "GOBOT token transfer needs GOBOT_TOKEN_MINT or GOBOT_MINT")
+		result.GOBOTCommand = nil
 	}
 
 	if !cfg.Send {
@@ -164,13 +164,13 @@ func Fund(ctx context.Context, cfg Config, runner Runner) (Result, error) {
 	}
 	result.SOLSignature = firstSignature(out)
 
-	out, err = runner.Run(ctx, "spl-token", actualCLAWD...)
+	out, err = runner.Run(ctx, "spl-token", actualGOBOT...)
 	if err != nil {
-		result.Status = "clawd_failed"
+		result.Status = "gobot_failed"
 		_ = appendLedger(cfg.LedgerPath, result)
 		return result, fmt.Errorf("spl-token transfer failed: %w: %s", err, strings.TrimSpace(out))
 	}
-	result.CLAWDSignature = firstSignature(out)
+	result.GOBOTSignature = firstSignature(out)
 	result.Status = "sent"
 	_ = appendLedger(cfg.LedgerPath, result)
 	return result, nil
@@ -187,7 +187,7 @@ func resolveTreasury(cfg Config) (string, string, func(), error) {
 
 	secret := strings.TrimSpace(cfg.TreasuryPrivateKey)
 	if secret == "" {
-		return "", "", nil, fmt.Errorf("treasury secret missing; set CLAWDBOT_TREASURY_KEYPAIR or CLAWDBOT_TREASURY_PRIVATE_KEY")
+		return "", "", nil, fmt.Errorf("treasury secret missing; set GOBOT_TREASURY_KEYPAIR or GOBOT_TREASURY_PRIVATE_KEY")
 	}
 	decoded, err := wallet.Base58Decode(secret)
 	if err != nil {
@@ -197,7 +197,7 @@ func resolveTreasury(cfg Config) (string, string, func(), error) {
 	if err != nil {
 		return "", "", nil, fmt.Errorf("treasury private key is not a valid Solana keypair")
 	}
-	dir, err := os.MkdirTemp("", "clawdbot-treasury-*")
+	dir, err := os.MkdirTemp("", "gobot-treasury-*")
 	if err != nil {
 		return "", "", nil, err
 	}
@@ -206,7 +206,7 @@ func resolveTreasury(cfg Config) (string, string, func(), error) {
 		_ = os.RemoveAll(dir)
 		return "", "", nil, err
 	}
-	return path, "env:CLAWDBOT_TREASURY_PRIVATE_KEY", func() { _ = os.RemoveAll(dir) }, nil
+	return path, "env:GOBOT_TREASURY_PRIVATE_KEY", func() { _ = os.RemoveAll(dir) }, nil
 }
 
 func appendLedger(path string, result Result) error {

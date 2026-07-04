@@ -1,5 +1,5 @@
 -- ============================================================
--- CLAWDBOT OS :: COMPLETE SUPABASE SCHEMA
+-- GOBOT OS :: COMPLETE SUPABASE SCHEMA
 -- Run this in your Supabase SQL Editor to create all tables.
 -- Covers: memory, trades, market data, research, strategy,
 --         agents, experiments, and wallets.

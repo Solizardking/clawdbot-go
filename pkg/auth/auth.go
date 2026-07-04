@@ -1,4 +1,4 @@
-// Package auth provides OAuth/token management for ClawdBot.
+// Package auth provides OAuth/token management for GoBot.
 // Adapted from PicoClaw — API key store, PKCE auth flow.
 package auth
 
@@ -24,7 +24,7 @@ func (t Token) IsExpired() bool {
 	return time.Now().After(t.ExpiresAt)
 }
 
-// Store manages API tokens for ClawdBot providers.
+// Store manages API tokens for GoBot providers.
 type Store struct {
 	mu     sync.RWMutex
 	tokens map[string]Token

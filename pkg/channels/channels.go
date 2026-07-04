@@ -1,4 +1,4 @@
-// Package channels provides the multi-channel gateway for ClawdBot.
+// Package channels provides the multi-channel gateway for GoBot.
 // Adapted from PicoClaw — supports Discord, Telegram, WebSocket, CLI.
 package channels
 
@@ -13,8 +13,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/bus"
-	"github.com/8bitlabs/clawdbot/pkg/logger"
+	"github.com/8bitlabs/gobot/pkg/bus"
+	"github.com/8bitlabs/gobot/pkg/logger"
 )
 
 var (

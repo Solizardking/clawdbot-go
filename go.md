@@ -1,16 +1,16 @@
-# ClawdBot-Go — Agent Handoff Document
+# GoBot-Go — Agent Handoff Document
 
 **Repo:** `https://github.com/Solizardking/clawdbot-go`  
 **Local path:** `/Users/8bit/clawdbot-go`  
 **Language:** Go 1.26.4+  
-**Module:** `github.com/8bitlabs/clawdbot`  
+**Module:** `github.com/8bitlabs/gobot`  
 **Public gateway:** `https://zk.x402.wtf`  
 **Public hub:** `https://github.com/solizardking/solana-clawd`  
 **Public terminal:** `https://cheshireterminal.ai`
 
 ## Module Path Decision
 
-The public runtime repository is `https://github.com/Solizardking/clawdbot-go`, but the active Go module path remains `github.com/8bitlabs/clawdbot`.
+The public runtime repository is `https://github.com/Solizardking/clawdbot-go`, but the active Go module path is `github.com/8bitlabs/gobot`.
 
 That is an intentional compatibility choice in the current state, not an accidental partial rename. It keeps:
 
@@ -24,14 +24,14 @@ If the project later migrates the module path into the public repo namespace, th
 
 ## Current State
 
-The current worktree is wired around the public Clawd surfaces and defaults to the sovereign AI stack:
+The current worktree is wired around the public Go Bot surfaces and defaults to the sovereign AI stack:
 
 | File | Change |
 |------|--------|
 | `install.sh` | Installer clones the public runtime repo, registers installs through `https://zk.x402.wtf/api/install`, and writes a ready-to-run `.env` with public defaults |
 | `.env.example` | Pre-filled with public zkrouter and RPC defaults so a fresh install can start without private credentials |
 | `pkg/config/config.go` | Central source of truth for runtime repo, hub repo, gateway, terminal, zkrouter base URL, and public RPC defaults |
-| `cmd/clawdbot/main.go` | CLI status/help/gateway output exposes the canonical runtime, hub, gateway, and terminal surfaces |
+| `cmd/gobot/main.go` | CLI status/help/gateway output exposes the canonical runtime, hub, gateway, and terminal surfaces |
 | `web/backend/main.go` | `/api/status`, `/api/connectors`, and `/api/ecosystem` now expose the same public topology for the web console |
 
 ---
@@ -50,7 +50,7 @@ func buildProvider(cfg *config.Config) providers.LLMProvider {
         }
         key := entry.APIKey
         if key == "" {
-            key = "clawdbot-free"
+            key = "gobot-free"
         }
         return providers.NewOpenAICompatProvider(key, base)
     }
@@ -58,7 +58,7 @@ func buildProvider(cfg *config.Config) providers.LLMProvider {
 }
 ```
 
-`newClawdAgent()` and `runInteractiveAgent()` both use this helper, so the default CLI path now routes through the OpenAI-compatible zkrouter base by default while still allowing overrides through config or env vars.
+`newGoBotAgent()` and `runInteractiveAgent()` both use this helper, so the default CLI path now routes through the OpenAI-compatible zkrouter base by default while still allowing overrides through config or env vars.
 
 ---
 
@@ -87,9 +87,9 @@ The backing AI router endpoint `https://clawdrouter-zk.fly.dev/v1` is still real
 
 ```
 pkg/providers/providers.go      LLMProvider interface + OpenRouterProvider (OpenAI-compat)
-pkg/agent/agent.go              ClawdAgent — full tool-calling loop, ready to use
+pkg/agent/agent.go              GoBotAgent — full tool-calling loop, ready to use
 pkg/config/config.go            Config struct + DefaultConfig() + ApplyEnvOverrides()
-cmd/clawdbot/main.go            All cobra commands — 1,193 lines
+cmd/gobot/main.go               All cobra commands — 1,193 lines
 install.sh                      Curl installer (just added)
 .env.example                    Pre-filled defaults (just added)
 ```
@@ -101,15 +101,15 @@ install.sh                      Curl installer (just added)
 | Var | Default | Purpose |
 |-----|---------|---------|
 | `ZKROUTER_BASE_URL` | `https://clawdrouter-zk.fly.dev/v1` | LLM API base (OpenAI-compat) |
-| `ZKROUTER_API_KEY` | `clawdbot-free` | Key for zkrouter free tier |
+| `ZKROUTER_API_KEY` | `gobot-free` | Key for zkrouter free tier |
 | `HELIUS_RPC_URL` | `https://zk.x402.wtf/api/solana/rpc-public` | Solana RPC (SolanaTracker-backed) |
-| `CLAWDBOT_INSTALL_ID` | set by installer | Install identity for tracking |
-| `CLAWDBOT_AGENT_DNA_ID` | set by installer | Starter agent DNA proof ID sent to install tracking |
+| `GOBOT_INSTALL_ID` | set by installer | Install identity for tracking |
+| `GOBOT_AGENT_DNA_ID` | set by installer | Starter agent DNA proof ID sent to install tracking |
 | `AGENT_WALLET_PUBLIC_KEY` | set by installer | Local agent wallet funded at startup |
-| `AGENT_WALLET_KEYPAIR` | `~/.clawdbot/workspace/agent-wallet.json` | Local 0600 Solana keypair path |
-| `CLAWDBOT_INSTALL_FUNDING_STATUS` | set by installer/API | Startup funding state (`requested`, `queued`, `funded`, etc.) |
-| `CLAWDBOT_SOL_FUNDING_SIGNATURE` | set by install API | SOL funding transaction signature when available |
-| `CLAWDBOT_CLAWD_FUNDING_SIGNATURE` | set by install API | `$CLAWD` funding transaction signature when available |
+| `AGENT_WALLET_KEYPAIR` | `~/.gobot/workspace/agent-wallet.json` | Local 0600 Solana keypair path |
+| `GOBOT_INSTALL_FUNDING_STATUS` | set by installer/API | Startup funding state (`requested`, `queued`, `funded`, etc.) |
+| `GOBOT_SOL_FUNDING_SIGNATURE` | set by install API | SOL funding transaction signature when available |
+| `GOBOT_FUNDING_SIGNATURE` | set by install API | `$GOBOT` funding transaction signature when available |
 | `OPENROUTER_API_KEY` | — | Override to use OpenRouter instead |
 | `HELIUS_API_KEY` | — | Override to use Helius directly |
 
@@ -139,22 +139,22 @@ The install API at `POST /api/install` returns:
 {
   "ok": true,
   "installId": "cb_...",
-  "zkrouterKey": "clawdbot-<32-char-hex>",
+  "zkrouterKey": "gobot-<32-char-hex>",
   "zkrouterBase": "https://clawdrouter-zk.fly.dev/v1",
   "rpcUrl": "https://zk.x402.wtf/api/solana/rpc-public",
   "fundingStatus": "funded",
   "solSignature": "<signature>",
-  "clawdSignature": "<signature>"
+  "gobotSignature": "<signature>"
 }
 ```
 
 The installer sends `agentWalletPubkey`, `agentDnaId`, and a funding request for
-`69,420,000` lamports plus `1,000` `$CLAWD`
+`69,420,000` lamports plus `1,000` `$GOBOT`
 (`8cHzQHUS2s2h8TzCmfqPKYiM4dSt4roa3n7MyRLApump`). The gateway should hold the
 funding wallet private key only in its server environment, transfer idempotently
-per install/wallet, create the recipient `$CLAWD` ATA if needed, and return
+per install/wallet, create the recipient `$GOBOT` ATA if needed, and return
 signatures or a queued status. The installer writes the non-secret receipt to
-`~/.clawdbot/install.json` and mirrors the returned fields in `~/.clawdbot/.env`.
+`~/.gobot/install.json` and mirrors the returned fields in `~/.gobot/.env`.
 
 ---
 
@@ -168,11 +168,11 @@ go build ./...                 # must compile cleanly
 
 # Run agent (uses zkrouter/public defaults unless overridden)
 ZKROUTER_BASE_URL=https://clawdrouter-zk.fly.dev/v1 \
-ZKROUTER_API_KEY=clawdbot-free \
-go run ./cmd/clawdbot agent -m "What is the current SOL price?"
+ZKROUTER_API_KEY=gobot-free \
+go run ./cmd/gobot agent -m "What is the current SOL price?"
 
 # Run interactive REPL
-go run ./cmd/clawdbot agent
+go run ./cmd/gobot agent
 ```
 
 ---

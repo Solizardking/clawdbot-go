@@ -1,4 +1,4 @@
-// Package commands provides the chat command registry for ClawdBot.
+// Package commands provides the chat command registry for GoBot.
 // Adapted from PicoClaw — slash commands dispatched from chat input.
 package commands
 
@@ -47,7 +47,7 @@ func (r *Registry) List() []*Definition {
 	return result
 }
 
-// BuiltinDefinitions returns the default ClawdBot chat commands.
+// BuiltinDefinitions returns the default GoBot chat commands.
 func BuiltinDefinitions() []Definition {
 	return []Definition{
 		{Name: "help", Description: "Show available commands", Aliases: []string{"?", "h"}},

@@ -1,5 +1,5 @@
 // Package memory :: engine.go
-// MemoryEngine — The epistemological core of ClawdBot.
+// MemoryEngine — The epistemological core of GoBot.
 // Ported from MemoryEngine.ts.
 //
 // Three tiers:
@@ -8,7 +8,7 @@
 //	LEARNED  — insights from trading and analysis. Persistent.
 //	INFERRED — cross-domain synthesis. Agent-reasoned connections.
 //
-// Dual storage: Supabase (source of truth when available) + ClawVault (local markdown).
+// Dual storage: Supabase (source of truth when available) + GoVault (local markdown).
 package memory
 
 import (
@@ -20,7 +20,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/8bitlabs/clawdbot/pkg/logger"
+	"github.com/8bitlabs/gobot/pkg/logger"
 )
 
 // ── Known Fact TTLs ──────────────────────────────────────────────────
@@ -43,7 +43,7 @@ type MemoryEngine struct {
 	supabaseURL string
 	supabaseKey string
 	openaiKey   string
-	vault       *ClawVault
+	vault       *GoVault
 	sessionID   string
 	useSupabase bool
 	httpClient  *http.Client
@@ -58,9 +58,9 @@ type EngineOpts struct {
 }
 
 func NewMemoryEngine(opts EngineOpts) *MemoryEngine {
-	vault := NewClawVault(opts.VaultPath)
+	vault := NewGoVault(opts.VaultPath)
 	if opts.VaultPath == "" {
-		vault = NewClawVault("./vault")
+		vault = NewGoVault("./vault")
 	}
 
 	sessionID := opts.SessionID
@@ -124,7 +124,7 @@ func (me *MemoryEngine) Remember(mem RememberInput) (string, error) {
 		mem.ExpiresAt = time.Now().Add(time.Duration(ttl) * time.Second).Format(time.RFC3339)
 	}
 
-	// Mirror to ClawVault
+	// Mirror to GoVault
 	vaultCat := memTypeToVaultCategory(mem.MemoryType)
 	score := mem.Confidence
 	if score == 0 {
@@ -222,7 +222,7 @@ type MemorySearchResult struct {
 }
 
 func (me *MemoryEngine) RecallMemories(opts RecallInput) []MemorySearchResult {
-	// ClawVault search
+	// GoVault search
 	vCategory := VaultCategory("")
 	if opts.Type == TypeLearned {
 		vCategory = CatLessons
@@ -392,7 +392,7 @@ func (me *MemoryEngine) BuildContext(query string, asset string) string {
 
 // ── Vault reference ──────────────────────────────────────────────────
 
-func (me *MemoryEngine) Vault() *ClawVault {
+func (me *MemoryEngine) Vault() *GoVault {
 	return me.vault
 }
 

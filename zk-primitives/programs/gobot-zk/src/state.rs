@@ -15,10 +15,10 @@ use light_sdk::{
     instruction::{PackedStateTreeInfo, ValidityProof},
 };
 
-use crate::ClawdZkError;
+use crate::GoBotZkError;
 
-pub const ATTESTATION_PREFIX: &[u8] = b"clawd-zk-attest";
-pub const STATE_PREFIX: &[u8] = b"clawd-zk-state";
+pub const ATTESTATION_PREFIX: &[u8] = b"gobot-zk-attest";
+pub const STATE_PREFIX: &[u8] = b"gobot-zk-state";
 
 /// Compressed account that records a published model attestation.
 #[derive(Clone, Debug, Default, BorshSerialize, BorshDeserialize, LightDiscriminator)]
@@ -100,7 +100,7 @@ pub fn write_attestation<'info>(
 
     builder.invoke(cpi_accounts).map_err(|e| {
         msg!("Light CPI write_attestation failed: {:?}", e);
-        error!(ClawdZkError::UnknownTree)
+        error!(GoBotZkError::UnknownTree)
     })?;
 
     Ok(())
@@ -138,7 +138,7 @@ pub fn consume_attestation<'info>(
         .with_light_account(account)?;
     builder.invoke(cpi_accounts).map_err(|e| {
         msg!("Light CPI consume_attestation failed: {:?}", e);
-        error!(ClawdZkError::UnknownTree)
+        error!(GoBotZkError::UnknownTree)
     })?;
 
     Ok(())
@@ -178,7 +178,7 @@ pub fn commit_encrypted<'info>(
     builder = builder.with_light_account(account)?;
     builder.invoke(cpi_accounts).map_err(|e| {
         msg!("Light CPI commit_encrypted failed: {:?}", e);
-        error!(ClawdZkError::UnknownTree)
+        error!(GoBotZkError::UnknownTree)
     })?;
 
     Ok(())

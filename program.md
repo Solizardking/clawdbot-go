@@ -1,8 +1,8 @@
-# ClawdBot Research Program v1.0
+# GoBot Research Program v1.0
 
 This file governs the strategy-research loop for the Go runtime in
 `https://github.com/Solizardking/clawdbot-go`. Public discovery for the wider
-Clawd ecosystem lives at `https://github.com/solizardking/solana-clawd`, while
+GoBot ecosystem lives at `https://github.com/solizardking/solana-clawd`, while
 the public x402 gateway and terminal surfaces live at `https://zk.x402.wtf`
 and `https://cheshireterminal.ai`.
 

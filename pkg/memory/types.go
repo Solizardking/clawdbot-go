@@ -1,5 +1,5 @@
 // Package memory :: types.go
-// Shared types for the ClawdBot memory system.
+// Shared types for the GoBot memory system.
 package memory
 
 import (

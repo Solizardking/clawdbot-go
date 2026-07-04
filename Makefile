@@ -1,4 +1,4 @@
-# ── ClawdBot Go :: Makefile ─────────────────────────────────────────────
+# ── GoBot Go :: Makefile ─────────────────────────────────────────────
 # Build targets for x86_64, ARM64 (NVIDIA Orin Nano), and Arduino bridge
 #
 # Usage:
@@ -18,7 +18,7 @@ COMMIT    := $(shell git rev-parse --short HEAD 2>/dev/null || echo "none")
 BUILDTIME := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 GOVERSION := $(shell go version | cut -d' ' -f3)
 
-MODULE    := github.com/8bitlabs/clawdbot
+MODULE    := github.com/8bitlabs/gobot
 # The Go import path stays stable for v1 compatibility even though the public
 # runtime repo is https://github.com/Solizardking/clawdbot-go and the wider hub
 # is https://github.com/solizardking/solana-clawd.
@@ -38,8 +38,8 @@ GOFILES   := $(shell find cmd pkg web/backend -type f -name '*.go')
 
 # Output directories
 BUILD_DIR := ./build
-BIN_CLI   := $(BUILD_DIR)/clawdbot
-BIN_TUI   := $(BUILD_DIR)/clawdbot-tui
+BIN_CLI   := $(BUILD_DIR)/gobot
+BIN_TUI   := $(BUILD_DIR)/gobot-tui
 
 .PHONY: all build orin rpi riscv macos cross tui web docker docker-orin clean install test lint verify audit release-check deps scan-i2c help
 
@@ -50,21 +50,21 @@ all: build tui
 # ── Build for current platform ────────────────────────────────────────
 
 build:
-	@echo "🦞 Building ClawdBot CLI..."
+	@echo "🐹 Building GoBot CLI..."
 	@mkdir -p $(BUILD_DIR)
-	$(GOBUILD) -o $(BIN_CLI) ./cmd/clawdbot
+	$(GOBUILD) -o $(BIN_CLI) ./cmd/gobot
 	@echo "✓ $(BIN_CLI) built ($(shell file $(BIN_CLI) | cut -d: -f2))"
 	@ls -lh $(BIN_CLI)
 
 tui:
-	@echo "🦞 Building ClawdBot TUI Launcher..."
+	@echo "🐹 Building GoBot TUI Launcher..."
 	@mkdir -p $(BUILD_DIR)
-	$(GOBUILD) -o $(BIN_TUI) ./cmd/clawdbot-tui
+	$(GOBUILD) -o $(BIN_TUI) ./cmd/gobot-tui
 	@echo "✓ $(BIN_TUI) built"
 	@ls -lh $(BIN_TUI)
 
 web:
-	@echo "🦞 Building ClawdBot Web Console..."
+	@echo "🐹 Building GoBot Web Console..."
 	$(MAKE) -C web all
 
 # ── NVIDIA Orin Nano (Linux ARM64) ────────────────────────────────────
@@ -72,74 +72,74 @@ web:
 # CGO enabled for I2C syscalls (hardware/modulino.go)
 
 orin:
-	@echo "🦞 Cross-compiling for NVIDIA Orin Nano (linux/arm64)..."
+	@echo "🐹 Cross-compiling for NVIDIA Orin Nano (linux/arm64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
-		$(GOBUILD) -o $(BUILD_DIR)/clawdbot-orin ./cmd/clawdbot
+		$(GOBUILD) -o $(BUILD_DIR)/gobot-orin ./cmd/gobot
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
-		$(GOBUILD) -o $(BUILD_DIR)/clawdbot-tui-orin ./cmd/clawdbot-tui
+		$(GOBUILD) -o $(BUILD_DIR)/gobot-tui-orin ./cmd/gobot-tui
 	@echo "✓ Orin Nano binaries:"
-	@ls -lh $(BUILD_DIR)/clawdbot-orin $(BUILD_DIR)/clawdbot-tui-orin
+	@ls -lh $(BUILD_DIR)/gobot-orin $(BUILD_DIR)/gobot-tui-orin
 	@echo ""
 	@echo "📦 Deploy to Orin Nano:"
-	@echo "  scp $(BUILD_DIR)/clawdbot-orin user@orin-nano:~/clawdbot"
-	@echo "  scp $(BUILD_DIR)/clawdbot-tui-orin user@orin-nano:~/clawdbot-tui"
+	@echo "  scp $(BUILD_DIR)/gobot-orin user@orin-nano:~/gobot"
+	@echo "  scp $(BUILD_DIR)/gobot-tui-orin user@orin-nano:~/gobot-tui"
 
 # ── Raspberry Pi / Generic ARM ────────────────────────────────────────
 
 rpi:
-	@echo "🦞 Cross-compiling for Raspberry Pi (linux/arm64)..."
+	@echo "🐹 Cross-compiling for Raspberry Pi (linux/arm64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
-		$(GOBUILD) -o $(BUILD_DIR)/clawdbot-rpi ./cmd/clawdbot
-	@echo "✓ $(BUILD_DIR)/clawdbot-rpi built"
+		$(GOBUILD) -o $(BUILD_DIR)/gobot-rpi ./cmd/gobot
+	@echo "✓ $(BUILD_DIR)/gobot-rpi built"
 
 # ── RISC-V ────────────────────────────────────────────────────────────
 
 riscv:
-	@echo "🦞 Cross-compiling for RISC-V (linux/riscv64)..."
+	@echo "🐹 Cross-compiling for RISC-V (linux/riscv64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=linux GOARCH=riscv64 CGO_ENABLED=0 \
-		$(GOBUILD) -o $(BUILD_DIR)/clawdbot-riscv ./cmd/clawdbot
-	@echo "✓ $(BUILD_DIR)/clawdbot-riscv built"
+		$(GOBUILD) -o $(BUILD_DIR)/gobot-riscv ./cmd/gobot
+	@echo "✓ $(BUILD_DIR)/gobot-riscv built"
 
 # ── macOS (Apple Silicon) ─────────────────────────────────────────────
 
 macos:
-	@echo "🦞 Building for macOS (darwin/arm64)..."
+	@echo "🐹 Building for macOS (darwin/arm64)..."
 	@mkdir -p $(BUILD_DIR)
 	GOOS=darwin GOARCH=arm64 \
-		$(GOBUILD) -o $(BUILD_DIR)/clawdbot-macos ./cmd/clawdbot
-	@echo "✓ $(BUILD_DIR)/clawdbot-macos built"
+		$(GOBUILD) -o $(BUILD_DIR)/gobot-macos ./cmd/gobot
+	@echo "✓ $(BUILD_DIR)/gobot-macos built"
 
 # ── All platforms ─────────────────────────────────────────────────────
 
 cross: build orin rpi riscv macos
 	@echo ""
-	@echo "🦞 All cross-compilation complete:"
+	@echo "🐹 All cross-compilation complete:"
 	@ls -lh $(BUILD_DIR)/
 
 # ── Docker ────────────────────────────────────────────────────────────
 
 docker:
 	@echo "🐳 Building Docker image..."
-	docker build -t clawdbot:$(VERSION) -t clawdbot:latest .
-	@echo "✓ Docker image built: clawdbot:$(VERSION)"
+	docker build -t gobot:$(VERSION) -t gobot:latest .
+	@echo "✓ Docker image built: gobot:$(VERSION)"
 
 docker-orin:
 	@echo "🐳 Building Docker image for Orin Nano (linux/arm64)..."
 	docker buildx build --platform linux/arm64 \
-		-t clawdbot:$(VERSION)-orin \
-		-t clawdbot:latest-orin .
-	@echo "✓ Docker image built: clawdbot:$(VERSION)-orin"
+		-t gobot:$(VERSION)-orin \
+		-t gobot:latest-orin .
+	@echo "✓ Docker image built: gobot:$(VERSION)-orin"
 
 # ── Install ───────────────────────────────────────────────────────────
 
 install: build tui
 	@echo "📦 Installing to /usr/local/bin..."
-	install -m 755 $(BIN_CLI) /usr/local/bin/clawdbot
-	install -m 755 $(BIN_TUI) /usr/local/bin/clawdbot-tui
-	@echo "✓ Installed clawdbot and clawdbot-tui"
+	install -m 755 $(BIN_CLI) /usr/local/bin/gobot
+	install -m 755 $(BIN_TUI) /usr/local/bin/gobot-tui
+	@echo "✓ Installed gobot and gobot-tui"
 
 # ── Test ──────────────────────────────────────────────────────────────
 
@@ -163,9 +163,9 @@ verify:
 	$(GO) vet ./...
 	@echo "🧪 Running race tests..."
 	$(GOTEST) ./...
-	@echo "🦞 Building release entrypoints..."
-	$(GOBUILD) -o /tmp/clawdbot-verify ./cmd/clawdbot
-	$(GOBUILD) -o /tmp/clawdbot-tui-verify ./cmd/clawdbot-tui
+	@echo "🐹 Building release entrypoints..."
+	$(GOBUILD) -o /tmp/gobot-verify ./cmd/gobot
+	$(GOBUILD) -o /tmp/gobot-tui-verify ./cmd/gobot-tui
 
 audit: verify
 	@echo "🔒 Running vulnerability scan when govulncheck is installed..."
@@ -177,7 +177,7 @@ audit: verify
 
 release-check: verify
 	@echo "📦 Checking tracked generated artifacts..."
-	@bad="$$(git ls-files -- .cache build dist clawdbot ':(glob)**/.next/**' ':(glob)**/target/**' ':(glob)**/*.tsbuildinfo')"; \
+	@bad="$$(git ls-files -- .cache build dist gobot ':(glob)**/.next/**' ':(glob)**/target/**' ':(glob)**/*.tsbuildinfo')"; \
 	if [ -n "$$bad" ]; then \
 		echo "generated artifacts are tracked and must be removed from git:"; \
 		echo "$$bad"; \
@@ -217,7 +217,7 @@ clean:
 # ── Help ──────────────────────────────────────────────────────────────
 
 help:
-	@echo "ClawdBot Go — Makefile targets:"
+	@echo "GoBot Go — Makefile targets:"
 	@echo ""
 	@echo "  build       Build for current platform"
 	@echo "  tui         Build TUI launcher"

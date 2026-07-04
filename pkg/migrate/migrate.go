@@ -1,4 +1,4 @@
-// Package migrate provides config migration for ClawdBot.
+// Package migrate provides config migration for GoBot.
 // Adapted from PicoClaw — version-based config file upgrades.
 package migrate
 
@@ -19,7 +19,7 @@ var migrations = []Migration{
 	{
 		FromVersion: 0,
 		ToVersion:   1,
-		Description: "Initial ClawdBot config schema",
+		Description: "Initial GoBot config schema",
 		Apply: func(data map[string]any) (map[string]any, error) {
 			if _, ok := data["version"]; !ok {
 				data["version"] = 1

@@ -1,4 +1,4 @@
-// Package mcp provides Model Context Protocol integration for ClawdBot.
+// Package mcp provides Model Context Protocol integration for GoBot.
 // Adapted from PicoClaw — manages MCP server connections and tool proxying.
 package mcp
 

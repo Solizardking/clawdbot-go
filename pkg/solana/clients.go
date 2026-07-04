@@ -1,4 +1,4 @@
-// Package solana provides Solana blockchain integration for ClawdBot.
+// Package solana provides Solana blockchain integration for GoBot.
 // Clients for Helius RPC, Birdeye analytics, Jupiter swaps, and wallet management.
 package solana
 

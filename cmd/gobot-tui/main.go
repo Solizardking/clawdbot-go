@@ -1,4 +1,4 @@
-// ClawdBot TUI Launcher — Lobster-themed terminal UI
+// GoBot TUI Launcher — Gopher-themed terminal UI
 // Uses tview for a rich interactive experience.
 package main
 
@@ -14,40 +14,36 @@ import (
 )
 
 const (
-	clawdGreen  = "#14F195"
-	clawdPurple = "#9945FF"
-	clawdTeal   = "#00D4FF"
-	clawdAmber  = "#FFAA00"
-	clawdRed    = "#FF4060"
-	clawdBg     = "#020208"
-	clawdBg2    = "#0A0A14"
-	clawdDim    = "#556680"
+	gobotGreen  = "#14F195"
+	gobotPurple = "#9945FF"
+	gobotTeal   = "#00D4FF"
+	gobotAmber  = "#FFAA00"
+	gobotRed    = "#FF4060"
+	gobotBg     = "#020208"
+	gobotBg2    = "#0A0A14"
+	gobotDim    = "#556680"
 )
 
-const lobsterArt = `[#FF4060]
+const gopherArt = `[#FF4060]
               ██████╗████████████████████████████╗
              ██╔═══████╔═══════════════════════████╗
-            ██║   ████║  [#14F195]🦞 CLAWDBOT GO[#FF4060]           ████║
+            ██║   ████║  [#14F195]🐹 GOBOT GO[#FF4060]           ████║
            ██║   ████║  [#00D4FF]Sentient Solana Robot[#FF4060]    ████║
           ██║   ████║  [#9945FF]NVIDIA Orin Nano[#FF4060]         ████║
-         ██║   ████║  [#FFAA00]$CLAWD :: Droids Lead[#FF4060]    ████║
+         ██║   ████║  [#FFAA00]$GOBOT :: Droids Lead[#FF4060]    ████║
         ██║   ████╚═══════════════════════════████║
        ██║   ████████████████████████████████████║
-      ██╔╝  /|      __                      ████║
-     ██╔╝  / |   ,-~ /                     ████║
-    ██╔╝  Y :|  //  /                     ████║
-   ██╔╝   | jj /( .^                    ████║
-  ██╔╝    >-"~"-v"                     ████║
- ██╔╝    /       Y   [#14F195]OODA LOOP[#FF4060]       ████║
-██╔╝    jo  o    |   [#14F195]ACTIVE[#FF4060]          ████║
-██║     ( ~T~     j                   ████║
-██║      >._-' _./                  ████║
-██╚══════/═══"~"══|════════════════████╝
- ╚══════Y═════_,══|═══════════════██╝
-         /| ;-"~ _  l
-        / l/ ,-"~    \
-        \//\/      .- \
-         Y        /    Y[-]
+      ██╔╝     .-"""-.                    ████║
+     ██╔╝     /  o o  \                  ████║
+    ██╔╝     |    >    |                ████║
+   ██╔╝       \  ---  /   [#14F195]OODA LOOP[#FF4060]  ████║
+  ██╔╝         '-...-'    [#14F195]ACTIVE[#FF4060]     ████║
+ ██╔╝              ||                  ████║
+██╔╝              /  \                ████║
+██║              '    '              ████║
+██║                                 ████║
+██╚════════════════════════════████╝
+ ╚══════════════════════════════██╝[-]
 `
 
 func main() {
@@ -57,19 +53,19 @@ func main() {
 	header := tview.NewTextView().
 		SetDynamicColors(true).
 		SetTextAlign(tview.AlignCenter).
-		SetText(fmt.Sprintf("[%s]CLAWDBOT[%s] [%s]OS[%s] [%s]:: v1.0 :: Go Runtime :: %s[-]",
-			clawdGreen, clawdPurple, clawdTeal, "", clawdDim, time.Now().Format("15:04:05")))
+		SetText(fmt.Sprintf("[%s]GOBOT[%s] [%s]OS[%s] [%s]:: v1.0 :: Go Runtime :: %s[-]",
+			gobotGreen, gobotPurple, gobotTeal, "", gobotDim, time.Now().Format("15:04:05")))
 	header.SetBackgroundColor(tcell.ColorBlack)
 	header.SetBorderPadding(0, 0, 2, 2)
 
-	// ── Lobster Art Panel ────────────────────────────────────
+	// ── Gopher Art Panel ─────────────────────────────────────
 	artView := tview.NewTextView().
 		SetDynamicColors(true).
-		SetText(lobsterArt)
+		SetText(gopherArt)
 	artView.SetBackgroundColor(tcell.ColorBlack)
 	artView.SetBorder(true).
 		SetBorderColor(tcell.NewRGBColor(20, 241, 149)).
-		SetTitle(fmt.Sprintf(" [%s]🦞 CLAWDBOT SOLANA ROBOT[-] ", clawdGreen)).
+		SetTitle(fmt.Sprintf(" [%s]🐹 GOBOT SOLANA ROBOT[-] ", gobotGreen)).
 		SetTitleAlign(tview.AlignCenter)
 
 	// ── Menu ─────────────────────────────────────────────────
@@ -78,7 +74,7 @@ func main() {
 		desc  string
 		cmd   string
 	}{
-		{"🤖 Agent Chat", "Interactive chat with ClawdBot AI", "agent"},
+		{"🤖 Agent Chat", "Interactive chat with GoBot AI", "agent"},
 		{"🔄 OODA Loop", "Start autonomous trading cycle", "ooda"},
 		{"💰 Wallet", "Solana wallet info & balance", "solana wallet"},
 		{"🌐 Trending", "Birdeye trending tokens", "solana trending"},
@@ -98,7 +94,7 @@ func main() {
 	menu.SetBackgroundColor(tcell.ColorBlack)
 	menu.SetBorder(true).
 		SetBorderColor(tcell.NewRGBColor(153, 69, 255)).
-		SetTitle(fmt.Sprintf(" [%s]◆ LAUNCH PAD[-] ", clawdPurple)).
+		SetTitle(fmt.Sprintf(" [%s]◆ LAUNCH PAD[-] ", gobotPurple)).
 		SetTitleAlign(tview.AlignLeft)
 	menu.SetHighlightFullLine(true)
 	menu.SetSelectedBackgroundColor(tcell.NewRGBColor(20, 241, 149))
@@ -111,7 +107,7 @@ func main() {
 		shortcut := rune('a' + i)
 		menu.AddItem(item.label, item.desc, shortcut, func() {
 			app.Stop()
-			runClawdBotCommand(cmdCopy)
+			runGoBotCommand(cmdCopy)
 		})
 	}
 
@@ -125,7 +121,7 @@ func main() {
 	statusView.SetBackgroundColor(tcell.ColorBlack)
 	statusView.SetBorder(true).
 		SetBorderColor(tcell.NewRGBColor(0, 212, 255)).
-		SetTitle(fmt.Sprintf(" [%s]SYSTEM STATUS[-] ", clawdTeal)).
+		SetTitle(fmt.Sprintf(" [%s]SYSTEM STATUS[-] ", gobotTeal)).
 		SetTitleAlign(tview.AlignLeft)
 
 	updateStatus(statusView)
@@ -134,7 +130,7 @@ func main() {
 	infoBar := tview.NewTextView().
 		SetDynamicColors(true).
 		SetTextAlign(tview.AlignCenter).
-		SetText(fmt.Sprintf("[%s]$CLAWD :: Droids Lead The Way :: solana-clawd hub :: zk.x402.wtf :: cheshireterminal.ai[-]", clawdDim))
+		SetText(fmt.Sprintf("[%s]$GOBOT :: Droids Lead The Way :: solana-clawd hub :: zk.x402.wtf :: cheshireterminal.ai[-]", gobotDim))
 	infoBar.SetBackgroundColor(tcell.ColorBlack)
 
 	// ── Layout ───────────────────────────────────────────────
@@ -197,14 +193,14 @@ func updateStatus(view *tview.TextView) {
   Modulinos: (scan on connect)
 
 [%s]Memory[%s]
-  Vault:     ~/.clawdbot/workspace/vault
+  Vault:     ~/.gobot/workspace/vault
   Supabase:  %s
 `,
-		clawdGreen, "",
+		gobotGreen, "",
 		"Go 1.25+",
 		"linux/arm64",
 		now.Format("15:04:05 MST"),
-		clawdAmber, "",
+		gobotAmber, "",
 		envStatus("HELIUS_API_KEY"),
 		envValue("HELIUS_NETWORK", "mainnet"),
 		envStatus("BIRDEYE_API_KEY"),
@@ -212,8 +208,8 @@ func updateStatus(view *tview.TextView) {
 		envStatus("ASTER_API_KEY"),
 		envStatus("HELIUS_API_KEY"),
 		envStatus("HELIUS_API_KEY"),
-		clawdTeal, "",
-		clawdPurple, "",
+		gobotTeal, "",
+		gobotPurple, "",
 		envStatus("SUPABASE_URL"),
 	)
 
@@ -222,9 +218,9 @@ func updateStatus(view *tview.TextView) {
 
 func envStatus(key string) string {
 	if os.Getenv(key) != "" {
-		return fmt.Sprintf("[%s]✓ configured[-]", clawdGreen)
+		return fmt.Sprintf("[%s]✓ configured[-]", gobotGreen)
 	}
-	return fmt.Sprintf("[%s]✗ not set[-]", clawdRed)
+	return fmt.Sprintf("[%s]✗ not set[-]", gobotRed)
 }
 
 func envValue(key, fallback string) string {
@@ -232,17 +228,17 @@ func envValue(key, fallback string) string {
 	if v == "" {
 		v = fallback
 	}
-	return fmt.Sprintf("[%s]%s[-]", clawdTeal, v)
+	return fmt.Sprintf("[%s]%s[-]", gobotTeal, v)
 }
 
-func runClawdBotCommand(subcmd string) {
+func runGoBotCommand(subcmd string) {
 	parts := strings.Fields(subcmd)
 	args := append([]string{}, parts...)
 
-	// Try to find clawdbot binary
-	binary := "clawdbot"
+	// Try to find gobot binary
+	binary := "gobot"
 	if _, err := exec.LookPath(binary); err != nil {
-		binary = "./clawdbot"
+		binary = "./gobot"
 	}
 
 	cmd := exec.Command(binary, args...)

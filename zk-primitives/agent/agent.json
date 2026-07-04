@@ -27,7 +27,7 @@
   },
   "meta": {
     "title": "ZK Shark Agent",
-    "description": "Shark of All Streets wrapper over the on-chain clawd-zk program: nullifiers, Groth16 proof preparation, Light Protocol compressed state, and deterministic intent routing.",
+    "description": "Shark of All Streets wrapper over the on-chain gobot-zk program: nullifiers, Groth16 proof preparation, Light Protocol compressed state, and deterministic intent routing.",
     "category": "infrastructure",
     "riskLevel": "medium",
     "variant": "zk-shark-primitives",
@@ -40,7 +40,7 @@
       "light-protocol",
       "attestation",
       "compressed-state",
-      "clawd",
+      "gobot",
       "zk-shark"
     ]
   },

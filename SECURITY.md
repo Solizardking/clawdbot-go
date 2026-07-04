@@ -2,7 +2,7 @@
 
 ## Supported Surface
 
-Security fixes target the current `main` branch of `clawdbot-go`.
+Security fixes target the current `main` branch of `clawdbot-go` (the GoBot Go runtime repository).
 
 ## Reporting
 

@@ -1,5 +1,5 @@
 /**
- * ooda/clawd-decision.ts — AI-powered OODA decision function
+ * ooda/gobot-decision.ts — AI-powered OODA decision function
  *
  * Provider priority:
  *   1. XAI_API_KEY      → grok-4.3 (fast, cheap, streaming)
@@ -8,7 +8,7 @@
  *   4. ANTHROPIC_API_KEY                     → Claude direct
  *
  * Design: Fresh context per tick. No conversation history.
- * The per-tick prompt (CLAWD.md) + observations → one JSON decision.
+ * The per-tick prompt (GOBOT.md) + observations → one JSON decision.
  */
 
 import { readFileSync } from 'node:fs';
@@ -39,7 +39,7 @@ export interface Observations {
 // ─── Prompt assembly ────────────────────────────────────────────────────────
 
 function getPrompt(obs: Observations): string {
-  const clwdPath = join(__dirname, 'CLAWD.md');
+  const clwdPath = join(__dirname, 'GOBOT.md');
   const clwdContent = readFileSync(clwdPath, 'utf8');
   // Strip YAML frontmatter
   const body = clwdContent.replace(/^---[\s\S]*?---\n?/, '').trim();
@@ -173,7 +173,7 @@ async function callOpenAi(prompt: string, apiKey: string, baseUrl: string, model
   return response.choices[0]?.message?.content ?? '';
 }
 
-export async function clawdDecision(obs: Observations): Promise<unknown> {
+export async function gobotDecision(obs: Observations): Promise<unknown> {
   const prompt = getPrompt(obs);
   let raw: string | undefined;
 
@@ -187,7 +187,7 @@ export async function clawdDecision(obs: Observations): Promise<unknown> {
     try {
       raw = await callGrok(prompt, xaiKey);
     } catch (err) {
-      process.stderr.write(`[clawd-decision] Grok failed: ${err}\n`);
+      process.stderr.write(`[gobot-decision] Grok failed: ${err}\n`);
     }
   }
 
@@ -195,7 +195,7 @@ export async function clawdDecision(obs: Observations): Promise<unknown> {
     try {
       raw = await callOpenAi(prompt, dsKey, process.env['DEEPSEEK_BASE_URL'] || 'https://api.deepseek.com', 'deepseek-v4-flash');
     } catch (err) {
-      process.stderr.write(`[clawd-decision] DeepSeek failed: ${err}\n`);
+      process.stderr.write(`[gobot-decision] DeepSeek failed: ${err}\n`);
     }
   }
 
@@ -208,7 +208,7 @@ export async function clawdDecision(obs: Observations): Promise<unknown> {
         process.env['OPENROUTER_MODEL'] || 'nex-agi/nex-n2-pro:free',
       );
     } catch (err) {
-      process.stderr.write(`[clawd-decision] zkrouter/OpenRouter-compatible provider failed: ${err}\n`);
+      process.stderr.write(`[gobot-decision] zkrouter/OpenRouter-compatible provider failed: ${err}\n`);
     }
   }
 
@@ -216,12 +216,12 @@ export async function clawdDecision(obs: Observations): Promise<unknown> {
     try {
       raw = await callClaude(prompt, antKey);
     } catch (err) {
-      process.stderr.write(`[clawd-decision] Claude failed: ${err}\n`);
+      process.stderr.write(`[gobot-decision] Claude failed: ${err}\n`);
     }
   }
 
   if (!raw) {
-    process.stderr.write(`[clawd-decision] No API key available — falling back to deterministic\n`);
+    process.stderr.write(`[gobot-decision] No API key available — falling back to deterministic\n`);
     return deterministicDecision(obs);
   }
 
@@ -230,7 +230,7 @@ export async function clawdDecision(obs: Observations): Promise<unknown> {
   try {
     return JSON.parse(cleaned);
   } catch {
-    process.stderr.write(`[clawd-decision] Failed to parse LLM response as JSON: ${cleaned.slice(0, 200)}\n`);
+    process.stderr.write(`[gobot-decision] Failed to parse LLM response as JSON: ${cleaned.slice(0, 200)}\n`);
     return deterministicDecision(obs);
   }
 }

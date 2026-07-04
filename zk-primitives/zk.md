@@ -145,7 +145,7 @@ npm install @gobot/zk-client @lightprotocol/stateless.js @solana/kit
 import { computeNullifier, NULLIFIER_PREFIX } from "@gobot/zk-client";
 
 const secret  = crypto.getRandomValues(new Uint8Array(32));
-const context = "solana-clawd/attestation/v1";
+const context = "solana-gobot/attestation/v1";
 
 const nullifier = computeNullifier({ secret, context });
 // → Uint8Array(32)

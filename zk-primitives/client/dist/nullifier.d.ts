@@ -37,7 +37,7 @@ export declare function computeNullifier(inputs: NullifierInputs): Promise<Bytes
 /** Compute N nullifiers in one go, each with a unique nonce. */
 export declare function computeNullifierBatch(baseInputs: Omit<NullifierInputs, "nonce">, count: number): Promise<Bytes32[]>;
 /** Re-export the on-chain address derivation so the client and program agree. */
-export declare const NULLIFIER_PREFIX: Uint8Array<ArrayBufferLike>;
+export declare const NULLIFIER_PREFIX: Uint8Array<ArrayBuffer>;
 /**
  * Derive the compressed-account address for a given nullifier and
  * address tree. The address is what the Light Protocol address tree

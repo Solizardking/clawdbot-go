@@ -24,18 +24,18 @@
  * ```
  */
 import { TransactionInstruction, Keypair } from "@solana/web3.js";
-import { ClawdZkClient, type Groth16Proof, type Bytes32 } from "@clawd/zk-client";
+import { GoBotZkClient, type Groth16Proof, type Bytes32 } from "@gobot/zk-client";
 import { type ZkSharkAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 import { type IntentContext, type IntentRoute } from "./intents.js";
 export interface ZkSharkAgentOptions {
     /** Pre-built config. If omitted, the agent reads from `process.env`. */
     config?: ZkSharkAgentConfig;
-    /** Pre-built ClawdZkClient. If omitted, the agent constructs one. */
-    client?: ClawdZkClient;
+    /** Pre-built GoBotZkClient. If omitted, the agent constructs one. */
+    client?: GoBotZkClient;
     /** Optional keypair for signing. */
     signer?: Keypair;
 }
-export type ClawdZkAgentOptions = ZkSharkAgentOptions;
+export type GoBotZkAgentOptions = ZkSharkAgentOptions;
 export interface AttestModelArgs {
     /** 32-byte hash identifying the model being attested to. */
     modelHash: Bytes32;
@@ -90,7 +90,7 @@ export interface VerifyProofResult {
 }
 export declare class ZkSharkAgent {
     readonly config: ZkSharkAgentConfig;
-    readonly client: ClawdZkClient;
+    readonly client: GoBotZkClient;
     /** Optional signer; the agent can attest / commit without one (instruction-only). */
     signer?: Keypair;
     private constructor();
@@ -138,7 +138,7 @@ export declare class ZkSharkAgent {
     describe(): string;
     private trySend;
 }
-export { ZkSharkAgent as ClawdZkAgent };
+export { ZkSharkAgent as GoBotZkAgent };
 export { DEFAULT_PROGRAM_ID };
 export type { Groth16Proof, Bytes32 };
 export type { Keypair as SolanaKeypair } from "@solana/web3.js";

@@ -1,7 +1,7 @@
 /**
- * @clawd/zk-shark-agent - public exports
+ * @gobot/zk-shark-agent - public exports
  *
- * The Shark of All Streets wrapper around `@clawd/zk-client`. Use this when you
+ * The Shark of All Streets wrapper around `@gobot/zk-client`. Use this when you
  * want your ZK Shark agent (or REPL, or MCP tool) to be able to say
  * "attest this model" / "commit this encrypted state" / "verify this
  * proof" without hand-rolling the underlying nullifier, Groth16, and
@@ -10,7 +10,7 @@
  * Quick start:
  *
  * ```ts
- * import { ZkSharkAgent } from "@clawd/zk-shark-agent";
+ * import { ZkSharkAgent } from "@gobot/zk-shark-agent";
  * import { createSolanaRpc } from "@solana/kit";
  *
  * const agent = await ZkSharkAgent.fromEnv();
@@ -27,9 +27,9 @@
  * that exposes the same operations as subcommands and as a
  * natural-language intent router.
  */
-export { ZkSharkAgent, ClawdZkAgent, type ZkSharkAgentOptions, type ClawdZkAgentOptions, type AttestModelResult, type CommitStateResult, type VerifyProofResult, } from "./agent.js";
+export { ZkSharkAgent, GoBotZkAgent, type ZkSharkAgentOptions, type GoBotZkAgentOptions, type AttestModelResult, type CommitStateResult, type VerifyProofResult, } from "./agent.js";
 export { routeIntent, type IntentRoute, type IntentContext, KNOWN_INTENTS } from "./intents.js";
 export { loadAgentConfig, type ZkSharkAgentConfig, type ZkAgentConfig, DEFAULT_PROGRAM_ID } from "./config.js";
 export { runCli } from "./cli.js";
-export { computeNullifier, computeNullifierBatch, deriveNullifierAddress, buildPublishPublicInputs, buildCommitPublicInputs, buildConsumePublicInputs, packPublicInputs, serializeProof, verifyGroth16Offchain, type NullifierInputs, type Groth16Proof, type Bytes32, type PublishAttestationArgs, type CommitStateArgs, } from "@clawd/zk-client";
+export { computeNullifier, computeNullifierBatch, deriveNullifierAddress, buildPublishPublicInputs, buildCommitPublicInputs, buildConsumePublicInputs, packPublicInputs, serializeProof, verifyGroth16Offchain, type NullifierInputs, type Groth16Proof, type Bytes32, type PublishAttestationArgs, type CommitStateArgs, } from "@gobot/zk-client";
 //# sourceMappingURL=index.d.ts.map

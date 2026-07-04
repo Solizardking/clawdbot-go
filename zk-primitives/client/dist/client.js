@@ -1,5 +1,5 @@
 /**
- * ClawdZkClient — high-level orchestrator.
+ * GoBotZkClient — high-level orchestrator.
  *
  * Glues together nullifier computation, Groth16 proof assembly, and
  * Light Protocol validity-proof fetching into single-method calls
@@ -10,7 +10,7 @@ import { buildCommitPublicInputs, buildPublishPublicInputs, packPublicInputs, se
 import { fetchAddressTreeV2, fetchRandomStateTreeV2, fetchValidityProofV2, packAccounts, } from "./state.js";
 import { deriveNullifierAddress } from "./nullifier.js";
 const PROGRAM_IDENTITY = new PublicKey("4vJ9JU1bJJE96FWSVKmnrL3xFU5jSBSVdk9x4La2vzhn");
-export class ClawdZkClient {
+export class GoBotZkClient {
     rpc;
     programId;
     photonUrl;

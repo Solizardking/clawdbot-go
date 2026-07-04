@@ -30,7 +30,7 @@ gobot catalog zk
 | Agent | Slug | Category | Description | Status |
 |-------|------|----------|-------------|--------|
 | **Go Bot Core** | `gobot` | Orchestration | The sovereign agent runtime and constitution enforcer | ✅ Production |
-| **GoBotex** | `gobotex` | Coding | Dual-engine coding agent: Go Bot Code + OpenAI Codex + Browser Use | ✅ Production |
+| **Clawdex** | `clawdex` | Coding | Dual-engine coding agent: Claude Code + OpenAI Codex + Browser Use | ✅ Production |
 | **Solana Arbitrage Scanner** | `solana-arbitrage-scanner` | DeFi | Cross-DEX arbitrage opportunity detection | ✅ Production |
 | **Solana Autonomous Trader** | `solana-autonomous-trader` | Trading | Autonomous trade execution with risk management | ✅ Production |
 | **Solana Whale Tracker** | `solana-whale-tracker` | Analytics | Large transaction monitoring and wallet intelligence | ✅ Production |
@@ -149,7 +149,7 @@ Skills extend Go Bot agents with specialized capabilities. Key categories:
 ### Coding & Dev Tools
 - `gobotex` — Dual-engine coding agent (Go Bot Code + Codex)
 - `coding-agent` — Codex CLI, Go Bot Code, OpenCode PTY management
-- `openclaw-claude-code-skill-main` — Go Bot Code control via MCP
+- `openclaw-claude-code-skill-main` — Claude Code control via MCP
 - `model-usage` — Model usage and cost tracking via CodexBar
 - `tmux` — Terminal multiplexing for agent orchestration
 

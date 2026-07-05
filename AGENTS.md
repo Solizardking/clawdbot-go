@@ -231,6 +231,7 @@ Override per-session with `gobot-code --model <id> --provider <name>`, or global
     "lawHarness": "six-laws.md",
     "onchainLaws": "three-laws.md",
     "offchainLaws": "CONSTITUTION.md#the-six-law-harness",
+    "sovereigntyArticles": "CONSTITUTION.md#the-ai-sovereignty-articles",
     "shell": "SHELL.md",
     "chain": "solana-mainnet",
     "payment": "x402",

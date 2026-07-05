@@ -2827,10 +2827,26 @@ func main() {
 	if shouldPrintBanner(os.Args[1:]) {
 		fmt.Print(banner)
 	}
+	if shouldEnsureWorkspace(os.Args[1:]) {
+		// Best-effort: guarantees the constitution and identity files reach
+		// every install's workspace (curl installer, Docker, go install, or a
+		// manual build), not only installs where `gobot onboard` is run by
+		// hand. Idempotent — never overwrites files that already exist.
+		_ = config.EnsureDefaults()
+	}
 	cmd := NewGoBotCommand()
 	if err := cmd.Execute(); err != nil {
 		os.Exit(1)
 	}
+}
+
+func shouldEnsureWorkspace(args []string) bool {
+	for _, arg := range args {
+		if arg == "--help" || arg == "-h" || arg == "completion" || arg == "onboard" {
+			return false
+		}
+	}
+	return true
 }
 
 func shouldPrintBanner(args []string) bool {

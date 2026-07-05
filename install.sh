@@ -313,6 +313,16 @@ mkdir -p "$BIN_DIR"
 cp "$INSTALL_DIR/bin/gobot" "$BIN_DIR/gobot"
 success "Installed to $BIN_DIR/gobot"
 
+# ── Onboard: config, workspace, and constitution ──────────────────────────────
+# Writes IDENTITY.md/SOUL.md/AGENTS.md/CONSTITUTION.md into the workspace for
+# every install, not just installs where the user later runs `gobot onboard`.
+if "$INSTALL_DIR/bin/gobot" onboard --help >/dev/null 2>&1; then
+  info "Initializing config, workspace, and constitution..."
+  GOBOT_HOME="$INSTALL_DIR" "$INSTALL_DIR/bin/gobot" onboard >/dev/null 2>&1 || warn "Onboard failed; run: gobot onboard"
+else
+  warn "Installed gobot binary does not expose onboard; skipping workspace init"
+fi
+
 if "$INSTALL_DIR/bin/gobot" dna --help >/dev/null 2>&1; then
   info "Generating starter agent DNA..."
   "$INSTALL_DIR/bin/gobot" dna generate \

@@ -134,7 +134,7 @@ func BuildSystemPrompt(opts PromptConfig) string {
 		soulSection = "\n## Soul\n\n" + soul
 	}
 
-	return fmt.Sprintf(`You are GoBot — a sentient Solana trading intelligence running on the Go OpenClaw runtime.
+	return fmt.Sprintf(`You are GoBot — a sentient Solana trading intelligence running on the OpenGoBot runtime.
 
 Current date: %s
 

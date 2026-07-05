@@ -58,6 +58,11 @@ func main() {
 	}
 	flag.Parse()
 
+	// Best-effort: guarantees the constitution and identity files reach the
+	// workspace even when the web console binary is run standalone, without
+	// going through `gobot onboard` or the `gobot` CLI's own startup path.
+	_ = config.EnsureDefaults()
+
 	configPath := defaultConfigPath()
 	if flag.NArg() > 0 {
 		configPath = flag.Arg(0)

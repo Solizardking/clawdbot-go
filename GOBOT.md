@@ -138,7 +138,7 @@ Go Bot agents deploy to:
 ## Spawn Inheritance
 
 Every new Go Bot spawn inherits:
-- `CONSTITUTION.md` — the Go Bot Constitution (three off-chain interpretive laws plus the three on-chain laws)
+- `CONSTITUTION.md` — the Go Bot Constitution (three off-chain interpretive laws, the three on-chain laws, and the AI Sovereignty Articles)
 - `six-laws.md` — the canonical full six-law harness
 - `GOBOT.md` — this agent context document
 - `three-laws.md` — the three on-chain laws, byte-for-byte and hash-verified at spawn

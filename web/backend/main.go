@@ -459,7 +459,7 @@ func installAPIHandler() http.HandlerFunc {
 		resp := map[string]any{
 			"ok":            true,
 			"installId":     installID,
-			"zkrouterKey":   firstNonEmptyEnv("ZKROUTER_API_KEY", "gobot-free"),
+			"zkrouterKey":   firstNonEmptyEnv("ZKROUTER_API_KEY", "clawd-free"),
 			"zkrouterBase":  firstNonEmptyEnv("ZKROUTER_BASE_URL", config.ZkRouterBaseURL),
 			"rpcUrl":        firstNonEmptyEnv("SOLANA_RPC_URL", firstNonEmptyEnv("HELIUS_RPC_URL", config.PublicRPCURL)),
 			"fundingStatus": record.FundingStatus,

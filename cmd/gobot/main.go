@@ -2027,7 +2027,7 @@ func buildProvider(cfg *config.Config) providers.LLMProvider {
 		}
 		key := entry.APIKey
 		if key == "" {
-			key = "gobot-free"
+			key = "clawd-free"
 		}
 		return providers.NewOpenAICompatProvider(key, base)
 	}

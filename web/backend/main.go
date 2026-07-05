@@ -178,6 +178,7 @@ func main() {
 			{"name": "Aster", "status": envStatus("ASTER_API_KEY"), "type": "perps"},
 			{"name": "Vulcan", "status": binaryStatus("vulcan"), "type": "perps_cli"},
 			{"name": "OpenRouter", "status": envStatus("OPENROUTER_API_KEY"), "type": "llm"},
+			{"name": "Open Gateway", "status": envStatus("OPENGATEWAY_API_KEY"), "type": "llm"},
 			{"name": "Supabase", "status": envStatus("SUPABASE_URL"), "type": "database"},
 		}
 		json.NewEncoder(w).Encode(connectors)

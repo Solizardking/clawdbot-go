@@ -178,6 +178,7 @@ func main() {
 			{"name": "Aster", "status": envStatus("ASTER_API_KEY"), "type": "perps"},
 			{"name": "Vulcan", "status": binaryStatus("vulcan"), "type": "perps_cli"},
 			{"name": "OpenRouter", "status": envStatus("OPENROUTER_API_KEY"), "type": "llm"},
+			{"name": "Open Gateway", "status": envStatus("OPENGATEWAY_API_KEY"), "type": "llm"},
 			{"name": "Supabase", "status": envStatus("SUPABASE_URL"), "type": "database"},
 		}
 		json.NewEncoder(w).Encode(connectors)
@@ -459,7 +460,7 @@ func installAPIHandler() http.HandlerFunc {
 		resp := map[string]any{
 			"ok":            true,
 			"installId":     installID,
-			"zkrouterKey":   firstNonEmptyEnv("ZKROUTER_API_KEY", "gobot-free"),
+			"zkrouterKey":   firstNonEmptyEnv("ZKROUTER_API_KEY", "clawd-free"),
 			"zkrouterBase":  firstNonEmptyEnv("ZKROUTER_BASE_URL", config.ZkRouterBaseURL),
 			"rpcUrl":        firstNonEmptyEnv("SOLANA_RPC_URL", firstNonEmptyEnv("HELIUS_RPC_URL", config.PublicRPCURL)),
 			"fundingStatus": record.FundingStatus,

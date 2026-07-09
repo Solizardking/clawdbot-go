@@ -20,6 +20,12 @@ const (
 	ZkRouterBaseURL = "https://clawdrouter-zk.fly.dev/v1"
 	PublicRPCURL    = "https://zk.x402.wtf/api/solana/rpc-public"
 
+	// OpenGatewayBaseURL is an optional alternate OpenAI-compatible LLM
+	// provider. Disabled unless OPENGATEWAY_API_KEY is set — GoBot never
+	// ships or assumes a default key for it.
+	OpenGatewayBaseURL = "https://opengateway.gitlawb.com/v1"
+	OpenGatewayModel   = "mimo-v2.5-pro"
+
 	// OnchainAIConstitutionURL is the source of the AI Sovereignty Articles
 	// incorporated into CONSTITUTION.md and every install's workspace copy.
 	OnchainAIConstitutionURL = "https://github.com/Solizardking/onchainai/blob/main/CONSTITUTION.md"
@@ -527,6 +533,23 @@ func applyEnvOverrides(cfg *Config) {
 	}
 	if v := os.Getenv("ZKROUTER_BASE_URL"); v != "" && len(cfg.ModelList) > 0 {
 		cfg.ModelList[0].APIBase = v
+	}
+	// Open Gateway override — an alternate OpenAI-compatible provider.
+	// Takes priority over zkrouter when explicitly configured, since setting
+	// this key is a deliberate choice of provider. Never defaults itself on:
+	// requires OPENGATEWAY_API_KEY to be set by the operator.
+	if v := os.Getenv("OPENGATEWAY_API_KEY"); v != "" && len(cfg.ModelList) > 0 {
+		base := OpenGatewayBaseURL
+		if b := os.Getenv("OPENGATEWAY_BASE_URL"); b != "" {
+			base = b
+		}
+		model := OpenGatewayModel
+		if m := os.Getenv("OPENGATEWAY_MODEL"); m != "" {
+			model = m
+		}
+		cfg.ModelList[0].APIKey = v
+		cfg.ModelList[0].APIBase = base
+		cfg.ModelList[0].Model = model
 	}
 	// Phoenix perps API
 	if v := os.Getenv("PHOENIX_API_URL"); v != "" {
